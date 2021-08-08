@@ -1,4 +1,4 @@
-package de.taschi.bulkgpsviewer.settings;
+package de.taschi.bulkgpxviewer.settings;
 
 /*-
  * #%L
@@ -35,8 +35,8 @@ import org.apache.commons.io.FileUtils;
 
 import com.fasterxml.jackson.jr.ob.JSON;
 
-import de.taschi.bulkgpsviewer.settings.dto.Settings;
-import de.taschi.bulkgpsviewer.settings.dto.SettingsColor;
+import de.taschi.bulkgpxviewer.settings.dto.Settings;
+import de.taschi.bulkgpxviewer.settings.dto.SettingsColor;
 
 public class SettingsManager {
 	private static SettingsManager INSTANCE;

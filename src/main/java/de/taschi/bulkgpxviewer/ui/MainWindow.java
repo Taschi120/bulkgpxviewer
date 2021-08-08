@@ -1,4 +1,4 @@
-package de.taschi.bulkgpsviewer.ui;
+package de.taschi.bulkgpxviewer.ui;
 
 /*-
  * #%L
@@ -42,10 +42,10 @@ import org.jxmapviewer.viewer.DefaultTileFactory;
 import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.TileFactoryInfo;
 
-import de.taschi.bulkgpsviewer.gpx.GpsBoundingBox;
-import de.taschi.bulkgpsviewer.gpx.GpxFileUtil;
-import de.taschi.bulkgpsviewer.gpx.GpxToJxMapper;
-import de.taschi.bulkgpsviewer.settings.SettingsManager;
+import de.taschi.bulkgpxviewer.gpx.GpsBoundingBox;
+import de.taschi.bulkgpxviewer.gpx.GpxFileUtil;
+import de.taschi.bulkgpxviewer.gpx.GpxToJxMapper;
+import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import io.jenetics.jpx.WayPoint;
 
 public class MainWindow extends JFrame {

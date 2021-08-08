@@ -1,4 +1,4 @@
-package de.taschi.bulkgpsviewer;
+package de.taschi.bulkgpxviewer.settings.dto;
 
 /*-
  * #%L
@@ -22,20 +22,29 @@ package de.taschi.bulkgpsviewer;
  * #L%
  */
 
-import javax.swing.UIManager;
+import java.util.List;
 
-import de.taschi.bulkgpsviewer.ui.MainWindow;
+public class Settings {
 
-public class Application {		
-	public static void main(String[] args) {
-		System.out.println("Application startup");
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
-			System.err.println("Error while setting system look and feel");
-			e.printStackTrace();
-		}
-		MainWindow mw = new MainWindow();
-		mw.setVisible(true);
+	private String lastUsedDirectory;
+	
+	private List<SettingsColor> routeColors;
+
+	public String getLastUsedDirectory() {
+		return lastUsedDirectory;
 	}
+
+	public void setLastUsedDirectory(String lastUsedDirectory) {
+		this.lastUsedDirectory = lastUsedDirectory;
+	}
+
+	public List<SettingsColor> getRouteColors() {
+		return routeColors;
+	}
+
+	public void setRouteColors(List<SettingsColor> routeColors) {
+		this.routeColors = routeColors;
+	}
+	
+	
 }

@@ -1,4 +1,4 @@
-package de.taschi.bulkgpsviewer.settings;
+package de.taschi.bulkgpxviewer.settings;
 
 /*-
  * #%L
@@ -26,7 +26,7 @@ import java.awt.Color;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import de.taschi.bulkgpsviewer.settings.dto.SettingsColor;
+import de.taschi.bulkgpxviewer.settings.dto.SettingsColor;
 
 public class ColorConverter {
 	

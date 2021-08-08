@@ -1,4 +1,4 @@
-package de.taschi.bulkgpsviewer.ui;
+package de.taschi.bulkgpxviewer.ui;
 
 /*-
  * #%L
@@ -43,8 +43,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 
-import de.taschi.bulkgpsviewer.settings.ColorConverter;
-import de.taschi.bulkgpsviewer.settings.SettingsManager;
+import de.taschi.bulkgpxviewer.settings.ColorConverter;
+import de.taschi.bulkgpxviewer.settings.SettingsManager;
 
 public class SettingsWindow extends JDialog {
 	

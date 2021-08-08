@@ -1,4 +1,4 @@
-package de.taschi.bulkgpsviewer.ui;
+package de.taschi.bulkgpxviewer.ui;
 
 /*-
  * #%L
@@ -34,8 +34,8 @@ import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.painter.Painter;
 import org.jxmapviewer.viewer.GeoPosition;
 
-import de.taschi.bulkgpsviewer.settings.ColorConverter;
-import de.taschi.bulkgpsviewer.settings.SettingsManager;
+import de.taschi.bulkgpxviewer.settings.ColorConverter;
+import de.taschi.bulkgpxviewer.settings.SettingsManager;
 
 /**
  * Paints a route. This class has been shamelessly stolen from the JXMapViewer samples 

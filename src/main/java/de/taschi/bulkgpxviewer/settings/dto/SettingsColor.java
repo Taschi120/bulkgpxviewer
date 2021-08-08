@@ -1,4 +1,4 @@
-package de.taschi.bulkgpsviewer.settings.dto;
+package de.taschi.bulkgpxviewer.settings.dto;
 
 /*-
  * #%L
