@@ -21,6 +21,18 @@
 			<source>${project.basedir}/target/classes/runme.sh</source>
 			<outputDirectory>/</outputDirectory>
 		</file>
+		<file>
+			<source>${project.basedir}/COPYING</source>
+			<outputDirectory>/</outputDirectory>
+		</file>
+		<file>
+			<source>${project.basedir}/THIRD-PARTY.txt</source>
+			<outputDirectory>/</outputDirectory>
+		</file>
+		<file>
+			<source>${project.basedir}/README.md</source>
+			<outputDirectory>/</outputDirectory>
+		</file>
 	</files>
 	<dependencySets>
 		<dependencySet>
