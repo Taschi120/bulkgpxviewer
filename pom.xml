@@ -5,6 +5,15 @@
 	<groupId>de.taschi</groupId>
 	<artifactId>bulkgpxviewer</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<inceptionYear>2021</inceptionYear>
+	<organization>
+		<name>S. Hillebrand</name>
+	</organization>
+	<licenses>
+		<license>
+			<name>GNU General Public License (GPL) version 3.0</name>
+		</license>
+	</licenses>
 
 	<dependencies>
 		<dependency>
