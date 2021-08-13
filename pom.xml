@@ -67,6 +67,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<mainClass>de.taschi.bulkgpxviewer.Application</mainClass>
+							<classpathPrefix>lib/</classpathPrefix>
 						</manifest>
 					</archive>
 				</configuration>
@@ -82,25 +83,6 @@
 						<goals>
 							<goal>download-licenses</goal>
 						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<appendAssemblyId>false</appendAssemblyId>
-							<descriptors>
-								<descriptor>src/main/assembly/zip.xml</descriptor>
-							</descriptors>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -126,6 +108,68 @@
 						</replacement>
 					</replacements>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.akathist.maven.plugins.launch4j</groupId>
+				<artifactId>launch4j-maven-plugin</artifactId>
+				<version>2.1.1</version>
+
+				<executions>
+					<execution>
+						<id>windows-executable</id>
+						<phase>package</phase>
+						<goals>
+							<goal>launch4j</goal>
+						</goals>
+						<configuration>
+							<headerType>gui</headerType>
+							<outfile>target/bulkgpxviewer.exe</outfile>
+							<jar>${project.basedir}/target/${project.artifactId}-${project.version}.jar</jar>
+							<errTitle>bulkgpxviewer</errTitle>
+							<classPath>
+								<mainClass>de.taschi.bulkgpxviewer.Application</mainClass>
+								<addDependencies>true</addDependencies>
+								<preCp>lib</preCp>
+							</classPath>
+							<jre>
+								<minVersion>14</minVersion>
+							</jre>
+							<versionInfo>
+								<!-- versions are not set to anything sensible here because of strict 
+									format restrictions prevent me from using the Maven project version -->
+								<fileVersion>0.0.0.0</fileVersion>
+								<txtFileVersion>0.0.0.0</txtFileVersion>
+								<fileDescription>Bulk GPX Viewer</fileDescription>
+								<copyright>(c) 2021 S. Hillebrand</copyright>
+								<productVersion>0.0.0.0</productVersion>
+								<txtProductVersion>0.0.0.0</txtProductVersion>
+								<productName>Bulk GPX ViewerC</productName>
+								<internalName>bulkgpxviewer</internalName>
+								<originalFilename>bulkgpxviewer.exe</originalFilename>
+							</versionInfo>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<appendAssemblyId>false</appendAssemblyId>
+							<descriptors>
+								<descriptor>src/main/assembly/zip.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

@@ -54,10 +54,14 @@
 			<source>${project.basedir}/README.md</source>
 			<outputDirectory>/</outputDirectory>
 		</file>
+		<file>
+			<source>${project.basedir}/target/${project.artifactId}.exe</source>
+			<outputDirectory>/</outputDirectory>
+		</file>
 	</files>
 	<dependencySets>
 		<dependencySet>
-			<outputDirectory>.</outputDirectory>
+			<outputDirectory>lib</outputDirectory>
 		</dependencySet>
 	</dependencySets>
 </assembly>
