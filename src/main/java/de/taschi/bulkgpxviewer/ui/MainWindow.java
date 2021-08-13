@@ -44,6 +44,7 @@ import org.jxmapviewer.viewer.TileFactoryInfo;
 import de.taschi.bulkgpxviewer.gpx.GpsBoundingBox;
 import de.taschi.bulkgpxviewer.gpx.GpxFileUtil;
 import de.taschi.bulkgpxviewer.gpx.GpxToJxMapper;
+import de.taschi.bulkgpxviewer.gpx.Track;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings;
 import io.jenetics.jpx.WayPoint;
@@ -60,7 +61,7 @@ public class MainWindow extends JFrame {
 	
 	private static final String BASE_TITLE = "MapView";
 	
-	private List<List<GeoPosition>> displayedTracks = new ArrayList<>();
+	private List<Track> displayedTracks = new ArrayList<>();
 	
 	public MainWindow() {
 		super(BASE_TITLE);
@@ -136,6 +137,7 @@ public class MainWindow extends JFrame {
 		try {
 	        List<List<WayPoint>> tracks = GpxFileUtil.getInstance().loadAllGpxInFolder(selectedFile.toPath());
 	        displayedTracks = GpxToJxMapper.getInstance().waypointTracksToGeoPositionTracks(tracks);
+	        
 	        routesPainter.setTracks(displayedTracks);
 	        setTitle(BASE_TITLE + " " + selectedFile.getPath());
 	        

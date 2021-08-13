@@ -43,13 +43,13 @@ public class GpxToJxMapper {
 		return new GeoPosition(in.getLatitude().doubleValue(), in.getLongitude().doubleValue());
 	}
 	
-	public List<GeoPosition> waypointsToGeoPositions(List<WayPoint> in) {
-		return in.stream()
+	public Track waypointsToGeoPositions(List<WayPoint> in) {
+		return new Track(in.stream()
 				.map((it) -> waypointToGeoPosition(it))
-				.collect(Collectors.toList());
+				.collect(Collectors.toList()));
 	}
 	
-	public List<List<GeoPosition>> waypointTracksToGeoPositionTracks(List<List<WayPoint>> in) {
+	public List<Track> waypointTracksToGeoPositionTracks(List<List<WayPoint>> in) {
 		return in.stream()
 				.map((it) -> waypointsToGeoPositions(it))
 				.collect(Collectors.toList());

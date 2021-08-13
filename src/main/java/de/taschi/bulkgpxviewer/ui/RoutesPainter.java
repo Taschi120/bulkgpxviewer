@@ -34,6 +34,7 @@ import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.painter.Painter;
 import org.jxmapviewer.viewer.GeoPosition;
 
+import de.taschi.bulkgpxviewer.gpx.Track;
 import de.taschi.bulkgpxviewer.settings.ColorConverter;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 
@@ -42,7 +43,7 @@ import de.taschi.bulkgpxviewer.settings.SettingsManager;
  * at {@link https://github.com/msteiger/jxmapviewer2/blob/master/examples/src/sample2_waypoints/RoutePainter.java}
  * and slightly adapted.
  *
- * @author Martin Steiger
+ * @author Martin Steiger (original), S. Hillebrand (adapted)
  */
 public class RoutesPainter implements Painter<JXMapViewer>
 {
@@ -50,12 +51,12 @@ public class RoutesPainter implements Painter<JXMapViewer>
     
     private List<Color> colors;
 
-    private List<List<GeoPosition>> tracks;
+    private List<Track> tracks;
 
     /**
      * @param track the track
      */
-    public RoutesPainter(List<List<GeoPosition>> tracks)
+    public RoutesPainter(List<Track> tracks)
     {
         this.tracks = tracks;
         refreshColorList();
@@ -128,7 +129,7 @@ public class RoutesPainter implements Painter<JXMapViewer>
         }
     }
 
-	public void setTracks(List<List<GeoPosition>> tracks) {
+	public void setTracks(List<Track> tracks) {
 		this.tracks = tracks;
 	}
 	
