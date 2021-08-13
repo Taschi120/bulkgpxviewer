@@ -68,12 +68,9 @@ public class MainWindow extends JFrame {
 		MainWindowSettings settings = SettingsManager.getInstance().getSettings().getMainWindowSettings();
 		
 		setSize(settings.getWidth(), settings.getHeight());
-		setMaximizedBounds(getBounds());
 		
 		if (settings.isMaximized()) {
-			setExtendedState(MAXIMIZED_BOTH);
-		} else {
-			setExtendedState(0);
+			setExtendedState(getExtendedState() | MAXIMIZED_BOTH);
 		}
 		
         menuBar = new MenuBar(this);
