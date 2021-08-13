@@ -34,7 +34,9 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 
 import com.fasterxml.jackson.jr.ob.JSON;
+import com.fasterxml.jackson.jr.ob.JSON.Feature;
 
+import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings;
 import de.taschi.bulkgpxviewer.settings.dto.Settings;
 import de.taschi.bulkgpxviewer.settings.dto.SettingsColor;
 
@@ -65,10 +67,25 @@ public class SettingsManager {
 	private void loadOrInitSettings(Path settingsFile) {
 		if(Files.exists(settingsFile)) {
 			loadSettings(settingsFile);
+			migrateIfNecessary();
+			saveSettings();
 		} else {
 			makeNewSettings();
 			saveSettings();
 		}
+	}
+
+	private void migrateIfNecessary() {
+		migrateToV0_2_0();
+	}
+
+	private void migrateToV0_2_0() {
+		if (getSettings().getMainWindowSettings() == null) {
+			MainWindowSettings s = new MainWindowSettings();
+			getSettings().setMainWindowSettings(s);
+		}
+		
+
 	}
 
 	public void saveSettings() {
@@ -85,12 +102,15 @@ public class SettingsManager {
 		
 		List<SettingsColor> colors = ColorConverter.convertToSettings(DEFAULT_TRACK_COLORS);
 		settings.setRouteColors(colors);
+		migrateIfNecessary();
 	}
 
 	private void loadSettings(Path settingsFile) {
 		try {
 			String jsonDoc = FileUtils.readFileToString(settingsFile.toFile(), Charset.forName("UTF-8"));
-			settings = JSON.std.beanFrom(Settings.class, jsonDoc);
+			settings = JSON.std
+				    .with(Feature.PRETTY_PRINT_OUTPUT).
+				    beanFrom(Settings.class, jsonDoc);
 		} catch (IOException e) {
 			handleException(e);
 		}

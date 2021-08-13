@@ -29,6 +29,8 @@ public class Settings {
 	private String lastUsedDirectory;
 	
 	private List<SettingsColor> routeColors;
+	
+	private MainWindowSettings mainWindowSettings;
 
 	public String getLastUsedDirectory() {
 		return lastUsedDirectory;
@@ -45,6 +47,13 @@ public class Settings {
 	public void setRouteColors(List<SettingsColor> routeColors) {
 		this.routeColors = routeColors;
 	}
-	
+
+	public MainWindowSettings getMainWindowSettings() {
+		return mainWindowSettings;
+	}
+
+	public void setMainWindowSettings(MainWindowSettings mainWindowSettings) {
+		this.mainWindowSettings = mainWindowSettings;
+	}
 	
 }

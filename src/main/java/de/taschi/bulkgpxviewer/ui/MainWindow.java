@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -46,6 +45,7 @@ import de.taschi.bulkgpxviewer.gpx.GpsBoundingBox;
 import de.taschi.bulkgpxviewer.gpx.GpxFileUtil;
 import de.taschi.bulkgpxviewer.gpx.GpxToJxMapper;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
+import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings;
 import io.jenetics.jpx.WayPoint;
 
 public class MainWindow extends JFrame {
@@ -64,7 +64,17 @@ public class MainWindow extends JFrame {
 	
 	public MainWindow() {
 		super(BASE_TITLE);
-		setSize(600, 400);
+		
+		MainWindowSettings settings = SettingsManager.getInstance().getSettings().getMainWindowSettings();
+		
+		setSize(settings.getWidth(), settings.getHeight());
+		setMaximizedBounds(getBounds());
+		
+		if (settings.isMaximized()) {
+			setExtendedState(MAXIMIZED_BOTH);
+		} else {
+			setExtendedState(0);
+		}
 		
         menuBar = new MenuBar(this);
         setJMenuBar(menuBar);
@@ -85,6 +95,7 @@ public class MainWindow extends JFrame {
         addWindowListener(new WindowAdapter() {
         	@Override
         	public void windowClosing(WindowEvent e) {
+        		writeWindowStateToSettings();
         		SettingsManager.getInstance().saveSettings();
         	}
         });
@@ -140,5 +151,14 @@ public class MainWindow extends JFrame {
 	
 	public void forceSettingsRefresh() {
 		routesPainter.refreshColorList();
+	}
+	
+	private void writeWindowStateToSettings() {
+		MainWindowSettings settings = SettingsManager.getInstance().getSettings().getMainWindowSettings();
+		settings.setWidth(getWidth());
+		settings.setHeight(getHeight());
+		settings.setX(getX());
+		settings.setY(getY());
+		settings.setMaximized((getExtendedState() & MAXIMIZED_BOTH) != 0);
 	}
 }
