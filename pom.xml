@@ -171,6 +171,49 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<groupId>org.digitalmediaserver</groupId>
+				<artifactId>nsis-maven-plugin</artifactId>
+				<version>1.0.3</version>
+				<configuration>
+                    <makensisExecutable>${nsisBinDir}/makensis.exe</makensisExecutable>
+                    <makensisExecutableLinux>${nsisBinDir}/makensisLinux</makensisExecutableLinux>
+                    <makensisExecutableMacOS>${nsisBinDir}/Bin/makensisMacOS</makensisExecutableMacOS>
+                    <compression>lzma</compression>
+                    <compressionIsFinal>true</compressionIsFinal>
+                    <compressionDictSize>64</compressionDictSize>
+                    <defines>
+                        <PROJECT_NAME_SHORT>${project.artifactId}</PROJECT_NAME_SHORT>
+                        <PROJECT_NAME_CAMEL>${project.artifactId}</PROJECT_NAME_CAMEL>
+                    </defines>
+                </configuration>
+                
+				<executions>
+<!--                     <execution>
+                        <id>build-windows-launcher</id>
+                        <configuration>
+                            <scriptFile>${project.dir}/src/main/assembly</scriptFile>
+                            <outputFile>${project.name.short}.exe</outputFile>
+                            <attachArtifact>false</attachArtifact>
+                        </configuration>
+                        <goals>
+                            <goal>generate-headerfile</goal>
+                            <goal>make</goal>
+                        </goals>
+                    </execution> -->
+                    <execution>
+                        <id>build-windows-installer</id>
+                        <configuration>
+                            <scriptFile>${project.basedir}/src/main/assembly/installer.nsi</scriptFile>
+                            <outputFile>${project.basedir}/target/${project.artifactId}-${project.version}-setup.exe</outputFile>
+                        </configuration>
+                        <goals>
+                            <goal>make</goal>
+                        </goals>
+                    </execution>
+                </executions>
+			</plugin>
 		</plugins>
 	</build>
 
