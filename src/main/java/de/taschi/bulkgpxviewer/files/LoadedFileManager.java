@@ -110,7 +110,7 @@ public class LoadedFileManager {
 				.filter((it) -> matcher.matches(it))
 				.forEach((it) -> loadFile(it));
 
-			fireChangeListeners();
+			new Thread(() -> fireChangeListeners()).start();
 		} catch (RuntimeException e) {
 			if (e.getCause() != null && e.getCause() instanceof IOException) {
 				throw (IOException) e.getCause();
