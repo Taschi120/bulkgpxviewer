@@ -100,7 +100,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<filesToInclude>${project.basedir}/target/classes/runme.bat,${project.basedir}/target/classes/runme.sh</filesToInclude>
+					<filesToInclude>${project.basedir}/target/classes/runme.sh</filesToInclude>
 					<replacements>
 						<replacement>
 							<token>VERSION</token>
