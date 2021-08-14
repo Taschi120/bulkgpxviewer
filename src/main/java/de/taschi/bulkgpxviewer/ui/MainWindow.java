@@ -1,5 +1,7 @@
 package de.taschi.bulkgpxviewer.ui;
 
+import java.awt.Image;
+
 /*-
  * #%L
  * bulkgpxviewer
@@ -31,6 +33,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -65,6 +68,8 @@ public class MainWindow extends JFrame {
 	
 	public MainWindow() {
 		super(BASE_TITLE);
+		
+	    loadAndSetIcon();
 		
 		MainWindowSettings settings = SettingsManager.getInstance().getSettings().getMainWindowSettings();
 		
@@ -110,6 +115,15 @@ public class MainWindow extends JFrame {
         }
         
         setZoomAndLocation();
+	}
+
+	private void loadAndSetIcon() {
+		try {
+			Image image = ImageIO.read(getClass().getResource("/icon_256.png"));
+			setIconImage(image);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void setZoomAndLocation() {

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="200mm"
+   height="200mm"
+   viewBox="0 0 200 200"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   sodipodi:docname="icon.svg"
+   inkscape:export-filename="E:\Documents\Programme\komoot-map\bulkgpxviewer\src\main\resources\icon_256.png"
+   inkscape:export-xdpi="32.512001"
+   inkscape:export-ydpi="32.512001"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     width="200mm"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-center="false"
+     inkscape:zoom="0.74118967"
+     inkscape:cx="-313.0103"
+     inkscape:cy="184.16339"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer2">
+    <sodipodi:guide
+       position="99.999999,99.999999"
+       orientation="-1,0"
+       id="guide9"
+       inkscape:label=""
+       inkscape:locked="false"
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="99.999999,99.999999"
+       orientation="0,1"
+       id="guide11"
+       inkscape:label=""
+       inkscape:locked="false"
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="99.999999,99.999999"
+       orientation="0.70710678,0.70710678"
+       id="guide13"
+       inkscape:label=""
+       inkscape:locked="false"
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="99.999999,99.999999"
+       orientation="-0.70710678,0.70710678"
+       id="guide15"
+       inkscape:label=""
+       inkscape:locked="false"
+       inkscape:color="rgb(0,0,255)" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Ebene 0">
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 51.695603,51.695603 154.92548,154.92548"
+       id="path583" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#9a916c;stroke-width:0.197208;stroke-opacity:1"
+       id="rect675"
+       width="1.7848557"
+       height="77.144722"
+       x="-0.89242518"
+       y="-179.99371"
+       transform="rotate(135)" />
+  </g>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#ff6600;fill-opacity:1;stroke:#9a916c;stroke-width:0.165435;stroke-opacity:1"
+       id="rect245"
+       width="41.014629"
+       height="54.222549"
+       x="120.91404"
+       y="-27.111273"
+       transform="rotate(45)" />
+    <rect
+       style="fill:#000080;fill-opacity:1;stroke:#9a916c;stroke-width:0.284981;stroke-opacity:1"
+       id="rect373"
+       width="16.709192"
+       height="82.652687"
+       x="-8.3545952"
+       y="-114.43497"
+       transform="rotate(135)" />
+    <rect
+       style="fill:#000080;fill-opacity:1;stroke:#9a916c;stroke-width:0.284981;stroke-opacity:1"
+       id="rect373-3"
+       width="16.709192"
+       height="82.652687"
+       x="-8.3545961"
+       y="-250.32739"
+       transform="rotate(135)" />
+  </g>
+</svg>

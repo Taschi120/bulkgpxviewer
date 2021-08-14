@@ -128,6 +128,9 @@
 							<outfile>target/bulkgpxviewer.exe</outfile>
 							<jar>${project.basedir}/target/${project.artifactId}-${project.version}.jar</jar>
 							<errTitle>bulkgpxviewer</errTitle>
+							
+							<icon>src/main/resources/icon_256.ico</icon>
+							
 							<classPath>
 								<mainClass>de.taschi.bulkgpxviewer.Application</mainClass>
 								<addDependencies>true</addDependencies>
