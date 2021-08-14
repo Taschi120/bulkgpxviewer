@@ -1,24 +1,26 @@
-# define name of installer
-#OutFile "bulkgpxviewer_setup.exe"
- 
 # define installation directory
-InstallDir $PROGRAMFILES/bulkgpxviewer
+InstallDir $PROGRAMFILES\bulkgpxviewer
  
-# For removing Start Menu shortcut in Windows 7
-RequestExecutionLevel user
+RequestExecutionLevel admin
  
 # start default section
 Section
  
     # set the installation directory as the destination for the following actions
     SetOutPath $INSTDIR
+    
+    # include all files from the Maven assembly
+    !cd ${PROJECT_BASEDIR}\target\${PROJECT_ARTIFACT_ID}-${PROJECT_VERSION}\${PROJECT_ARTIFACT_ID}-${PROJECT_VERSION}
+    File /r *
  
     # create the uninstaller
     WriteUninstaller "$INSTDIR\uninstall.exe"
  
-    # create a shortcut named "new shortcut" in the start menu programs directory
-    # point the new shortcut at the program uninstaller
-    CreateShortcut "$SMPROGRAMS\Uninstall bulkgpxviewer.lnk" "$INSTDIR\uninstall.exe"
+    # uninstaller shortcut
+    CreateShortcut "$SMPROGRAMS\Uninstall Bulk GPX Viewer.lnk" "$INSTDIR\uninstall.exe"
+    
+    # app shortcut
+    CreateShortcut "$SMPROGRAMS\Bulk GPX Viewer.lnk" "$INSTDIR\bulkgpxviewer.exe"
 SectionEnd
  
 # uninstaller section start
@@ -27,9 +29,14 @@ Section "uninstall"
     # first, delete the uninstaller
     Delete "$INSTDIR\uninstall.exe"
  
-    # second, remove the link from the start menu
-    Delete "$SMPROGRAMS\new shortcut.lnk"
+    # second, remove the links from the start menu
+    Delete "$SMPROGRAMS\Uninstall Bulk GPX Viewer.lnk"
+    Delete "$SMPROGRAMS\Bulk GPX Viewer.lnk"
  
+ 	Delete "$INSTDIR\*"
+ 	Delete "$INSTDIR\lib\*"
+ 
+ 	RMDir $INSTDIR\lib
     RMDir $INSTDIR
 # uninstaller section end
 SectionEnd

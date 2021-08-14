@@ -190,18 +190,6 @@
                 </configuration>
                 
 				<executions>
-<!--                     <execution>
-                        <id>build-windows-launcher</id>
-                        <configuration>
-                            <scriptFile>${project.dir}/src/main/assembly</scriptFile>
-                            <outputFile>${project.name.short}.exe</outputFile>
-                            <attachArtifact>false</attachArtifact>
-                        </configuration>
-                        <goals>
-                            <goal>generate-headerfile</goal>
-                            <goal>make</goal>
-                        </goals>
-                    </execution> -->
                     <execution>
                         <id>build-windows-installer</id>
                         <configuration>
@@ -209,6 +197,7 @@
                             <outputFile>${project.basedir}/target/${project.artifactId}-${project.version}-setup.exe</outputFile>
                         </configuration>
                         <goals>
+                            <goal>generate-headerfile</goal>
                             <goal>make</goal>
                         </goals>
                     </execution>

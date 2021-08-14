@@ -27,7 +27,8 @@
 	<includeBaseDirectory>true</includeBaseDirectory>
 
 	<formats>
-		<format>zip</format>
+		<format>zip</format> <!-- the ZIP is distributed to end-users -->
+		<format>dir</format> <!-- this is used as input for the NSIS installer -->
 	</formats>
 	<files>
 		<file>
