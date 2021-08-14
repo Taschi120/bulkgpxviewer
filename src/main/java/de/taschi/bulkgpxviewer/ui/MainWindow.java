@@ -28,7 +28,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,13 +43,11 @@ import org.jxmapviewer.viewer.DefaultTileFactory;
 import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.TileFactoryInfo;
 
+import de.taschi.bulkgpxviewer.files.LoadedFileManager;
 import de.taschi.bulkgpxviewer.gpx.GpsBoundingBox;
-import de.taschi.bulkgpxviewer.gpx.GpxFileUtil;
-import de.taschi.bulkgpxviewer.gpx.GpxToJxMapper;
-import de.taschi.bulkgpxviewer.gpx.Track;
+import de.taschi.bulkgpxviewer.gpx.GpxViewerTrack;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings;
-import io.jenetics.jpx.WayPoint;
 
 public class MainWindow extends JFrame {
 
@@ -63,9 +60,7 @@ public class MainWindow extends JFrame {
 	private final MenuBar menuBar;
 	
 	private static final String BASE_TITLE = "MapView";
-	
-	private List<Track> displayedTracks = new ArrayList<>();
-	
+		
 	public MainWindow() {
 		super(BASE_TITLE);
 		
@@ -103,10 +98,12 @@ public class MainWindow extends JFrame {
         	}
         });
         
-        List<List<WayPoint>> tracks = new ArrayList<List<WayPoint>>(0);
-        displayedTracks = GpxToJxMapper.getInstance().waypointTracksToGeoPositionTracks(tracks);
-        routesPainter = new RoutesPainter(displayedTracks);
+        routesPainter = new RoutesPainter();
         mapKit.getMainMap().setOverlayPainter(routesPainter);
+        
+        LoadedFileManager.getInstance().addChangeListener(() -> {
+        	mapKit.repaint();
+        });
         
         String lastUsedDirectory = SettingsManager.getInstance().getSettings().getLastUsedDirectory();
         
@@ -127,7 +124,9 @@ public class MainWindow extends JFrame {
 	}
 
 	private void setZoomAndLocation() {
-		if (displayedTracks.isEmpty()) {
+		List<GpxViewerTrack> tracks = LoadedFileManager.getInstance().getLoadedTracks();
+		
+		if (tracks.isEmpty()) {
 			// default location
 			mapKit.setZoom(8);
 	        mapKit.setAddressLocation(new GeoPosition(50.11, 8.68));
@@ -135,7 +134,7 @@ public class MainWindow extends JFrame {
 			GpsBoundingBox bb = new GpsBoundingBox();
 			Set<GeoPosition> allPositions = new LinkedHashSet<GeoPosition>();
 			
-			for(List<GeoPosition> track: displayedTracks) {
+			for(List<GeoPosition> track: tracks) {
 				allPositions.addAll(track);
 				for(GeoPosition pos : track) {
 					bb.clamp(pos);
@@ -149,15 +148,12 @@ public class MainWindow extends JFrame {
 
 	public void setCrawlDirectory(File selectedFile) {
 		try {
-	        List<List<WayPoint>> tracks = GpxFileUtil.getInstance().loadAllGpxInFolder(selectedFile.toPath());
-	        displayedTracks = GpxToJxMapper.getInstance().waypointTracksToGeoPositionTracks(tracks);
-	        
-	        routesPainter.setTracks(displayedTracks);
+			LoadedFileManager.getInstance().clearAndLoadAllFromDirectory(selectedFile.toPath());
+
 	        setTitle(BASE_TITLE + " " + selectedFile.getPath());
-	        
 	        SettingsManager.getInstance().getSettings().setLastUsedDirectory(selectedFile.getCanonicalPath());
 		} catch (IOException e) {
-			JOptionPane.showConfirmDialog(this, "Error while loading GPX files from folder " + selectedFile.getAbsolutePath());
+			JOptionPane.showMessageDialog(this, "Error while loading GPX files from folder " + selectedFile.getAbsolutePath());
 			e.printStackTrace();
 		}
 	}

@@ -23,7 +23,7 @@ package de.taschi.bulkgpxviewer.gpx;
  */
 
 import java.nio.file.Path;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -39,18 +39,18 @@ import java.util.stream.Stream;
 
 import org.jxmapviewer.viewer.GeoPosition;
 
-public class Track implements List<GeoPosition> {
+public class GpxViewerTrack implements List<GeoPosition> {
 	
 	private List<GeoPosition> internal;
 	
-	private LocalDateTime startedAt;
+	private Instant startedAt;
 	private Path fileName;
 
-	public Track() {
+	public GpxViewerTrack() {
 		internal = new ArrayList<>();
 	}
 	
-	public Track(List<GeoPosition> geoPositions) {
+	public GpxViewerTrack(List<GeoPosition> geoPositions) {
 		internal = new ArrayList<>(geoPositions);
 	}
 	
@@ -80,11 +80,11 @@ public class Track implements List<GeoPosition> {
 	// Eclipse auto-generated getters and setters from here on               //
 	// ======================================================================//
 
-	public LocalDateTime getStartedAt() {
+	public Instant getStartedAt() {
 		return startedAt;
 	}
 
-	public void setStartedAt(LocalDateTime startedAt) {
+	public void setStartedAt(Instant startedAt) {
 		this.startedAt = startedAt;
 	}
 
