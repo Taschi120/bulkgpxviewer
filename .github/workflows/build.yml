@@ -7,16 +7,25 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Set up JDK 14
         uses: actions/setup-java@v2
         with:
           java-version: '14'
           distribution: 'adopt'
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m  2
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots verify
-      - run: mkdir staging && cp target/*.zip staging && cp target/*-setup.exe staging
-      - uses: actions/upload-artifact@v2
+      - name: Prepare artifact archival
+        run: mkdir staging && cp target/*.zip staging && cp target/*-setup.exe staging
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v2
         with:
           name: Package
           path: staging
