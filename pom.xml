@@ -177,9 +177,6 @@
 				<artifactId>nsis-maven-plugin</artifactId>
 				<version>1.0.3</version>
 				<configuration>
-                    <makensisExecutable>${nsisBinDir}/makensis.exe</makensisExecutable>
-                    <makensisExecutableLinux>${nsisBinDir}/makensisLinux</makensisExecutableLinux>
-                    <makensisExecutableMacOS>${nsisBinDir}/Bin/makensisMacOS</makensisExecutableMacOS>
                     <compression>lzma</compression>
                     <compressionIsFinal>true</compressionIsFinal>
                     <compressionDictSize>64</compressionDictSize>
