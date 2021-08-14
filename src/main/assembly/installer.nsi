@@ -1,3 +1,16 @@
+!include MUI2.nsh
+
+!define MUI_FINISHPAGE_TEXT "Installation is now complete"
+
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_LICENSE ${PROJECT_BASEDIR}\COPYING
+!insertmacro MUI_PAGE_INSTFILES
+!insertmacro MUI_PAGE_FINISH
+
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+!insertmacro MUI_UNPAGE_FINISH
+
 # define installation directory
 InstallDir $PROGRAMFILES\bulkgpxviewer
  
