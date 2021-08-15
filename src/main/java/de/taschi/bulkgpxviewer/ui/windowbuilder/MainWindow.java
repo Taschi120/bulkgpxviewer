@@ -35,6 +35,7 @@ import de.taschi.bulkgpxviewer.gpx.GpxViewerTrack;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings;
 import de.taschi.bulkgpxviewer.ui.MapPanel;
+import de.taschi.bulkgpxviewer.ui.SidePanel;
 
 public class MainWindow {
 
@@ -48,6 +49,7 @@ public class MainWindow {
 	private MapPanel mapPanel;
 
 	private String BASE_TITLE = "Bulk GPX Viewer";
+	private SidePanel sidePanel;
 	
 	/**
 	 * Launch the application.
@@ -95,6 +97,10 @@ public class MainWindow {
 		
 		JPanel panel_1 = new JPanel();
 		splitPane.setRightComponent(panel_1);
+		panel_1.setLayout(new BorderLayout(0, 0));
+		
+		sidePanel = new SidePanel();
+		panel_1.add(sidePanel);
 		
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);

@@ -1,5 +1,8 @@
 package de.taschi.bulkgpxviewer.gpx;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /*-
  * #%L
  * bulkgpxviewer
@@ -58,12 +61,13 @@ public class GpxViewerTrack implements List<GeoPosition> {
 	 * Determine route length.
 	 * @return
 	 */
-	public double getRouteLengthInKilometers() {
-		double result = 0;
+	public BigDecimal getRouteLengthInKilometers() {
 		
 		if (internal.size() < 2) {
-			return result;
+			return BigDecimal.ZERO;
 		}
+		
+		double result = 0;
 		
 		for (int i = 0; i < internal.size() - 1; i++) {
 			GeoPosition here = get(i);
@@ -72,8 +76,7 @@ public class GpxViewerTrack implements List<GeoPosition> {
 			result += HaversineCalculator.getDistance(here, there);
 		}
 		
-		return result;
-		
+		return new BigDecimal(result).setScale(1, RoundingMode.HALF_UP);
 	}
 	
 	// ======================================================================//
