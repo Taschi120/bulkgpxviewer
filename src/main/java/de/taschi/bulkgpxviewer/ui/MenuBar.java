@@ -30,6 +30,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import de.taschi.bulkgpxviewer.ui.windowbuilder.SettingsWindow;
+
 public class MenuBar extends JMenuBar {
 
 	private static final long serialVersionUID = 3071719473861414914L;
