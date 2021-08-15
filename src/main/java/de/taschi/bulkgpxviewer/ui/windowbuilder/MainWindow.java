@@ -111,6 +111,7 @@ public class MainWindow {
 		mnNewMenu.add(settingsMenuItem);
 		
 		quitMenuItem = new JMenuItem("Quit");
+		quitMenuItem.addActionListener(this::closeEventHandler);
 		mnNewMenu.add(quitMenuItem);
 		
 		JMenu mnNewMenu_1 = new JMenu("Help");
@@ -130,8 +131,7 @@ public class MainWindow {
 		frame.addWindowListener(new WindowAdapter() {
         	@Override
         	public void windowClosing(WindowEvent e) {
-        		writeWindowStateToSettings();
-        		SettingsManager.getInstance().saveSettings();
+        		closeEventHandler(null);
         	}
         });
 		
@@ -259,4 +259,12 @@ public class MainWindow {
 			JOptionPane.showMessageDialog(frame, "Could not open default browser.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
+	
+	private void closeEventHandler(ActionEvent evt) {
+		writeWindowStateToSettings();
+		SettingsManager.getInstance().saveSettings();
+		System.out.println("Closing application by user request.");
+		System.exit(0);
+	}
 }
+
