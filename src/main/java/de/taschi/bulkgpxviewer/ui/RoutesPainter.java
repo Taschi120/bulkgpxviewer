@@ -30,6 +30,8 @@ import java.awt.RenderingHints;
 import java.awt.geom.Point2D;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.painter.Painter;
 import org.jxmapviewer.viewer.GeoPosition;
@@ -47,6 +49,9 @@ import de.taschi.bulkgpxviewer.settings.SettingsManager;
  */
 public class RoutesPainter implements Painter<JXMapViewer>
 {
+	
+	private static final Logger LOG = LogManager.getLogger(RoutesPainter.class);
+	
     private boolean antiAlias = true;
     
     private List<Color> colors;
@@ -60,6 +65,7 @@ public class RoutesPainter implements Painter<JXMapViewer>
     }
     
     public void refreshColorList() {
+    	LOG.info("Refreshing colors list");
         colors = ColorConverter.convertToAwt(SettingsManager.getInstance().getSettings().getRouteColors());
     }
 

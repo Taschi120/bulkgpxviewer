@@ -15,9 +15,14 @@ import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.swing.JScrollPane;
 
 public class InfoDialog extends JDialog {
+	
+	private static final Logger LOG = LogManager.getLogger(InfoDialog.class);
 
 	private static final long serialVersionUID = -8478805153020789079L;
 	
@@ -36,7 +41,7 @@ public class InfoDialog extends JDialog {
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error(e);
 		}
 	}
 
@@ -121,7 +126,7 @@ public class InfoDialog extends JDialog {
 			licenseScrollPane.getVerticalScrollBar().setValue(0);
 			thirdPartyScrollPane.getVerticalScrollBar().setValue(0);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOG.error("Couldn't load license or third-party licenses", e);
 		}
 	}
 	

@@ -13,10 +13,15 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
 import de.taschi.bulkgpxviewer.gpx.GpxViewerTrack;
 
 public class SidePanel extends JPanel {
+	
+	private static final Logger LOG = LogManager.getLogger(SidePanel.class);
 	
 	private static final long serialVersionUID = -4050409521285757121L;
 	
@@ -39,6 +44,9 @@ public class SidePanel extends JPanel {
 	}
 
 	private void createTreeModel() {
+		
+		LOG.info("Recreating tree model");
+		
 		if (rootNode == null) {
 			rootNode = new DefaultMutableTreeNode("All files");
 		} else {
@@ -56,7 +64,7 @@ public class SidePanel extends JPanel {
 			DefaultMutableTreeNode yearNode = yearNodes.get(year);
 			
 			if (yearNode == null) {
-				System.out.println("Making node for year " + year);
+				LOG.info("Making node for year " + year);
 				yearNode = new DefaultMutableTreeNode(year);
 				yearNodes.put(year, yearNode);
 				rootNode.add(yearNode);

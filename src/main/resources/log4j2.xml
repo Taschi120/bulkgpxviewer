@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout
+				pattern="%d{yyyy-MM-dd HH:mm:ss.SSS}  %-4p %4L --- [%15.15t] %-40.40C : %m%n" />
+		</Console>
+
+		<File name="debugLog"
+			filename="${sys:user.home}/.bulkgpxviewer/debug.log">
+			<PatternLayout
+				pattern="%d{yyyy-MM-dd HH:mm:ss.SSS}  %-4p %4L --- [%15.15t] %-40.40C : %m%n" />
+		</File>
+
+	</Appenders>
+	<Loggers>
+
+		<Logger name="de.taschi" level="debug" additivity="true">
+			<AppenderRef ref="debugLog" />
+		</Logger>
+
+		<Root level="debug" additivity="true">
+			<AppenderRef ref="Console" />
+		</Root>
+
+	</Loggers>
+</Configuration>

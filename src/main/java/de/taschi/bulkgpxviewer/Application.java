@@ -1,5 +1,6 @@
 package de.taschi.bulkgpxviewer;
 
+
 /*-
  * #%L
  * bulkgpxviewer
@@ -24,17 +25,22 @@ package de.taschi.bulkgpxviewer;
 
 import javax.swing.UIManager;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.taschi.bulkgpxviewer.ui.windowbuilder.MainWindow;
 
 
-public class Application {		
+public class Application {
+	
+	private static final Logger LOG = LogManager.getLogger(Application.class);
+	
 	public static void main(String[] args) {
-		System.out.println("Application startup");
+		LOG.info("Application startup");
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
-			System.err.println("Error while setting system look and feel");
-			e.printStackTrace();
+			LOG.error("Error while setting system look and feel", e);
 		}
 		MainWindow mw = new MainWindow();
 		mw.setVisible(true);

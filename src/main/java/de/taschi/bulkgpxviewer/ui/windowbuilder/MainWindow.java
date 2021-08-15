@@ -26,6 +26,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jxmapviewer.JXMapKit;
 import org.jxmapviewer.viewer.GeoPosition;
 
@@ -38,6 +40,8 @@ import de.taschi.bulkgpxviewer.ui.MapPanel;
 import de.taschi.bulkgpxviewer.ui.SidePanel;
 
 public class MainWindow {
+	
+	private static final Logger LOG = LogManager.getLogger(MainWindow.class);
 
 	private JFrame frame;
 	private JSplitPane splitPane;
@@ -208,7 +212,7 @@ public class MainWindow {
 	        SettingsManager.getInstance().getSettings().setLastUsedDirectory(selectedFile.getCanonicalPath());
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(frame, "Error while loading GPX files from folder " + selectedFile.getAbsolutePath());
-			e.printStackTrace();
+			LOG.error("Error while loading GPX files from folder " + selectedFile.getAbsolutePath(), e);
 		}
 	}
 	
@@ -261,7 +265,7 @@ public class MainWindow {
 		try {
 			Desktop.getDesktop().browse(URI.create("https://github.com/Taschi120/bulkgpxviewer"));
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOG.error("Error while trying to open GitHub site in system browser", e);
 			JOptionPane.showMessageDialog(frame, "Could not open default browser.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -269,7 +273,7 @@ public class MainWindow {
 	private void closeEventHandler(ActionEvent evt) {
 		writeWindowStateToSettings();
 		SettingsManager.getInstance().saveSettings();
-		System.out.println("Closing application by user request.");
+		LOG.info("Closing application by user request.");
 		System.exit(0);
 	}
 }

@@ -32,6 +32,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.fasterxml.jackson.jr.ob.JSON.Feature;
@@ -41,6 +43,9 @@ import de.taschi.bulkgpxviewer.settings.dto.Settings;
 import de.taschi.bulkgpxviewer.settings.dto.SettingsColor;
 
 public class SettingsManager {
+	
+	private static Logger LOG = LogManager.getLogger(SettingsManager.class);
+	
 	private static SettingsManager INSTANCE;
 	
 	public static SettingsManager getInstance() {
@@ -57,6 +62,7 @@ public class SettingsManager {
 	private Settings settings;
 	
 	private SettingsManager() {
+		LOG.info("Loading settings");
 		loadOrInitSettings(getSettingsFile());
 	}
 	
@@ -81,13 +87,14 @@ public class SettingsManager {
 
 	private void migrateToV0_2_0() {
 		if (getSettings().getMainWindowSettings() == null) {
+			LOG.info("Updating settings to v0.2.0");
 			MainWindowSettings s = new MainWindowSettings();
 			getSettings().setMainWindowSettings(s);
 		}
 		
 
 	}
-
+	
 	public void saveSettings() {
 		try {
 			FileUtils.forceMkdirParent(getSettingsFile().toFile());
@@ -117,8 +124,7 @@ public class SettingsManager {
 	}
 
 	private void handleException(IOException e) {
-		System.err.println("Error while trying to load settings:");
-		e.printStackTrace();
+		LOG.error("Error while trying to load settings:", e);
 	}
 
 	private Path getSettingsFile() {

@@ -32,6 +32,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jxmapviewer.viewer.GeoPosition;
 
 import de.taschi.bulkgpxviewer.gpx.GpxToJxMapper;
@@ -45,6 +47,8 @@ import io.jenetics.jpx.WayPoint;
  * Singleton class for access to the loaded files and GPX tracks
  */
 public class LoadedFileManager {
+	
+	private static final Logger LOG = LogManager.getLogger(LoadedFileManager.class);
 
 	private static LoadedFileManager INSTANCE;
 
@@ -64,7 +68,7 @@ public class LoadedFileManager {
 	 * @param file
 	 */
 	private void loadFile(Path file) {
-		System.out.println("Loading GPX file " + file.toString());
+		LOG.info("Loading GPX file " + file.toString());
 		
 		try {
 			List<WayPoint> waypoints = GPX.read(file).tracks()
@@ -82,7 +86,7 @@ public class LoadedFileManager {
 			
 			loadedTracks.add(track);
 			
-			System.out.println("GPX file " + file.toString() + "has been successfully loaded.");
+			LOG.info("GPX file " + file.toString() + " has been successfully loaded.");
 			
 			new Thread(() -> fireChangeListeners()).start();
 		} catch (IOException e) {
