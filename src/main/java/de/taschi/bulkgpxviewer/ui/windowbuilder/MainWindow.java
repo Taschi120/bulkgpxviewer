@@ -1,5 +1,6 @@
 package de.taschi.bulkgpxviewer.ui.windowbuilder;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.HeadlessException;
 import java.awt.Image;
@@ -15,6 +16,16 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+
+import org.apache.commons.lang3.StringUtils;
+import org.jxmapviewer.JXMapKit;
+import org.jxmapviewer.viewer.GeoPosition;
 
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
 import de.taschi.bulkgpxviewer.gpx.GpsBoundingBox;
@@ -22,20 +33,6 @@ import de.taschi.bulkgpxviewer.gpx.GpxViewerTrack;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings;
 import de.taschi.bulkgpxviewer.ui.MapPanel;
-import java.awt.BorderLayout;
-import javax.swing.JSplitPane;
-import javax.swing.SwingUtilities;
-
-import org.apache.commons.lang3.StringUtils;
-import org.jxmapviewer.JXMapKit;
-import org.jxmapviewer.viewer.GeoPosition;
-
-import javax.swing.JPanel;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import java.awt.event.ActionListener;
 
 public class MainWindow {
 
@@ -121,6 +118,7 @@ public class MainWindow {
 		mnNewMenu_1.add(openGithubMenuItem);
 		
 		aboutMenuItem = new JMenuItem("About");
+		aboutMenuItem.addActionListener(this::aboutEventHandler);
 		mnNewMenu_1.add(aboutMenuItem);
 		
 		restoreWindowGeometry();
@@ -244,6 +242,10 @@ public class MainWindow {
 
 	public JFrame getFrame() {
 		return frame;
+	}
+	
+	private void aboutEventHandler(ActionEvent evt) {
+		new InfoDialog().setVisible(true);
 	}
 	
 }
