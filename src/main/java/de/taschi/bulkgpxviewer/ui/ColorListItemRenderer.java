@@ -31,6 +31,9 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.Border;
 
+/**
+ * Renderer to display a {@link JList} of {@link Color}s
+ */
 public class ColorListItemRenderer extends JLabel implements ListCellRenderer<Color> {
 
 	private static final long serialVersionUID = -5909430684119887421L;

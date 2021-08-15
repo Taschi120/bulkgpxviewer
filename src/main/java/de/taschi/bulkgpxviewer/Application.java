@@ -24,7 +24,8 @@ package de.taschi.bulkgpxviewer;
 
 import javax.swing.UIManager;
 
-import de.taschi.bulkgpxviewer.ui.MainWindow;
+import de.taschi.bulkgpxviewer.ui.windowbuilder.MainWindow;
+
 
 public class Application {		
 	public static void main(String[] args) {

@@ -46,7 +46,6 @@ import javax.swing.border.EmptyBorder;
 import de.taschi.bulkgpxviewer.settings.ColorConverter;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.ui.ColorListItemRenderer;
-import de.taschi.bulkgpxviewer.ui.MainWindow;
 
 public class SettingsWindow extends JDialog {
 	
@@ -76,7 +75,7 @@ public class SettingsWindow extends JDialog {
 	 * Create the dialog.
 	 */
 	public SettingsWindow(MainWindow mainWindow) {
-		super(mainWindow);
+		super(mainWindow.getFrame());
 		setTitle("Settings");
 		this.mainWindow = mainWindow;
 		
