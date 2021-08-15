@@ -1,6 +1,7 @@
 package de.taschi.bulkgpxviewer.ui.windowbuilder;
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.awt.HeadlessException;
 import java.awt.Image;
@@ -9,6 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -115,6 +117,7 @@ public class MainWindow {
 		menuBar.add(mnNewMenu_1);
 		
 		openGithubMenuItem = new JMenuItem("Bulk GPX Viewer on Github");
+		openGithubMenuItem.addActionListener(this::openGithubEventHandler);
 		mnNewMenu_1.add(openGithubMenuItem);
 		
 		aboutMenuItem = new JMenuItem("About");
@@ -248,4 +251,12 @@ public class MainWindow {
 		new InfoDialog().setVisible(true);
 	}
 	
+	private void openGithubEventHandler(ActionEvent evt) {
+		try {
+			Desktop.getDesktop().browse(URI.create("https://github.com/Taschi120/bulkgpxviewer"));
+		} catch (IOException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(frame, "Could not open default browser.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
 }
