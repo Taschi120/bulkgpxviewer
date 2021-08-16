@@ -65,7 +65,7 @@ public class RoutesPainter implements Painter<JXMapViewer>
     }
     
     public void refreshColorList() {
-    	LOG.info("Refreshing colors list");
+    	LOG.info("Refreshing colors list"); //$NON-NLS-1$
         colors = ColorConverter.convertToAwt(SettingsManager.getInstance().getSettings().getRouteColors());
     }
 

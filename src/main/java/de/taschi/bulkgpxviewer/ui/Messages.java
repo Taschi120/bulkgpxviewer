@@ -1,7 +1,4 @@
-/**
- * Classes in this package were created with the Eclipse plugin "WindowBuilder".
- */
-package de.taschi.bulkgpxviewer.ui.windowbuilder;
+package de.taschi.bulkgpxviewer.ui;
 
 /*-
  * #%L
@@ -24,3 +21,23 @@ package de.taschi.bulkgpxviewer.ui.windowbuilder;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
+
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
+public class Messages {
+	private static final String BUNDLE_NAME = "de.taschi.bulkgpxviewer.ui.messages"; //$NON-NLS-1$
+
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+
+	private Messages() {
+	}
+
+	public static String getString(String key) {
+		try {
+			return RESOURCE_BUNDLE.getString(key);
+		} catch (MissingResourceException e) {
+			return '!' + key + '!';
+		}
+	}
+}

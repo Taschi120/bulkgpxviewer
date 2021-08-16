@@ -68,7 +68,7 @@ public class LoadedFileManager {
 	 * @param file
 	 */
 	private void loadFile(Path file) {
-		LOG.info("Loading GPX file " + file.toString());
+		LOG.info("Loading GPX file " + file.toString()); //$NON-NLS-1$
 		
 		try {
 			List<WayPoint> waypoints = GPX.read(file).tracks()
@@ -86,7 +86,7 @@ public class LoadedFileManager {
 			
 			loadedTracks.add(track);
 			
-			LOG.info("GPX file " + file.toString() + " has been successfully loaded.");
+			LOG.info("GPX file " + file.toString() + " has been successfully loaded."); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			new Thread(() -> fireChangeListeners()).start();
 		} catch (IOException e) {
@@ -105,7 +105,7 @@ public class LoadedFileManager {
 	 * @param directory
 	 */
 	public void clearAndLoadAllFromDirectory(Path directory) throws IOException {
-		PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.gpx");
+		PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.gpx"); //$NON-NLS-1$
 
 		loadedTracks.clear();
 		
