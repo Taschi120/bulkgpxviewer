@@ -23,10 +23,10 @@ package de.taschi.bulkgpxviewer.ui;
  */
 
 import java.awt.BorderLayout;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -78,19 +78,30 @@ public class SidePanel extends JPanel {
 		
 		List<GpxViewerTrack> tracks = LoadedFileManager.getInstance().getLoadedTracks();
 		HashMap<Integer, DefaultMutableTreeNode> yearNodes = new HashMap<>();
+		DefaultMutableTreeNode unknownYearNode = null;
 		
 		for (GpxViewerTrack track : tracks) {
-			// TODO handle GPX files without date?
-			ZonedDateTime startDate = track.getStartedAt().atZone(ZoneId.systemDefault());
-			int year = startDate.getYear();
-			
-			DefaultMutableTreeNode yearNode = yearNodes.get(year);
-			
-			if (yearNode == null) {
-				LOG.info("Making node for year " + year); //$NON-NLS-1$
-				yearNode = new DefaultMutableTreeNode(year);
-				yearNodes.put(year, yearNode);
-				rootNode.add(yearNode);
+
+			DefaultMutableTreeNode yearNode;
+			Instant startedAt = track.getStartedAt();
+			if (startedAt != null) {
+				ZonedDateTime startDate = startedAt.atZone(ZoneId.systemDefault());
+				int year = startDate.getYear();
+				yearNode = yearNodes.get(year);
+				
+				if (yearNode == null) {
+					LOG.info("Making node for year " + year); //$NON-NLS-1$
+					yearNode = new DefaultMutableTreeNode(year);
+					yearNodes.put(year, yearNode);
+					rootNode.add(yearNode);
+				}
+				
+			} else {
+				if (unknownYearNode == null) {
+					unknownYearNode = new DefaultMutableTreeNode(Messages.getString("SidePanel.unknownYear"));
+					rootNode.add(unknownYearNode);
+				}
+				yearNode = unknownYearNode;
 			}
 			
 			yearNode.add(makeNodeFor(track));
@@ -104,8 +115,11 @@ public class SidePanel extends JPanel {
 	private MutableTreeNode makeNodeFor(GpxViewerTrack track) {
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(track.getFileName().getFileName());
 		
-		DefaultMutableTreeNode startDate = new DefaultMutableTreeNode(Messages.getString("SidePanel.StartedAt") + track.getStartedAt().atZone(ZoneId.systemDefault()).format(dtf)); //$NON-NLS-1$
-		root.add(startDate);
+		Instant startedAt = track.getStartedAt();
+		if (startedAt != null) {
+			DefaultMutableTreeNode startDate = new DefaultMutableTreeNode(Messages.getString("SidePanel.StartedAt") + startedAt.atZone(ZoneId.systemDefault()).format(dtf)); //$NON-NLS-1$
+			root.add(startDate);
+		}
 		
 		DefaultMutableTreeNode length = new DefaultMutableTreeNode(Messages.getString("SidePanel.RouteLength") + track.getRouteLengthInKilometers() + Messages.getString("SidePanel.Unit_km")); //$NON-NLS-1$ //$NON-NLS-2$
 		root.add(length);
