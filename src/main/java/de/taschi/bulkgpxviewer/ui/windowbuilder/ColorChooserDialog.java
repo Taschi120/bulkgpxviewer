@@ -101,6 +101,8 @@ public class ColorChooserDialog extends JDialog {
 				buttonPane.add(cancelButton);
 			}
 		}
+		
+		pack();
 	}
 
 	protected void onCancel() {
