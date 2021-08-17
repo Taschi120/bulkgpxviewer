@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.taschi</groupId>
 	<artifactId>bulkgpxviewer</artifactId>
-	<version>0.2.0-SNAPSHOT</version>
+	<version>0.2.0</version>
 	<inceptionYear>2021</inceptionYear>
 	<organization>
 		<name>S. Hillebrand</name>
