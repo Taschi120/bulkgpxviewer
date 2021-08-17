@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,6 +56,8 @@ public class LoadedFileManager {
 	private final List<GpxViewerTrack> loadedTracks = new ArrayList<>();
 	
 	private final List<LoadedFileChangeListener> changeListeners = new LinkedList<>();
+	
+	private GpxViewerTrack highlightedTrack = null;
 
 	public static LoadedFileManager getInstance() {
 		if (INSTANCE == null) {
@@ -104,8 +107,8 @@ public class LoadedFileManager {
 	 * Remove all currently loaded GPX files and load all files from the given directory
 	 * @param directory
 	 */
-	public void clearAndLoadAllFromDirectory(Path directory) throws IOException {
-		PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.gpx");
+	public synchronized void clearAndLoadAllFromDirectory(Path directory) throws IOException {
+		PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.gpx"); //$NON-NLS-1$
 
 		loadedTracks.clear();
 		
@@ -144,8 +147,15 @@ public class LoadedFileManager {
 	 * get all currently loaded tracks
 	 * @return
 	 */
-	public List<GpxViewerTrack> getLoadedTracks() {
-		return loadedTracks;
+	public synchronized List<GpxViewerTrack> getLoadedTracks() {
+		return Collections.unmodifiableList(loadedTracks);
 	}
 	
+	public synchronized void setHighlightedTrack(GpxViewerTrack track) {
+		highlightedTrack = track;
+	}
+	
+	public synchronized GpxViewerTrack getHighlightedTrack() {
+		return highlightedTrack;
+	}
 }

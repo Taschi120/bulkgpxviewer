@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class SidePanel extends JPanel {
 		LoadedFileManager.getInstance().addChangeListener(this::createTreeModel);
 	}
 
-	private void createTreeModel() {
+	private synchronized void createTreeModel() {
 		
 		LOG.info("Recreating tree model");
 		
