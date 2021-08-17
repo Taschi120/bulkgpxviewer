@@ -88,7 +88,7 @@ public class ColorChooserDialog extends JDialog {
 					}
 
 				});
-				okButton.setActionCommand(Messages.getString("ColorChooserDialog.OK")); //$NON-NLS-1$
+				okButton.setActionCommand("OK"); //$NON-NLS-1$
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 			}
@@ -99,7 +99,7 @@ public class ColorChooserDialog extends JDialog {
 						onCancel();
 					}
 				});
-				cancelButton.setActionCommand(Messages.getString("ColorChooserDialog.Cancel")); //$NON-NLS-1$
+				cancelButton.setActionCommand("Cancel"); //$NON-NLS-1$
 				buttonPane.add(cancelButton);
 			}
 		}
