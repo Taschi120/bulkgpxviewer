@@ -36,11 +36,11 @@ public class Application {
 	private static final Logger LOG = LogManager.getLogger(Application.class);
 	
 	public static void main(String[] args) {
-		LOG.info("Application startup");
+		LOG.info("Application startup"); //$NON-NLS-1$
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
-			LOG.error("Error while setting system look and feel", e);
+			LOG.error("Error while setting system look and feel", e); //$NON-NLS-1$
 		}
 		MainWindow mw = new MainWindow();
 		mw.setVisible(true);

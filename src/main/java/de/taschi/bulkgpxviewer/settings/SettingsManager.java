@@ -62,7 +62,7 @@ public class SettingsManager {
 	private Settings settings;
 	
 	private SettingsManager() {
-		LOG.info("Loading settings");
+		LOG.info("Loading settings"); //$NON-NLS-1$
 		loadOrInitSettings(getSettingsFile());
 	}
 	
@@ -87,7 +87,7 @@ public class SettingsManager {
 
 	private void migrateToV0_2_0() {
 		if (getSettings().getMainWindowSettings() == null) {
-			LOG.info("Updating settings to v0.2.0");
+			LOG.info("Updating settings to v0.2.0"); //$NON-NLS-1$
 			MainWindowSettings s = new MainWindowSettings();
 			getSettings().setMainWindowSettings(s);
 		}
@@ -114,7 +114,7 @@ public class SettingsManager {
 
 	private void loadSettings(Path settingsFile) {
 		try {
-			String jsonDoc = FileUtils.readFileToString(settingsFile.toFile(), Charset.forName("UTF-8"));
+			String jsonDoc = FileUtils.readFileToString(settingsFile.toFile(), Charset.forName("UTF-8")); //$NON-NLS-1$
 			settings = JSON.std
 				    .with(Feature.PRETTY_PRINT_OUTPUT).
 				    beanFrom(Settings.class, jsonDoc);
@@ -124,11 +124,11 @@ public class SettingsManager {
 	}
 
 	private void handleException(IOException e) {
-		LOG.error("Error while trying to load settings:", e);
+		LOG.error("Error while trying to load settings:", e); //$NON-NLS-1$
 	}
 
 	private Path getSettingsFile() {
 		String userDir = FileUtils.getUserDirectoryPath();
-		return Paths.get(userDir, ".bulkgpxviewer", "settings.json");
+		return Paths.get(userDir, ".bulkgpxviewer", "settings.json"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

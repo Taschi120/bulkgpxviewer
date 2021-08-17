@@ -1,5 +1,27 @@
 package de.taschi.bulkgpxviewer.ui.windowbuilder;
 
+/*-
+ * #%L
+ * bulkgpxviewer
+ * %%
+ * Copyright (C) 2021 S. Hillebrand
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -17,6 +39,8 @@ import javax.swing.border.EmptyBorder;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import de.taschi.bulkgpxviewer.ui.Messages;
 
 import javax.swing.JScrollPane;
 
@@ -49,7 +73,7 @@ public class InfoDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public InfoDialog() {
-		setTitle("Info");
+		setTitle(Messages.getString("InfoDialog.Info")); //$NON-NLS-1$
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -60,15 +84,15 @@ public class InfoDialog extends JDialog {
 			contentPanel.add(tabbedPane);
 			{
 				JPanel panel = new JPanel();
-				tabbedPane.addTab("About", null, panel, null);
+				tabbedPane.addTab(Messages.getString("InfoDialog.AboutTab"), null, panel, null); //$NON-NLS-1$
 				{
-					JLabel lblNewLabel = new JLabel("(c) 2021 S. Hillebrand");
+					JLabel lblNewLabel = new JLabel(Messages.getString("InfoDialog.2")); //$NON-NLS-1$
 					panel.add(lblNewLabel);
 				}
 			}
 			{
 				JPanel panel = new JPanel();
-				tabbedPane.addTab("License", null, panel, null);
+				tabbedPane.addTab(Messages.getString("InfoDialog.LicenseTab"), null, panel, null); //$NON-NLS-1$
 				panel.setLayout(new BorderLayout(0, 0));
 				{
 					licenseScrollPane = new JScrollPane();
@@ -81,10 +105,10 @@ public class InfoDialog extends JDialog {
 			}
 			{
 				JPanel panel = new JPanel();
-				tabbedPane.addTab("Third-Party Software", null, panel, null);
+				tabbedPane.addTab(Messages.getString("InfoDialog.ThirdPartyTab"), null, panel, null); //$NON-NLS-1$
 				panel.setLayout(new BorderLayout(0, 0));
 				{
-					JLabel lblBulkGpxViewer = new JLabel("Bulk GPX Viewer is based on the following third-party libraries:");
+					JLabel lblBulkGpxViewer = new JLabel(Messages.getString("InfoDialog.ThirdPartyLabel")); //$NON-NLS-1$
 					panel.add(lblBulkGpxViewer, BorderLayout.NORTH);
 				}
 				{
@@ -102,8 +126,8 @@ public class InfoDialog extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("OK");
-				okButton.setActionCommand("OK");
+				JButton okButton = new JButton(Messages.getString("InfoDialog.OK")); //$NON-NLS-1$
+				okButton.setActionCommand(Messages.getString("InfoDialog.OK")); //$NON-NLS-1$
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 				
@@ -116,8 +140,8 @@ public class InfoDialog extends JDialog {
 	
 	private void loadTexts() {
 		try {
-			String license = FileUtils.readFileToString(new File("COPYING"), "UTF-8");
-			String thirdParty = FileUtils.readFileToString(new File("THIRD-PARTY.txt"), "UTF-8");
+			String license = FileUtils.readFileToString(new File("COPYING"), "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
+			String thirdParty = FileUtils.readFileToString(new File("THIRD-PARTY.txt"), "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			
 			licenseTextPane.setText(license);
@@ -126,7 +150,7 @@ public class InfoDialog extends JDialog {
 			licenseScrollPane.getVerticalScrollBar().setValue(0);
 			thirdPartyScrollPane.getVerticalScrollBar().setValue(0);
 		} catch (IOException e) {
-			LOG.error("Couldn't load license or third-party licenses", e);
+			LOG.error("Couldn't load license or third-party licenses", e); //$NON-NLS-1$
 		}
 	}
 	

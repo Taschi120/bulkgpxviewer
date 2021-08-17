@@ -46,6 +46,7 @@ import javax.swing.border.EmptyBorder;
 import de.taschi.bulkgpxviewer.settings.ColorConverter;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.ui.ColorListItemRenderer;
+import de.taschi.bulkgpxviewer.ui.Messages;
 
 public class SettingsWindow extends JDialog {
 	
@@ -76,7 +77,7 @@ public class SettingsWindow extends JDialog {
 	 */
 	public SettingsWindow(MainWindow mainWindow) {
 		super(mainWindow.getFrame());
-		setTitle("Settings");
+		setTitle(Messages.getString("SettingsWindow.Settings")); //$NON-NLS-1$
 		this.mainWindow = mainWindow;
 		
 		addWindowListener(new WindowAdapter() {
@@ -95,7 +96,7 @@ public class SettingsWindow extends JDialog {
 			contentPanel.add(tabbedPane);
 			{
 				JPanel panel = new JPanel();
-				tabbedPane.addTab("Trail Colors", null, panel, null);
+				tabbedPane.addTab(Messages.getString("SettingsWindow.TrailColors"), null, panel, null); //$NON-NLS-1$
 				GridBagLayout gbl_panel = new GridBagLayout();
 				gbl_panel.columnWidths = new int[]{0, 0};
 				gbl_panel.rowHeights = new int[]{0, 0, 0};
@@ -129,7 +130,7 @@ public class SettingsWindow extends JDialog {
 					gbl_panel_1.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
 					panel_1.setLayout(gbl_panel_1);
 					{
-						JButton btnNewButton_1 = new JButton("Add");
+						JButton btnNewButton_1 = new JButton(Messages.getString("SettingsWindow.Add")); //$NON-NLS-1$
 						btnNewButton_1.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent e) {
 								onAdd();
@@ -147,7 +148,7 @@ public class SettingsWindow extends JDialog {
 						panel_1.add(btnNewButton_1, gbc_btnNewButton_1);
 					}
 					{
-						JButton btnNewButton = new JButton("Remove");
+						JButton btnNewButton = new JButton(Messages.getString("SettingsWindow.Remove")); //$NON-NLS-1$
 						btnNewButton.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent e) {
 								onRemove();
@@ -171,24 +172,24 @@ public class SettingsWindow extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("OK");
+				JButton okButton = new JButton(Messages.getString("SettingsWindow.OK")); //$NON-NLS-1$
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						onOk();
 					}
 				});
-				okButton.setActionCommand("OK");
+				okButton.setActionCommand("OK"); //$NON-NLS-1$
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 			}
 			{
-				JButton cancelButton = new JButton("Cancel");
+				JButton cancelButton = new JButton(Messages.getString("SettingsWindow.Cancel")); //$NON-NLS-1$
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						onCancel();
 					}
 				});
-				cancelButton.setActionCommand("Cancel");
+				cancelButton.setActionCommand("Cancel"); //$NON-NLS-1$
 				buttonPane.add(cancelButton);
 			}
 		}

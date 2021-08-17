@@ -34,6 +34,8 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import de.taschi.bulkgpxviewer.ui.Messages;
+
 public class ColorChooserDialog extends JDialog {
 
 	private static final long serialVersionUID = 1659785303836654966L;
@@ -62,7 +64,7 @@ public class ColorChooserDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public ColorChooserDialog() {
-		setTitle("Select color");
+		setTitle(Messages.getString("ColorChooserDialog.SelectColor")); //$NON-NLS-1$
 		setModal(true);
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 519, 319);
@@ -79,25 +81,25 @@ public class ColorChooserDialog extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("OK");
+				JButton okButton = new JButton(Messages.getString("ColorChooserDialog.OK")); //$NON-NLS-1$
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						onOk();
 					}
 
 				});
-				okButton.setActionCommand("OK");
+				okButton.setActionCommand("OK"); //$NON-NLS-1$
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 			}
 			{
-				JButton cancelButton = new JButton("Cancel");
+				JButton cancelButton = new JButton(Messages.getString("ColorChooserDialog.Cancel")); //$NON-NLS-1$
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						onCancel();
 					}
 				});
-				cancelButton.setActionCommand("Cancel");
+				cancelButton.setActionCommand("Cancel"); //$NON-NLS-1$
 				buttonPane.add(cancelButton);
 			}
 		}

@@ -1,5 +1,27 @@
 package de.taschi.bulkgpxviewer.ui;
 
+/*-
+ * #%L
+ * bulkgpxviewer
+ * %%
+ * Copyright (C) 2021 S. Hillebrand
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
+
 import java.awt.BorderLayout;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -46,10 +68,10 @@ public class SidePanel extends JPanel {
 
 	private synchronized void createTreeModel() {
 		
-		LOG.info("Recreating tree model");
+		LOG.info("Recreating tree model"); //$NON-NLS-1$
 		
 		if (rootNode == null) {
-			rootNode = new DefaultMutableTreeNode("All files");
+			rootNode = new DefaultMutableTreeNode(Messages.getString("SidePanel.AllFiles")); //$NON-NLS-1$
 		} else {
 			rootNode.removeAllChildren();
 		}
@@ -65,7 +87,7 @@ public class SidePanel extends JPanel {
 			DefaultMutableTreeNode yearNode = yearNodes.get(year);
 			
 			if (yearNode == null) {
-				LOG.info("Making node for year " + year);
+				LOG.info("Making node for year " + year); //$NON-NLS-1$
 				yearNode = new DefaultMutableTreeNode(year);
 				yearNodes.put(year, yearNode);
 				rootNode.add(yearNode);
@@ -82,10 +104,10 @@ public class SidePanel extends JPanel {
 	private MutableTreeNode makeNodeFor(GpxViewerTrack track) {
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(track.getFileName().getFileName());
 		
-		DefaultMutableTreeNode startDate = new DefaultMutableTreeNode("Started at: " + track.getStartedAt().atZone(ZoneId.systemDefault()).format(dtf));
+		DefaultMutableTreeNode startDate = new DefaultMutableTreeNode(Messages.getString("SidePanel.StartedAt") + track.getStartedAt().atZone(ZoneId.systemDefault()).format(dtf)); //$NON-NLS-1$
 		root.add(startDate);
 		
-		DefaultMutableTreeNode length = new DefaultMutableTreeNode("Route length: " + track.getRouteLengthInKilometers() + " km");
+		DefaultMutableTreeNode length = new DefaultMutableTreeNode(Messages.getString("SidePanel.RouteLength") + track.getRouteLengthInKilometers() + Messages.getString("SidePanel.Unit_km")); //$NON-NLS-1$ //$NON-NLS-2$
 		root.add(length);
 		
 		return root;

@@ -24,8 +24,6 @@ package de.taschi.bulkgpxviewer.files;
 
 /**
  * Listener used by {@link LoadedFileManager} to notify other classes of state changes
- * @author Stephan
- *
  */
 public interface LoadedFileChangeListener {
 	public void onLoadedFileChange();

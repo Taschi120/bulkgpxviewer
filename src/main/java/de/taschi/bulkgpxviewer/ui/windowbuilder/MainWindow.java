@@ -1,5 +1,27 @@
 package de.taschi.bulkgpxviewer.ui.windowbuilder;
 
+/*-
+ * #%L
+ * bulkgpxviewer
+ * %%
+ * Copyright (C) 2021 S. Hillebrand
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
+
 import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.EventQueue;
@@ -37,6 +59,7 @@ import de.taschi.bulkgpxviewer.gpx.GpxViewerTrack;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings;
 import de.taschi.bulkgpxviewer.ui.MapPanel;
+import de.taschi.bulkgpxviewer.ui.Messages;
 import de.taschi.bulkgpxviewer.ui.SidePanel;
 
 public class MainWindow {
@@ -52,7 +75,7 @@ public class MainWindow {
 	private JMenuItem aboutMenuItem;
 	private MapPanel mapPanel;
 
-	private String BASE_TITLE = "Bulk GPX Viewer";
+	private String BASE_TITLE = Messages.getString("MainWindow.WindowTitle"); //$NON-NLS-1$
 	private SidePanel sidePanel;
 	
 	/**
@@ -83,7 +106,7 @@ public class MainWindow {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setTitle("Bulk GPX Viewer");
+		frame.setTitle(Messages.getString("MainWindow.WindowTitle")); //$NON-NLS-1$
 		frame.setBounds(100, 100, 710, 481);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -109,29 +132,29 @@ public class MainWindow {
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
 		
-		JMenu mnNewMenu = new JMenu("File");
+		JMenu mnNewMenu = new JMenu(Messages.getString("MainWindow.FileMenu")); //$NON-NLS-1$
 		menuBar.add(mnNewMenu);
 		
-		openFolderMenuItem = new JMenuItem("Open folder...");
+		openFolderMenuItem = new JMenuItem(Messages.getString("MainWindow.OpenFolderMenuItem")); //$NON-NLS-1$
 		openFolderMenuItem.addActionListener(this::openFolderEventHandler);
 		mnNewMenu.add(openFolderMenuItem);
 		
-		settingsMenuItem = new JMenuItem("Settings");
+		settingsMenuItem = new JMenuItem(Messages.getString("MainWindow.SettingsMenuItem")); //$NON-NLS-1$
 		settingsMenuItem.addActionListener(this::showSettingsWindowEventHandler);
 		mnNewMenu.add(settingsMenuItem);
 		
-		quitMenuItem = new JMenuItem("Quit");
+		quitMenuItem = new JMenuItem(Messages.getString("MainWindow.QuitMenuItem")); //$NON-NLS-1$
 		quitMenuItem.addActionListener(this::closeEventHandler);
 		mnNewMenu.add(quitMenuItem);
 		
-		JMenu mnNewMenu_1 = new JMenu("Help");
+		JMenu mnNewMenu_1 = new JMenu(Messages.getString("MainWindow.HelpMenuItem")); //$NON-NLS-1$
 		menuBar.add(mnNewMenu_1);
 		
-		openGithubMenuItem = new JMenuItem("Bulk GPX Viewer on Github");
+		openGithubMenuItem = new JMenuItem(Messages.getString("MainWindow.GithubMenuItem")); //$NON-NLS-1$
 		openGithubMenuItem.addActionListener(this::openGithubEventHandler);
 		mnNewMenu_1.add(openGithubMenuItem);
 		
-		aboutMenuItem = new JMenuItem("About");
+		aboutMenuItem = new JMenuItem(Messages.getString("MainWindow.AboutMenuItem")); //$NON-NLS-1$
 		aboutMenuItem.addActionListener(this::aboutEventHandler);
 		mnNewMenu_1.add(aboutMenuItem);
 		
@@ -172,7 +195,7 @@ public class MainWindow {
 	
 	private void loadAndSetIcon() {
 		try {
-			Image image = ImageIO.read(getClass().getResource("/icon_256.png"));
+			Image image = ImageIO.read(getClass().getResource("/icon_256.png")); //$NON-NLS-1$
 			frame.setIconImage(image);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -208,11 +231,11 @@ public class MainWindow {
 		try {
 			LoadedFileManager.getInstance().clearAndLoadAllFromDirectory(selectedFile.toPath());
 
-	        frame.setTitle(BASE_TITLE + " " + selectedFile.getPath());
+	        frame.setTitle(BASE_TITLE + Messages.getString("MainWindow.WindowTitleSpace") + selectedFile.getPath()); //$NON-NLS-1$
 	        SettingsManager.getInstance().getSettings().setLastUsedDirectory(selectedFile.getCanonicalPath());
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(frame, "Error while loading GPX files from folder " + selectedFile.getAbsolutePath());
-			LOG.error("Error while loading GPX files from folder " + selectedFile.getAbsolutePath(), e);
+			JOptionPane.showMessageDialog(frame, Messages.getString("MainWindow.ErrorWhileLoadingGPXFiles") + selectedFile.getAbsolutePath()); //$NON-NLS-1$
+			LOG.error("Error while loading GPX files from folder " + selectedFile.getAbsolutePath(), e); //$NON-NLS-1$
 		}
 	}
 	
@@ -263,17 +286,17 @@ public class MainWindow {
 	
 	private void openGithubEventHandler(ActionEvent evt) {
 		try {
-			Desktop.getDesktop().browse(URI.create("https://github.com/Taschi120/bulkgpxviewer"));
+			Desktop.getDesktop().browse(URI.create("https://github.com/Taschi120/bulkgpxviewer")); //$NON-NLS-1$
 		} catch (IOException e) {
-			LOG.error("Error while trying to open GitHub site in system browser", e);
-			JOptionPane.showMessageDialog(frame, "Could not open default browser.", "Error", JOptionPane.ERROR_MESSAGE);
+			LOG.error("Error while trying to open GitHub site in system browser", e); //$NON-NLS-1$
+			JOptionPane.showMessageDialog(frame, Messages.getString("MainWindow.CouldNotOpenBrowser"), Messages.getString("MainWindow.Error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
 	private void closeEventHandler(ActionEvent evt) {
 		writeWindowStateToSettings();
 		SettingsManager.getInstance().saveSettings();
-		LOG.info("Closing application by user request.");
+		LOG.info("Closing application by user request."); //$NON-NLS-1$
 		System.exit(0);
 	}
 }

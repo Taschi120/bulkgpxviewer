@@ -45,7 +45,7 @@ public class ColorListItemRenderer extends JLabel implements ListCellRenderer<Co
 	public Component getListCellRendererComponent(JList<? extends Color> list, Color value, int index,
 			boolean isSelected, boolean cellHasFocus) {
 		
-		setText(value.getRed() + ", " + value.getGreen() +  ", " + value.getBlue());
+		setText(value.getRed() + Messages.getString("ColorListItemRenderer.Comma") + value.getGreen() +  Messages.getString("ColorListItemRenderer.Comma") + value.getBlue()); //$NON-NLS-1$ //$NON-NLS-2$
 		setForeground(value);
 		
 		if (cellHasFocus) {
