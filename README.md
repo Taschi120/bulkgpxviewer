@@ -4,7 +4,11 @@
 
 This is a small Java program for displaying multiple GPX tracks recorded by a GPS receiver and / or smartphone app. It can be used, for example, to display an archive of your bike trips, roadtrips, hiking trips or other sports activities. Uses map data from OpenStreetMap.
 
-A Java Runtime Environment, version 14 or higher, is required.
+Download the latest version here: https://github.com/Taschi120/bulkgpxviewer/releases/latest
+
+A Java Runtime Environment, version 14 or higher, is required. The software is developed and tested under Windows 10 x64 only because this is a one-person project, but should run on any reasonably current version of Windows, Linux and Mac OS X.
+
+Available languages are English and German.
 
 This program is released under GNU GPL 3. See THIRD-PARTY.txt for info on third-party libraries used, and COPYING for the license.
 
