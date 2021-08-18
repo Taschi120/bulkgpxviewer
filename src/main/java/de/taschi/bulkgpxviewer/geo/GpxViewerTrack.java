@@ -1,8 +1,5 @@
 package de.taschi.bulkgpxviewer.geo;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 /*-
  * #%L
  * bulkgpxviewer
@@ -25,10 +22,14 @@ import java.math.RoundingMode;
  * #L%
  */
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -38,12 +39,18 @@ import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jxmapviewer.viewer.GeoPosition;
 
+import io.jenetics.jpx.WayPoint;
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 public class GpxViewerTrack implements List<GeoPosition> {
 	
+	private List<WayPoint> waypoints;
 	private List<GeoPosition> internal;
 	
 	private Instant startedAt;
@@ -53,8 +60,56 @@ public class GpxViewerTrack implements List<GeoPosition> {
 		internal = new ArrayList<>();
 	}
 	
-	public GpxViewerTrack(List<GeoPosition> geoPositions) {
-		internal = new ArrayList<>(geoPositions);
+	public GpxViewerTrack(List<WayPoint> waypoints) {
+		this.waypoints = Collections.unmodifiableList(waypoints);
+		
+		internal = waypoints.stream()
+				.map(it -> GpxToJxMapper.getInstance().waypointToGeoPosition(it))
+				.collect(Collectors.toUnmodifiableList());
+	}
+	
+	/**
+	 * Determine route length in km.
+	 * @return
+	 */
+	public BigDecimal getRouteLengthInKilometers() {
+		return new BigDecimal(getPreciseRouteLengthInKilometers()).setScale(1, RoundingMode.HALF_UP);
+	}
+	
+	/**
+	 * Determine route length in miles
+	 * @return
+	 */
+	public BigDecimal getRouteLengthInMiles() {
+		return new BigDecimal(UnitConverter.kilometersToMiles(getPreciseRouteLengthInKilometers())).setScale(1, RoundingMode.HALF_UP);
+	}
+	
+	public String getTotalDuration() {
+		if(waypoints.size() < 2) {
+			log.debug("Time calculation impossible: List has fewer than 2 waypoints");
+			return "";
+		}
+		
+		Instant start = waypoints.get(0).getInstant().orElse(null);
+		Instant end = waypoints.get(waypoints.size() - 1).getInstant().orElse(null);
+	
+		if (start == null || end == null) {
+			log.debug("Time calculation impossible: GPX does not contain timestamps");
+			return "";
+		}
+		
+		Duration duration = Duration.between(start, end);
+		return DurationFormatter.getInstance().format(duration);
+	}
+	
+	/**
+	 * Get WayPoint #i
+	 * @see get(int)
+	 * @param i
+	 * @return
+	 */
+	public WayPoint getWaypoint(int i) {
+		return waypoints.get(i);
 	}
 	
 	private double getPreciseRouteLengthInKilometers() {
@@ -72,23 +127,6 @@ public class GpxViewerTrack implements List<GeoPosition> {
 		}
 		
 		return result;
-	}
-	
-	/**
-	 * Determine route length in km.
-	 * @return
-	 */
-	public BigDecimal getRouteLengthInKilometers() {
-		return new BigDecimal(getPreciseRouteLengthInKilometers()).setScale(1, RoundingMode.HALF_UP);
-	}
-	
-	/**
-	 * Determine route length in miles
-	 * @return
-	 */
-	public BigDecimal getRouteLengthInMiles() {
-		return new BigDecimal(UnitConverter.kilometersToMiles(getPreciseRouteLengthInKilometers())).setScale(1, RoundingMode.HALF_UP);
-
 	}
 	
 	// ======================================================================//
@@ -144,11 +182,11 @@ public class GpxViewerTrack implements List<GeoPosition> {
 	}
 
 	public boolean add(GeoPosition e) {
-		return internal.add(e);
+		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
 	}
 
 	public boolean remove(Object o) {
-		return internal.remove(o);
+		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
 	}
 
 	public boolean containsAll(Collection<?> c) {
@@ -156,23 +194,23 @@ public class GpxViewerTrack implements List<GeoPosition> {
 	}
 
 	public boolean addAll(Collection<? extends GeoPosition> c) {
-		return internal.addAll(c);
+		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
 	}
 
 	public boolean addAll(int index, Collection<? extends GeoPosition> c) {
-		return internal.addAll(index, c);
+		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
 	}
 
 	public boolean removeAll(Collection<?> c) {
-		return internal.removeAll(c);
+		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
 	}
 
 	public boolean retainAll(Collection<?> c) {
-		return internal.retainAll(c);
+		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
 	}
 
 	public void replaceAll(UnaryOperator<GeoPosition> operator) {
-		internal.replaceAll(operator);
+		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
 	}
 
 	public <T> T[] toArray(IntFunction<T[]> generator) {
@@ -180,11 +218,11 @@ public class GpxViewerTrack implements List<GeoPosition> {
 	}
 
 	public void sort(Comparator<? super GeoPosition> c) {
-		internal.sort(c);
+		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
 	}
 
 	public void clear() {
-		internal.clear();
+		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
 	}
 
 	public boolean equals(Object o) {
@@ -200,19 +238,19 @@ public class GpxViewerTrack implements List<GeoPosition> {
 	}
 
 	public GeoPosition set(int index, GeoPosition element) {
-		return internal.set(index, element);
+		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
 	}
 
 	public void add(int index, GeoPosition element) {
-		internal.add(index, element);
+		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
 	}
 
 	public boolean removeIf(Predicate<? super GeoPosition> filter) {
-		return internal.removeIf(filter);
+		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
 	}
 
 	public GeoPosition remove(int index) {
-		return internal.remove(index);
+		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
 	}
 
 	public int indexOf(Object o) {
@@ -246,5 +284,4 @@ public class GpxViewerTrack implements List<GeoPosition> {
 	public Stream<GeoPosition> parallelStream() {
 		return internal.parallelStream();
 	}
-
 }

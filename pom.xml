@@ -58,12 +58,20 @@
 			<version>2.14.1</version>
 		</dependency>
 
-		<!-- I'm not entirely sure why this is in "provided" scope but it's what the official website recommends -->
+		<!-- I'm not entirely sure why this is in "provided" scope but it's what 
+			the official website recommends -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.18.20</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>5.7.2</version>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>

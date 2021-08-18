@@ -1,8 +1,5 @@
 package de.taschi.bulkgpxviewer.ui.sidepanel;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
 /*-
  * #%L
  * bulkgpxviewer
@@ -50,6 +47,7 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode {
 	
 	private DefaultMutableTreeNode startDateNode;
 	private DefaultMutableTreeNode trackLengthNode;
+	private DefaultMutableTreeNode durationNode;
 		
 	public GpxFileTreeNode(GpxViewerTrack track) {
 		super(track.getFileName().getFileName());
@@ -59,8 +57,11 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode {
 		
 		trackLengthNode = new DefaultMutableTreeNode(getTrackLengthLabel()); 
 		add(trackLengthNode);		
+		
+		durationNode = new DefaultMutableTreeNode(getDurationLabel());
+		add(durationNode);
 	}
-	
+
 	/**
 	 * Update this node, and all child nodes, if needed.
 	 */
@@ -104,6 +105,10 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode {
 					+ track.getRouteLengthInMiles() 
 					+ Messages.getString("SidePanel.Unit_miles"); //$NON-NLS-1$
 		}
+	}
+	
+	private String getDurationLabel() {
+		return String.format(Messages.getString("GpxFileTreeNode.Duration"), track.getTotalDuration()); //$NON_NLS-1$
 	}
 
 	public GpxViewerTrack getTrack() {

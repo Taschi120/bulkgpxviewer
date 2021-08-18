@@ -35,9 +35,7 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jxmapviewer.viewer.GeoPosition;
 
-import de.taschi.bulkgpxviewer.geo.GpxToJxMapper;
 import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
@@ -80,10 +78,8 @@ public class LoadedFileManager {
 					.flatMap(Track::segments)
 					.flatMap(TrackSegment::points)
 					.collect(Collectors.toList());
-			
-			List<GeoPosition> positions = GpxToJxMapper.getInstance().waypointsToGeoPositions(waypoints);
-			
-			GpxViewerTrack track = new GpxViewerTrack(positions);
+						
+			GpxViewerTrack track = new GpxViewerTrack(waypoints);
 			track.setFileName(file);
 			if (!waypoints.isEmpty()) {
 				track.setStartedAt(waypoints.get(0).getInstant().orElse(null));

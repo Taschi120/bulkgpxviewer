@@ -22,36 +22,25 @@ package de.taschi.bulkgpxviewer.geo;
  * #L%
  */
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.time.Duration;
 
-import org.jxmapviewer.viewer.GeoPosition;
-
-import io.jenetics.jpx.WayPoint;
-
-public class GpxToJxMapper {
-	private static GpxToJxMapper INSTANCE = null;
+public class DurationFormatter {
 	
-	public static GpxToJxMapper getInstance() {
+	private static DurationFormatter INSTANCE = null;
+	
+	private DurationFormatter() {
+		// Singleton, prevent instantiation
+	}
+	
+	public static DurationFormatter getInstance() {
 		if (INSTANCE == null) {
-			INSTANCE = new GpxToJxMapper();
+			INSTANCE = new DurationFormatter();
 		}
 		return INSTANCE;
 	}
 	
-	public GeoPosition waypointToGeoPosition(WayPoint in) {
-		return new GeoPosition(in.getLatitude().doubleValue(), in.getLongitude().doubleValue());
-	}
-	
-	@Deprecated
-	public GpxViewerTrack waypointsToGeoPositions(List<WayPoint> in) {
-		return new GpxViewerTrack(in);
-	}
-	
-	@Deprecated
-	public List<GpxViewerTrack> waypointTracksToGeoPositionTracks(List<List<WayPoint>> in) {
-		return in.stream()
-				.map((it) -> waypointsToGeoPositions(it))
-				.collect(Collectors.toList());
+	public String format(Duration duration) {
+		long seconds = duration.getSeconds();
+		return String.format("%d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, (seconds % 60));
 	}
 }
