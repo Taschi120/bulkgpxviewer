@@ -23,11 +23,16 @@ package de.taschi.bulkgpxviewer.ui;
  */
 
 import java.awt.BorderLayout;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -35,7 +40,6 @@ import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,6 +55,10 @@ public class SidePanel extends JPanel {
 	
 	private JTree treeView;
 	private DefaultMutableTreeNode rootNode;
+	
+	private HashMap<Integer, DefaultMutableTreeNode> yearNodes = new HashMap<>();
+	private HashMap<Path, GpxFileTreeNode> trackNodes = new HashMap<>();
+	private DefaultMutableTreeNode unknownYearNode = null;
 	
 	public SidePanel() {
 		super();
@@ -80,43 +88,94 @@ public class SidePanel extends JPanel {
 		}
 		
 		List<GpxViewerTrack> tracks = LoadedFileManager.getInstance().getLoadedTracks();
-		HashMap<Integer, DefaultMutableTreeNode> yearNodes = new HashMap<>();
-		DefaultMutableTreeNode unknownYearNode = null;
+		
+		cullUnnecessaryTrackNodes(tracks);
 		
 		for (GpxViewerTrack track : tracks) {
-
-			DefaultMutableTreeNode yearNode;
-			Instant startedAt = track.getStartedAt();
-			if (startedAt != null) {
-				ZonedDateTime startDate = startedAt.atZone(ZoneId.systemDefault());
-				int year = startDate.getYear();
-				yearNode = yearNodes.get(year);
-				
-				if (yearNode == null) {
-					LOG.info("Making node for year " + year); //$NON-NLS-1$
-					yearNode = new DefaultMutableTreeNode(year);
-					yearNodes.put(year, yearNode);
-					rootNode.add(yearNode);
-				}
-				
-			} else {
-				if (unknownYearNode == null) {
-					unknownYearNode = new DefaultMutableTreeNode(Messages.getString("SidePanel.unknownYear"));
-					rootNode.add(unknownYearNode);
-				}
-				yearNode = unknownYearNode;
-			}
-			
-			yearNode.add(makeNodeFor(track));
+			DefaultMutableTreeNode yearNode = makeOrUpdateYearNode(track, rootNode);
+			makeOrUpdateTrackNode(track, yearNode);
 		}
+		
+		cullUnnecessaryYearTreeNodes();
 		
 		if (treeView != null) {
 			((DefaultTreeModel) treeView.getModel()).reload();
 		}
 	}
+	
+	/**
+	 * Removes all track nodes which do not correspond with currently loaded files
+	 */
+	private void cullUnnecessaryTrackNodes(List<GpxViewerTrack> loadedTracks) {
+		Set<Path> loadedTrackPaths = loadedTracks.stream().map(GpxViewerTrack::getFileName).collect(Collectors.toSet());
+		Set<Path> pathsInTree = new HashSet<Path>(trackNodes.keySet());
+		
+		for(Path p : pathsInTree) {
+			if (!loadedTrackPaths.contains(p)) {
+				GpxFileTreeNode node = trackNodes.get(p);
+				((DefaultMutableTreeNode) node.getParent()).remove(node);
+				
+				trackNodes.remove(p);
+			}
+		}
+	}
 
-	private MutableTreeNode makeNodeFor(GpxViewerTrack track) {
-		return new GpxFileTreeNode(track);
+	private DefaultMutableTreeNode makeOrUpdateYearNode(GpxViewerTrack track, DefaultMutableTreeNode parent) {
+		DefaultMutableTreeNode yearNode;
+		Instant startedAt = track.getStartedAt();
+		if (startedAt != null) {
+			ZonedDateTime startDate = startedAt.atZone(ZoneId.systemDefault());
+			int year = startDate.getYear();
+			yearNode = yearNodes.get(year);
+			
+			if (yearNode == null) {
+				LOG.info("Making node for year " + year); //$NON-NLS-1$
+				yearNode = new DefaultMutableTreeNode(year);
+				yearNodes.put(year, yearNode);
+				rootNode.add(yearNode);
+			}
+			
+		} else {
+			if (unknownYearNode == null) {
+				unknownYearNode = new DefaultMutableTreeNode(Messages.getString("SidePanel.unknownYear"));
+				rootNode.add(unknownYearNode);
+			}
+			yearNode = unknownYearNode;
+		}
+		
+		rootNode.add(yearNode);
+		return yearNode;
+	}
+
+	private void makeOrUpdateTrackNode(GpxViewerTrack track, DefaultMutableTreeNode parent) {
+		GpxFileTreeNode result = trackNodes.get(track.getFileName());
+		if (result == null) {
+			LOG.debug("Making new tree node for {}", track.getFileName().toString());
+			result = new GpxFileTreeNode(track);
+			trackNodes.put(track.getFileName(), result);
+			parent.add(result);
+		} else {
+			LOG.debug("Updating tree node for {}", track.getFileName().toString());
+			result.update();
+		}
+	}
+	
+	private void cullUnnecessaryYearTreeNodes() {
+		List<Integer> years = new ArrayList<>(yearNodes.keySet());
+		for (Integer year : years) {
+			DefaultMutableTreeNode node = yearNodes.get(year);
+			if(node.getChildCount() == 0) {
+				((DefaultMutableTreeNode)node.getParent()).remove(year);
+				yearNodes.remove(year);
+			}
+		}
+		
+		if (unknownYearNode != null && unknownYearNode.getChildCount() == 0) {
+			if (rootNode.getIndex(unknownYearNode) != -1) {
+				rootNode.remove(unknownYearNode);
+			}
+			unknownYearNode = null;
+		}
 	}
 
 	public void updateModel() {
