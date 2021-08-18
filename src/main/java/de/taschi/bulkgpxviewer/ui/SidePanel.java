@@ -26,7 +26,6 @@ import java.awt.BorderLayout;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -50,8 +49,6 @@ public class SidePanel extends JPanel {
 	
 	private JTree treeView;
 	private DefaultMutableTreeNode rootNode;
-
-	private DateTimeFormatter dtf = DateTimeFormatter.RFC_1123_DATE_TIME;
 	
 	public SidePanel() {
 		super();
@@ -113,17 +110,6 @@ public class SidePanel extends JPanel {
 	}
 
 	private MutableTreeNode makeNodeFor(GpxViewerTrack track) {
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode(track.getFileName().getFileName());
-		
-		Instant startedAt = track.getStartedAt();
-		if (startedAt != null) {
-			DefaultMutableTreeNode startDate = new DefaultMutableTreeNode(Messages.getString("SidePanel.StartedAt") + startedAt.atZone(ZoneId.systemDefault()).format(dtf)); //$NON-NLS-1$
-			root.add(startDate);
-		}
-		
-		DefaultMutableTreeNode length = new DefaultMutableTreeNode(Messages.getString("SidePanel.RouteLength") + track.getRouteLengthInKilometers() + Messages.getString("SidePanel.Unit_km")); //$NON-NLS-1$ //$NON-NLS-2$
-		root.add(length);
-		
-		return root;
+		return new GpxFileTreeNode(track);
 	}
 }
