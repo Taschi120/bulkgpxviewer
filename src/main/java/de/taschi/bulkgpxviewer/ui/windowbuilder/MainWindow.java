@@ -60,7 +60,7 @@ import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings;
 import de.taschi.bulkgpxviewer.ui.MapPanel;
 import de.taschi.bulkgpxviewer.ui.Messages;
-import de.taschi.bulkgpxviewer.ui.SidePanel;
+import de.taschi.bulkgpxviewer.ui.sidepanel.SidePanel;
 
 public class MainWindow {
 	

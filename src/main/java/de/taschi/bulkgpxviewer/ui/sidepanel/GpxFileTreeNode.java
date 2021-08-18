@@ -1,4 +1,7 @@
-package de.taschi.bulkgpxviewer.ui;
+package de.taschi.bulkgpxviewer.ui.sidepanel;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /*-
  * #%L
@@ -32,6 +35,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.settings.dto.UnitSystem;
+import de.taschi.bulkgpxviewer.ui.Messages;
 
 /**
  * A {@link JTree} node representing a {@link GpxViewerTrack} in the {@link SidePanel}.
@@ -42,19 +46,27 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode {
 
 	private static final DateTimeFormatter dtf = DateTimeFormatter.RFC_1123_DATE_TIME;
 	
-	private GpxViewerTrack track;
+	private final JTree parent;
+	
+	private final GpxViewerTrack track;
 	
 	private DefaultMutableTreeNode startDateNode;
 	private DefaultMutableTreeNode trackLengthNode;
 	
-	public GpxFileTreeNode(GpxViewerTrack track) {
+	private final GpxFilePopupMenu popupMenu;
+	
+	public GpxFileTreeNode(JTree parent, GpxViewerTrack track) {
 		super(track.getFileName().getFileName());
 
+		this.parent = parent;
 		this.track = track;
 		makeOrUpdateStartDateNode();
 		
 		trackLengthNode = new DefaultMutableTreeNode(getTrackLengthLabel()); 
 		add(trackLengthNode);
+		
+		popupMenu = new GpxFilePopupMenu();
+		
 	}
 	
 	/**
@@ -101,4 +113,18 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode {
 					+ Messages.getString("SidePanel.Unit_miles"); //$NON-NLS-1$
 		}
 	}
+
+	public GpxViewerTrack getTrack() {
+		return track;
+	}
+	
+	private class MouseListener extends MouseAdapter {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (e.getButton() == MouseEvent.BUTTON2) {
+				popupMenu.show(parent, e.getX(), e.getY());
+			}
+		}
+	}
+	
 }

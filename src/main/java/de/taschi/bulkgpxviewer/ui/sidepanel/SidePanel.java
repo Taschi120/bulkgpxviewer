@@ -1,4 +1,4 @@
-package de.taschi.bulkgpxviewer.ui;
+package de.taschi.bulkgpxviewer.ui.sidepanel;
 
 /*-
  * #%L
@@ -23,6 +23,8 @@ package de.taschi.bulkgpxviewer.ui;
  */
 
 import java.awt.BorderLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -38,6 +40,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
@@ -46,6 +49,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
 import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.ui.Messages;
 
 public class SidePanel extends JPanel {
 	
@@ -60,6 +64,8 @@ public class SidePanel extends JPanel {
 	private HashMap<Path, GpxFileTreeNode> trackNodes = new HashMap<>();
 	private DefaultMutableTreeNode unknownYearNode = null;
 	
+	private GpxFilePopupMenu filePopupMenu;
+	
 	public SidePanel() {
 		super();
 		
@@ -71,6 +77,9 @@ public class SidePanel extends JPanel {
 		
 		JScrollPane scrollPane = new JScrollPane(treeView, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 	            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		
+		filePopupMenu = new GpxFilePopupMenu();
+		treeView.addMouseListener(new MouseListener());
 		
 		add(scrollPane, BorderLayout.CENTER);
 		
@@ -151,7 +160,7 @@ public class SidePanel extends JPanel {
 		GpxFileTreeNode result = trackNodes.get(track.getFileName());
 		if (result == null) {
 			LOG.debug("Making new tree node for {}", track.getFileName().toString());
-			result = new GpxFileTreeNode(track);
+			result = new GpxFileTreeNode(treeView, track);
 			trackNodes.put(track.getFileName(), result);
 			parent.add(result);
 		} else {
@@ -181,4 +190,27 @@ public class SidePanel extends JPanel {
 	public void updateModel() {
 		createTreeModel();
 	}
+	
+	private class MouseListener extends MouseAdapter {
+		public void mouseClicked(MouseEvent e) {
+
+		    if (SwingUtilities.isRightMouseButton(e)) {
+
+		        var row = treeView.getRowForLocation(e.getX(), e.getY());
+		        treeView.setSelectionRow(row);
+		        
+		        var selectionModel = treeView.getSelectionModel();
+		        var selectionPath = selectionModel.getLeadSelectionPath();
+		        
+		        if (selectionPath != null) {
+			        var selected = selectionPath.getLastPathComponent();
+			        
+			        if(selected instanceof GpxFileTreeNode) {
+				        filePopupMenu.openOnTreeItem(treeView, (GpxFileTreeNode) selected, e.getX(), e.getY());
+			        }
+			    }
+		    }
+		}
+	}
+	
 }
