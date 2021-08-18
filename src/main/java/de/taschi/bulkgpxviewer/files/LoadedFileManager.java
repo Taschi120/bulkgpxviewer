@@ -59,6 +59,8 @@ public class LoadedFileManager {
 	
 	private GpxViewerTrack highlightedTrack = null;
 
+	private Path loadedDirectory;
+
 	public static LoadedFileManager getInstance() {
 		if (INSTANCE == null) {
 			INSTANCE = new LoadedFileManager();
@@ -107,7 +109,7 @@ public class LoadedFileManager {
 	 * Remove all currently loaded GPX files and load all files from the given directory
 	 * @param directory
 	 */
-	public synchronized void clearAndLoadAllFromDirectory(Path directory) throws IOException {
+	public synchronized void clearAndLoadAllFromDirectory(Path directory) throws IOException {		
 		PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.gpx"); //$NON-NLS-1$
 
 		loadedTracks.clear();
@@ -117,6 +119,7 @@ public class LoadedFileManager {
 				.filter((it) -> matcher.matches(it))
 				.forEach((it) -> loadFile(it));
 
+			loadedDirectory = directory;
 			new Thread(() -> fireChangeListeners()).start();
 		} catch (RuntimeException e) {
 			if (e.getCause() != null && e.getCause() instanceof IOException) {
@@ -157,5 +160,12 @@ public class LoadedFileManager {
 	
 	public synchronized GpxViewerTrack getHighlightedTrack() {
 		return highlightedTrack;
+	}
+
+	/**
+	 * Reloads files from current directory
+	 */
+	public void refresh() throws IOException {
+		clearAndLoadAllFromDirectory(loadedDirectory);
 	}
 }
