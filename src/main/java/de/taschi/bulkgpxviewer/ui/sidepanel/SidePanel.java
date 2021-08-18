@@ -160,7 +160,7 @@ public class SidePanel extends JPanel {
 		GpxFileTreeNode result = trackNodes.get(track.getFileName());
 		if (result == null) {
 			LOG.debug("Making new tree node for {}", track.getFileName().toString());
-			result = new GpxFileTreeNode(treeView, track);
+			result = new GpxFileTreeNode(track);
 			trackNodes.put(track.getFileName(), result);
 			parent.add(result);
 		} else {

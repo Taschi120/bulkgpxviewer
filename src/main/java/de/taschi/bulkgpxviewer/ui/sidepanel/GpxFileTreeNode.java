@@ -45,28 +45,20 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode {
 	private static final long serialVersionUID = 6138013700158255219L;
 
 	private static final DateTimeFormatter dtf = DateTimeFormatter.RFC_1123_DATE_TIME;
-	
-	private final JTree parent;
-	
+		
 	private final GpxViewerTrack track;
 	
 	private DefaultMutableTreeNode startDateNode;
 	private DefaultMutableTreeNode trackLengthNode;
-	
-	private final GpxFilePopupMenu popupMenu;
-	
-	public GpxFileTreeNode(JTree parent, GpxViewerTrack track) {
+		
+	public GpxFileTreeNode(GpxViewerTrack track) {
 		super(track.getFileName().getFileName());
 
-		this.parent = parent;
 		this.track = track;
 		makeOrUpdateStartDateNode();
 		
 		trackLengthNode = new DefaultMutableTreeNode(getTrackLengthLabel()); 
-		add(trackLengthNode);
-		
-		popupMenu = new GpxFilePopupMenu();
-		
+		add(trackLengthNode);		
 	}
 	
 	/**
@@ -116,15 +108,6 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode {
 
 	public GpxViewerTrack getTrack() {
 		return track;
-	}
-	
-	private class MouseListener extends MouseAdapter {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			if (e.getButton() == MouseEvent.BUTTON2) {
-				popupMenu.show(parent, e.getX(), e.getY());
-			}
-		}
 	}
 	
 }
