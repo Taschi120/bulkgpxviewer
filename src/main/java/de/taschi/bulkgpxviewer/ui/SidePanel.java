@@ -30,7 +30,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
@@ -55,10 +57,14 @@ public class SidePanel extends JPanel {
 		
 		setLayout(new BorderLayout());
 		
+		
 		createTreeModel();
 		treeView = new JTree(rootNode);
 		
-		add(treeView, BorderLayout.CENTER);
+		JScrollPane scrollPane = new JScrollPane(treeView, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+	            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		
+		add(scrollPane, BorderLayout.CENTER);
 		
 		LoadedFileManager.getInstance().addChangeListener(this::createTreeModel);
 	}
