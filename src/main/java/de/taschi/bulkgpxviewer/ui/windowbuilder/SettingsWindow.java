@@ -104,7 +104,7 @@ public class SettingsWindow extends JDialog {
 			{
 				JPanel panel = new JPanel();
 				panel.setBorder(new EmptyBorder(5, 5, 5, 5));
-				tabbedPane.addTab(Messages.getString("SettingsWindow.panel.title"), null, panel, null); //$NON-NLS-1$
+				tabbedPane.addTab(Messages.getString("SettingsWindow.GeneralTab"), null, panel, null); //$NON-NLS-1$
 				GridBagLayout gbl_panel = new GridBagLayout();
 				gbl_panel.columnWidths = new int[] {0, 0};
 				gbl_panel.rowHeights = new int[]{0, 0};
@@ -112,7 +112,7 @@ public class SettingsWindow extends JDialog {
 				gbl_panel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 				panel.setLayout(gbl_panel);
 				{
-					JLabel lblNewLabel = new JLabel(Messages.getString("SettingsWindow.lblNewLabel.text")); //$NON-NLS-1$
+					JLabel lblNewLabel = new JLabel(Messages.getString("SettingsWindow.Units")); //$NON-NLS-1$
 					GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 					gbc_lblNewLabel.insets = new Insets(0, 0, 0, 5);
 					gbc_lblNewLabel.anchor = GridBagConstraints.EAST;
@@ -122,7 +122,7 @@ public class SettingsWindow extends JDialog {
 				}
 				{
 					unitSystem = new JComboBox();
-					unitSystem.setModel(new DefaultComboBoxModel(new String[] {"Metric", "Imperial"}));
+					unitSystem.setModel(new DefaultComboBoxModel(new String[] {Messages.getString("SettingsWindow.Metric"), Messages.getString("SettingsWindow.Imperial")})); //$NON-NLS-1$ //$NON-NLS-2$
 					GridBagConstraints gbc_unitSystem = new GridBagConstraints();
 					gbc_unitSystem.fill = GridBagConstraints.HORIZONTAL;
 					gbc_unitSystem.gridx = 1;
