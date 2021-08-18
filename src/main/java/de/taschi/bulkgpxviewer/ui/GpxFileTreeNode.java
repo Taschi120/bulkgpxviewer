@@ -7,7 +7,9 @@ import java.time.format.DateTimeFormatter;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import de.taschi.bulkgpxviewer.gpx.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.settings.SettingsManager;
+import de.taschi.bulkgpxviewer.settings.dto.UnitSystem;
 
 /**
  * A {@link JTree} node representing a {@link GpxViewerTrack} in the {@link SidePanel}.
@@ -67,8 +69,14 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode {
 	}
 	
 	private String getTrackLengthLabel() {
-		return Messages.getString("SidePanel.RouteLength")  //$NON-NLS-1$
-				+ track.getRouteLengthInKilometers() 
-				+ Messages.getString("SidePanel.Unit_km"); //$NON-NLS-1$
+		if (SettingsManager.getInstance().getSettings().getUnitSystem() == UnitSystem.METRIC) {
+			return Messages.getString("SidePanel.RouteLength")  //$NON-NLS-1$
+					+ track.getRouteLengthInKilometers() 
+					+ Messages.getString("SidePanel.Unit_km"); //$NON-NLS-1$
+		} else {
+			return Messages.getString("SidePanel.RouteLength")  //$NON-NLS-1$
+					+ track.getRouteLengthInMiles() 
+					+ Messages.getString("SidePanel.Unit_miles"); //$NON-NLS-1$
+		}
 	}
 }

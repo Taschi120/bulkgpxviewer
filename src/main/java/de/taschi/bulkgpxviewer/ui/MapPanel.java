@@ -36,8 +36,8 @@ import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.TileFactoryInfo;
 
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
-import de.taschi.bulkgpxviewer.gpx.GpsBoundingBox;
-import de.taschi.bulkgpxviewer.gpx.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.geo.GpsBoundingBox;
+import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
 
 /**
  * A JPanel which wraps the {@link JXMapKit} instance

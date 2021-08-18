@@ -47,6 +47,12 @@ import de.taschi.bulkgpxviewer.settings.ColorConverter;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.ui.ColorListItemRenderer;
 import de.taschi.bulkgpxviewer.ui.Messages;
+import javax.swing.JLabel;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
+
+import de.taschi.bulkgpxviewer.settings.dto.Settings;
+import de.taschi.bulkgpxviewer.settings.dto.UnitSystem;
 
 public class SettingsWindow extends JDialog {
 	
@@ -58,6 +64,7 @@ public class SettingsWindow extends JDialog {
 	private JList<Color> list;
 	
 	private MainWindow mainWindow;
+	private JComboBox unitSystem;
 
 	/**
 	 * Launch the application.
@@ -94,6 +101,35 @@ public class SettingsWindow extends JDialog {
 		{
 			JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 			contentPanel.add(tabbedPane);
+			{
+				JPanel panel = new JPanel();
+				panel.setBorder(new EmptyBorder(5, 5, 5, 5));
+				tabbedPane.addTab(Messages.getString("SettingsWindow.panel.title"), null, panel, null); //$NON-NLS-1$
+				GridBagLayout gbl_panel = new GridBagLayout();
+				gbl_panel.columnWidths = new int[] {0, 0};
+				gbl_panel.rowHeights = new int[]{0, 0};
+				gbl_panel.columnWeights = new double[]{0.0, 1.0};
+				gbl_panel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+				panel.setLayout(gbl_panel);
+				{
+					JLabel lblNewLabel = new JLabel(Messages.getString("SettingsWindow.lblNewLabel.text")); //$NON-NLS-1$
+					GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+					gbc_lblNewLabel.insets = new Insets(0, 0, 0, 5);
+					gbc_lblNewLabel.anchor = GridBagConstraints.EAST;
+					gbc_lblNewLabel.gridx = 0;
+					gbc_lblNewLabel.gridy = 0;
+					panel.add(lblNewLabel, gbc_lblNewLabel);
+				}
+				{
+					unitSystem = new JComboBox();
+					unitSystem.setModel(new DefaultComboBoxModel(new String[] {"Metric", "Imperial"}));
+					GridBagConstraints gbc_unitSystem = new GridBagConstraints();
+					gbc_unitSystem.fill = GridBagConstraints.HORIZONTAL;
+					gbc_unitSystem.gridx = 1;
+					gbc_unitSystem.gridy = 0;
+					panel.add(unitSystem, gbc_unitSystem);
+				}
+			}
 			{
 				JPanel panel = new JPanel();
 				tabbedPane.addTab(Messages.getString("SettingsWindow.TrailColors"), null, panel, null); //$NON-NLS-1$
@@ -200,16 +236,33 @@ public class SettingsWindow extends JDialog {
 	}
 
 	protected void onOk() {
-		SettingsManager.getInstance().getSettings().setRouteColors(ColorConverter.convertToSettings(colorsIntl));
+		Settings settings = SettingsManager.getInstance().getSettings();
+		settings.setRouteColors(ColorConverter.convertToSettings(colorsIntl));
+		
+		if(unitSystem.getSelectedIndex() == 0) {
+			settings.setUnitSystem(UnitSystem.METRIC);
+		} else {
+			settings.setUnitSystem(UnitSystem.IMPERIAL);
+		}
 		SettingsManager.getInstance().saveSettings();
+		
+		// TODO replace this with a listener queue
 		mainWindow.forceSettingsRefresh();
 		setVisible(false);
 	}
 
 	private void initModel() {
-		colorsIntl = ColorConverter.convertToAwt(SettingsManager.getInstance().getSettings().getRouteColors());
+		Settings settings = SettingsManager.getInstance().getSettings();
+		
+		colorsIntl = ColorConverter.convertToAwt(settings.getRouteColors());
 		getColorList().setCellRenderer(new ColorListItemRenderer());
 		getColorList().setListData(new Vector<Color>(colorsIntl));
+		
+		if (settings.getUnitSystem() == UnitSystem.METRIC) {
+			unitSystem.setSelectedIndex(0);
+		} else {
+			unitSystem.setSelectedIndex(1);
+		}
 	}
 	
 	private void onAdd() {

@@ -41,7 +41,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
-import de.taschi.bulkgpxviewer.gpx.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
 
 public class SidePanel extends JPanel {
 	
@@ -117,5 +117,9 @@ public class SidePanel extends JPanel {
 
 	private MutableTreeNode makeNodeFor(GpxViewerTrack track) {
 		return new GpxFileTreeNode(track);
+	}
+
+	public void updateModel() {
+		createTreeModel();
 	}
 }

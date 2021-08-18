@@ -1,4 +1,4 @@
-package de.taschi.bulkgpxviewer.gpx;
+package de.taschi.bulkgpxviewer.geo;
 
 /*-
  * #%L

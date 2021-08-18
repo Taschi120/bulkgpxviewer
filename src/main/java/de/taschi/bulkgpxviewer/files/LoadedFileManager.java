@@ -37,8 +37,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jxmapviewer.viewer.GeoPosition;
 
-import de.taschi.bulkgpxviewer.gpx.GpxToJxMapper;
-import de.taschi.bulkgpxviewer.gpx.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.geo.GpxToJxMapper;
+import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;

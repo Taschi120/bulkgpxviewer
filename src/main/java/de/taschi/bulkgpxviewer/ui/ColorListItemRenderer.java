@@ -38,8 +38,8 @@ public class ColorListItemRenderer extends JLabel implements ListCellRenderer<Co
 
 	private static final long serialVersionUID = -5909430684119887421L;
 
-	Border active = BorderFactory.createEtchedBorder();
-	Border inactive = BorderFactory.createEmptyBorder();
+	private static Border active = BorderFactory.createEtchedBorder();
+	private static Border inactive = BorderFactory.createEmptyBorder();
 	
 	@Override
 	public Component getListCellRendererComponent(JList<? extends Color> list, Color value, int index,

@@ -54,8 +54,8 @@ import org.jxmapviewer.JXMapKit;
 import org.jxmapviewer.viewer.GeoPosition;
 
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
-import de.taschi.bulkgpxviewer.gpx.GpsBoundingBox;
-import de.taschi.bulkgpxviewer.gpx.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.geo.GpsBoundingBox;
+import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings;
 import de.taschi.bulkgpxviewer.ui.MapPanel;
@@ -241,6 +241,7 @@ public class MainWindow {
 	
 	public void forceSettingsRefresh() {
 		mapPanel.getRoutesPainter().refreshColorList();
+		sidePanel.updateModel();
 	}
 	
 	private void writeWindowStateToSettings() {

@@ -41,6 +41,7 @@ import com.fasterxml.jackson.jr.ob.JSON.Feature;
 import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings;
 import de.taschi.bulkgpxviewer.settings.dto.Settings;
 import de.taschi.bulkgpxviewer.settings.dto.SettingsColor;
+import de.taschi.bulkgpxviewer.settings.dto.UnitSystem;
 
 public class SettingsManager {
 	
@@ -83,6 +84,7 @@ public class SettingsManager {
 
 	private void migrateIfNecessary() {
 		migrateToV0_2_0();
+		migrateToV0_3_0();
 	}
 
 	private void migrateToV0_2_0() {
@@ -91,8 +93,13 @@ public class SettingsManager {
 			MainWindowSettings s = new MainWindowSettings();
 			getSettings().setMainWindowSettings(s);
 		}
-		
-
+	}
+	
+	private void migrateToV0_3_0() {
+		if (getSettings().getUnitSystem() == null) {
+			LOG.info("Updating settings to v0.3.0"); //$NON-NLS-1$
+			getSettings().setUnitSystem(UnitSystem.METRIC);
+		}
 	}
 	
 	public void saveSettings() {

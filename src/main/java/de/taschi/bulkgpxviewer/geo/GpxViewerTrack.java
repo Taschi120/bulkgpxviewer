@@ -1,4 +1,4 @@
-package de.taschi.bulkgpxviewer.gpx;
+package de.taschi.bulkgpxviewer.geo;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -57,14 +57,9 @@ public class GpxViewerTrack implements List<GeoPosition> {
 		internal = new ArrayList<>(geoPositions);
 	}
 	
-	/**
-	 * Determine route length.
-	 * @return
-	 */
-	public BigDecimal getRouteLengthInKilometers() {
-		
+	private double getPreciseRouteLengthInKilometers() {
 		if (internal.size() < 2) {
-			return BigDecimal.ZERO;
+			return 0;
 		}
 		
 		double result = 0;
@@ -76,7 +71,24 @@ public class GpxViewerTrack implements List<GeoPosition> {
 			result += HaversineCalculator.getDistance(here, there);
 		}
 		
-		return new BigDecimal(result).setScale(1, RoundingMode.HALF_UP);
+		return result;
+	}
+	
+	/**
+	 * Determine route length in km.
+	 * @return
+	 */
+	public BigDecimal getRouteLengthInKilometers() {
+		return new BigDecimal(getPreciseRouteLengthInKilometers()).setScale(1, RoundingMode.HALF_UP);
+	}
+	
+	/**
+	 * Determine route length in miles
+	 * @return
+	 */
+	public BigDecimal getRouteLengthInMiles() {
+		return new BigDecimal(UnitConverter.kilometersToMiles(getPreciseRouteLengthInKilometers())).setScale(1, RoundingMode.HALF_UP);
+
 	}
 	
 	// ======================================================================//
@@ -234,7 +246,5 @@ public class GpxViewerTrack implements List<GeoPosition> {
 	public Stream<GeoPosition> parallelStream() {
 		return internal.parallelStream();
 	}
-
-
 
 }
