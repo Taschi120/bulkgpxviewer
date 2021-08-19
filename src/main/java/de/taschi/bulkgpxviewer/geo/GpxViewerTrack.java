@@ -83,11 +83,12 @@ public class GpxViewerTrack implements List<GeoPosition> {
 	public BigDecimal getRouteLengthInMiles() {
 		return new BigDecimal(UnitConverter.kilometersToMiles(getPreciseRouteLengthInKilometers())).setScale(1, RoundingMode.HALF_UP);
 	}
+
 	
-	public String getTotalDuration() {
+	public Duration getTotalDuration() {
 		if(waypoints.size() < 2) {
 			log.debug("Time calculation impossible: List has fewer than 2 waypoints");
-			return "";
+			return Duration.ZERO;
 		}
 		
 		Instant start = waypoints.get(0).getInstant().orElse(null);
@@ -95,11 +96,11 @@ public class GpxViewerTrack implements List<GeoPosition> {
 	
 		if (start == null || end == null) {
 			log.debug("Time calculation impossible: GPX does not contain timestamps");
-			return "";
+			return Duration.ZERO;
 		}
 		
 		Duration duration = Duration.between(start, end);
-		return DurationFormatter.getInstance().format(duration);
+		return duration;
 	}
 	
 	/**
@@ -129,8 +130,27 @@ public class GpxViewerTrack implements List<GeoPosition> {
 		return result;
 	}
 	
+	public double getPreciseSpeedInKph() {
+		if (internal.size() < 2) {
+			return Double.NaN;
+		}
+		
+		return (getPreciseRouteLengthInKilometers() / getTotalDuration().getSeconds()) * 3600;
+	}
+	
+	public BigDecimal getSpeedInKph() {
+		return BigDecimal.valueOf(getPreciseSpeedInKph()).setScale(1, RoundingMode.HALF_UP);
+	}
+	
+	public BigDecimal getSpeedInMph() {
+		return BigDecimal.valueOf(
+				UnitConverter.kilometersToMiles(getPreciseSpeedInKph()))
+				.setScale(1, RoundingMode.HALF_UP);
+
+	}
+	
 	// ======================================================================//
-	// Eclipse auto-generated getters and setters from here on               //
+	// Eclipse auto-generated getters and setters from here on.
 	// ======================================================================//
 
 	public Instant getStartedAt() {
@@ -151,6 +171,7 @@ public class GpxViewerTrack implements List<GeoPosition> {
 	
 	// ======================================================================//
 	// Eclipse auto-generated proxy methods from here on                     //
+	// Some functions have been edited to prevent any modification           //
 	// ======================================================================//
 
 	public void forEach(Consumer<? super GeoPosition> action) {

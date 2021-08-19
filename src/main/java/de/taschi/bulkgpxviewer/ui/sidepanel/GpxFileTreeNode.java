@@ -29,6 +29,7 @@ import java.time.format.DateTimeFormatter;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import de.taschi.bulkgpxviewer.geo.DurationFormatter;
 import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.settings.dto.UnitSystem;
@@ -48,6 +49,7 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode {
 	private DefaultMutableTreeNode startDateNode;
 	private DefaultMutableTreeNode trackLengthNode;
 	private DefaultMutableTreeNode durationNode;
+	private DefaultMutableTreeNode avgSpeedNode;
 		
 	public GpxFileTreeNode(GpxViewerTrack track) {
 		super(track.getFileName().getFileName());
@@ -60,6 +62,21 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode {
 		
 		durationNode = new DefaultMutableTreeNode(getDurationLabel());
 		add(durationNode);
+		
+		avgSpeedNode = new DefaultMutableTreeNode(getAvgSpeedLabel());
+		add(avgSpeedNode);
+	}
+
+	private Object getAvgSpeedLabel() {
+		if (SettingsManager.getInstance().getSettings().getUnitSystem() == UnitSystem.METRIC) {
+			return Messages.getString("SidePanel.AvgSpeed")  //$NON-NLS-1$
+					+ track.getSpeedInKph() 
+					+ Messages.getString("SidePanel.Unit_kph"); //$NON-NLS-1$
+		} else {
+			return Messages.getString("SidePanel.AvgSpeed")  //$NON-NLS-1$
+					+ track.getSpeedInMph()
+					+ Messages.getString("SidePanel.Unit_mph"); //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -108,7 +125,8 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode {
 	}
 	
 	private String getDurationLabel() {
-		return String.format(Messages.getString("GpxFileTreeNode.Duration"), track.getTotalDuration()); //$NON_NLS-1$
+		return String.format(Messages.getString("GpxFileTreeNode.Duration"), //$NON_NLS-1$
+				DurationFormatter.getInstance().format(track.getTotalDuration())); 
 	}
 
 	public GpxViewerTrack getTrack() {
