@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -58,6 +59,7 @@ import de.taschi.bulkgpxviewer.geo.GpsBoundingBox;
 import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings;
+import de.taschi.bulkgpxviewer.ui.IconHandler;
 import de.taschi.bulkgpxviewer.ui.MapPanel;
 import de.taschi.bulkgpxviewer.ui.Messages;
 import de.taschi.bulkgpxviewer.ui.sidepanel.SidePanel;
@@ -137,14 +139,17 @@ public class MainWindow {
 		
 		openFolderMenuItem = new JMenuItem(Messages.getString("MainWindow.OpenFolderMenuItem")); //$NON-NLS-1$
 		openFolderMenuItem.addActionListener(this::openFolderEventHandler);
+		openFolderMenuItem.setIcon(IconHandler.loadIcon("folder-open-line")); //$NON-NLS-1$
 		mnNewMenu.add(openFolderMenuItem);
 		
 		settingsMenuItem = new JMenuItem(Messages.getString("MainWindow.SettingsMenuItem")); //$NON-NLS-1$
 		settingsMenuItem.addActionListener(this::showSettingsWindowEventHandler);
+		settingsMenuItem.setIcon(IconHandler.loadIcon("settings-5-line"));
 		mnNewMenu.add(settingsMenuItem);
 		
 		quitMenuItem = new JMenuItem(Messages.getString("MainWindow.QuitMenuItem")); //$NON-NLS-1$
 		quitMenuItem.addActionListener(this::closeEventHandler);
+		quitMenuItem.setIcon(IconHandler.loadIcon("door-open-line"));
 		mnNewMenu.add(quitMenuItem);
 		
 		JMenu mnNewMenu_1 = new JMenu(Messages.getString("MainWindow.HelpMenuItem")); //$NON-NLS-1$
@@ -156,6 +161,7 @@ public class MainWindow {
 		
 		aboutMenuItem = new JMenuItem(Messages.getString("MainWindow.AboutMenuItem")); //$NON-NLS-1$
 		aboutMenuItem.addActionListener(this::aboutEventHandler);
+		aboutMenuItem.setIcon(IconHandler.loadIcon("question-line"));
 		mnNewMenu_1.add(aboutMenuItem);
 		
 		restoreWindowGeometry();

@@ -35,6 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
 import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.ui.IconHandler;
 import de.taschi.bulkgpxviewer.ui.Messages;
 import lombok.extern.log4j.Log4j2;
 
@@ -54,13 +55,16 @@ public class GpxFilePopupMenu extends JPopupMenu {
 		super();
 		
 		edit = new JMenuItem(Messages.getString("GpxFilePopupMenu.Edit")); //$NON-NLS-1$
+		edit.setIcon(IconHandler.loadIcon("edit-line")); //$NON-NLS-1$
 		add(edit);
 		
 		rename = new JMenuItem(Messages.getString("GpxFilePopupMenu.Rename")); //$NON-NLS-1$
+		rename.setIcon(IconHandler.loadIcon("input-cursor-move")); //$NON-NLS-1$
 		rename.addActionListener(this::onRename);
 		add(rename);
 		
 		addTag = new JMenuItem(Messages.getString("GpxFilePopupMenu.AddTag")); //$NON-NLS-1$
+		addTag.setIcon(IconHandler.loadIcon("price-tag-3-line")); //$NON-NLS-1$
 		add(addTag);
 	}
 	

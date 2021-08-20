@@ -23,3 +23,5 @@ Lists of 23 third-party dependencies.
      (The Apache License, Version 2.0) org.jetbrains.kotlin:kotlin-stdlib-common (org.jetbrains.kotlin:kotlin-stdlib-common:1.4.0 - https://kotlinlang.org/)
      (The JSON License) JSON in Java (org.json:json:20160212 - https://github.com/douglascrockford/JSON-java)
      (GNU Lesser General Public License) jxmapviewer2 (org.jxmapviewer:jxmapviewer2:2.5 - https://github.com/msteiger/jxmapviewer2)
+
+Also uses icons by RemixDesign: https://github.com/Remix-Design/RemixIcon, released under the Apache License 2.0.
