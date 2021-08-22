@@ -1,4 +1,4 @@
-package de.taschi.bulkgpxviewer.ui;
+package de.taschi.bulkgpxviewer.ui.map;
 
 /*-
  * #%L
@@ -28,7 +28,10 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.Point2D;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.painter.Painter;
@@ -36,7 +39,7 @@ import org.jxmapviewer.viewer.GeoPosition;
 
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
 import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
-import lombok.extern.log4j.Log4j2;
+import de.taschi.bulkgpxviewer.ui.TrackColorUtil;
 
 /**
  * Paints a route. This class has been shamelessly stolen from the JXMapViewer samples 
@@ -45,11 +48,12 @@ import lombok.extern.log4j.Log4j2;
  *
  * @author Martin Steiger (original), S. Hillebrand (adapted)
  */
-@Log4j2
 public class TracksPainter implements Painter<JXMapViewer>
 {
 	
     private boolean antiAlias = true;
+    
+    private Supplier<Collection<GpxViewerTrack>> provider = getAllRouteProvider();
     
     /**
      * @param track the track
@@ -58,7 +62,15 @@ public class TracksPainter implements Painter<JXMapViewer>
     {
     }
 
-    @Override
+    public Supplier<Collection<GpxViewerTrack>> getAllRouteProvider() {
+		return () -> LoadedFileManager.getInstance().getLoadedTracks();
+	}
+    
+    public Supplier<Collection<GpxViewerTrack>> getSingleTrackProvider(GpxViewerTrack track) {
+    	return () -> Arrays.asList(track);
+    }
+
+	@Override
     public void paint(Graphics2D g, JXMapViewer map, int w, int h)
     {
         g = (Graphics2D) g.create();
@@ -70,7 +82,7 @@ public class TracksPainter implements Painter<JXMapViewer>
         if (antiAlias)
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        for (GpxViewerTrack track: LoadedFileManager.getInstance().getLoadedTracks()) {
+        for (GpxViewerTrack track: provider.get()) {
 	        // do the drawing
 	        g.setColor(Color.BLACK);
 	        g.setStroke(new BasicStroke(4));
@@ -116,5 +128,14 @@ public class TracksPainter implements Painter<JXMapViewer>
             lastX = (int) pt.getX();
             lastY = (int) pt.getY();
         }
+    }
+    
+    /**
+     * Changes the track provider. Remember that repaint() needs to be called afterwards on the
+     * JXMapViewer or JXMapKit instance.
+     * @param provider
+     */
+    public void setProvider(Supplier<Collection<GpxViewerTrack>> provider) {
+    	this.provider = provider;
     }
 }

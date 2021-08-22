@@ -1,4 +1,4 @@
-package de.taschi.bulkgpxviewer.ui;
+package de.taschi.bulkgpxviewer.ui.map;
 
 /*-
  * #%L
@@ -49,6 +49,8 @@ public class MapPanel extends JPanel {
 	private final JXMapKit mapKit;
 	
 	private final TracksPainter routesPainter;
+	private final SelectionPainter selectionPainter;
+	private final CompositePainter compositePainter;
 			
 	public MapPanel() {
 		super();
@@ -67,7 +69,13 @@ public class MapPanel extends JPanel {
         tileFactory.setThreadPoolSize(8);
                 
         routesPainter = new TracksPainter();
-        mapKit.getMainMap().setOverlayPainter(routesPainter);
+        selectionPainter = new SelectionPainter();
+        
+        compositePainter = new CompositePainter();
+        compositePainter.addPainter(routesPainter);
+        compositePainter.addPainter(selectionPainter);
+        
+        mapKit.getMainMap().setOverlayPainter(compositePainter);
         
         LoadedFileManager.getInstance().addChangeListener(mapKit::repaint);
         autoSetZoomAndLocation();
@@ -111,5 +119,9 @@ public class MapPanel extends JPanel {
 	
 	public TracksPainter getRoutesPainter() {
 		return routesPainter;
+	}
+	
+	public SelectionPainter getSelectionPainter() {
+		return selectionPainter;
 	}
 }

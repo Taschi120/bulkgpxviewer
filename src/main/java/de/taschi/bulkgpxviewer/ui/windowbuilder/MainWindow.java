@@ -59,8 +59,9 @@ import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings;
 import de.taschi.bulkgpxviewer.ui.IconHandler;
-import de.taschi.bulkgpxviewer.ui.MapPanel;
 import de.taschi.bulkgpxviewer.ui.Messages;
+import de.taschi.bulkgpxviewer.ui.map.MapPanel;
+import de.taschi.bulkgpxviewer.ui.map.MapSelectionHandler;
 import de.taschi.bulkgpxviewer.ui.sidepanel.SidePanel;
 
 public class MainWindow {
@@ -83,6 +84,8 @@ public class MainWindow {
 	private EditingPanel editingPanel = null;
 	private JPanel leftSideRootPanel;
 	private JPanel rightSideRootPanel;
+	
+	private MapSelectionHandler mapSelectionHandler;
 	
 	/**
 	 * Launch the application.
@@ -168,19 +171,19 @@ public class MainWindow {
 		aboutMenuItem.setIcon(IconHandler.loadIcon("question-line"));
 		mnNewMenu_1.add(aboutMenuItem);
 		
+		
+		// TODO move mapSelectionHandler into MapPanel
+		mapSelectionHandler = new MapSelectionHandler(mapPanel.getMapKit().getMainMap());
+		mapPanel.getMapKit().getMainMap();
+		mapSelectionHandler.addSelectionChangeListener(selection -> 
+			mapPanel.getSelectionPainter().setSelectionFromWayPoints(selection));
+		
+		mapPanel.getMapKit().getMainMap().addMouseListener(mapSelectionHandler);
+		
 		restoreWindowGeometry();
 		loadAndSetIcon();
 		
-		frame.addWindowListener(new WindowAdapter() {
-        	@Override
-        	public void windowClosing(WindowEvent e) {
-        		closeEventHandler(null);
-        	}
-        });
-		
-		LoadedFileManager.getInstance().addChangeListener(() -> {
-        	mapPanel.getMapKit().repaint();
-        });
+		frame.addWindowListener(new LocalWindowAdapter());
         
         String lastUsedDirectory = SettingsManager.getInstance().getSettings().getLastUsedDirectory();
         
@@ -189,7 +192,6 @@ public class MainWindow {
         }
 		
 		setZoomAndLocation();
-		
 	}
 	
 	public void startEditMode(GpxViewerTrack trackToEdit) {
@@ -197,8 +199,17 @@ public class MainWindow {
 		if (editingPanel == null) {
 			editingPanel = new EditingPanel();
 		}
+		
+		// show editing controls
 		leftSideRootPanel.add(editingPanel, BorderLayout.SOUTH);
 		leftSideRootPanel.revalidate();
+		
+		// set up map display
+		mapPanel.getSelectionPainter().setEnabled(true);
+		mapPanel.getRoutesPainter().setProvider(mapPanel.getRoutesPainter().getSingleTrackProvider(trackToEdit));
+		
+		// enable map listener
+		mapSelectionHandler.activate(trackToEdit);
 		
 		currentMode = MainWindowMode.EDITING;
 	}
@@ -320,6 +331,13 @@ public class MainWindow {
 		SettingsManager.getInstance().saveSettings();
 		LOG.info("Closing application by user request."); //$NON-NLS-1$
 		System.exit(0);
+	}
+	
+	private class LocalWindowAdapter extends WindowAdapter {
+		@Override
+    	public void windowClosing(WindowEvent e) {
+    		closeEventHandler(null);
+    	}
 	}
 }
 
