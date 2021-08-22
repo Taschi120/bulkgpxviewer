@@ -33,6 +33,7 @@ import javax.swing.JTree;
 
 import org.apache.commons.lang3.StringUtils;
 
+import de.taschi.bulkgpxviewer.Application;
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
 import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
 import de.taschi.bulkgpxviewer.ui.IconHandler;
@@ -56,6 +57,7 @@ public class GpxFilePopupMenu extends JPopupMenu {
 		
 		edit = new JMenuItem(Messages.getString("GpxFilePopupMenu.Edit")); //$NON-NLS-1$
 		edit.setIcon(IconHandler.loadIcon("edit-line")); //$NON-NLS-1$
+		edit.addActionListener(this::onEdit);
 		add(edit);
 		
 		rename = new JMenuItem(Messages.getString("GpxFilePopupMenu.Rename")); //$NON-NLS-1$
@@ -126,6 +128,10 @@ public class GpxFilePopupMenu extends JPopupMenu {
 			JOptionPane.showMessageDialog(null, String.format(Messages.getString("GpxFilePopupMenu.ErrorWhileReloading") //$NON-NLS-1$
 					, e.getLocalizedMessage()));
 		}
+	}
+
+	private void onEdit(ActionEvent e) {
+		Application.getMainWindow().startEditMode(track);
 	}
 	
 }

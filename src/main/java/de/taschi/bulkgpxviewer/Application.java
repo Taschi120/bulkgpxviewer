@@ -35,6 +35,12 @@ public class Application {
 	
 	private static final Logger LOG = LogManager.getLogger(Application.class);
 	
+	private static MainWindow mainWindow;
+	
+	public static MainWindow getMainWindow() {
+		return mainWindow;
+	}
+	
 	public static void main(String[] args) {
 		LOG.info("Application startup"); //$NON-NLS-1$
 		try {
@@ -42,7 +48,7 @@ public class Application {
 		} catch (Exception e) {
 			LOG.error("Error while setting system look and feel", e); //$NON-NLS-1$
 		}
-		MainWindow mw = new MainWindow();
-		mw.setVisible(true);
+		mainWindow = new MainWindow();
+		mainWindow.setVisible(true);
 	}
 }

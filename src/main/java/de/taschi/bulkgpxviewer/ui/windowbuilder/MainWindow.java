@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -80,6 +79,11 @@ public class MainWindow {
 	private String BASE_TITLE = Messages.getString("MainWindow.WindowTitle"); //$NON-NLS-1$
 	private SidePanel sidePanel;
 	
+	private MainWindowMode currentMode = MainWindowMode.BULK_DISPLAY;
+	private EditingPanel editingPanel = null;
+	private JPanel leftSideRootPanel;
+	private JPanel rightSideRootPanel;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -117,19 +121,19 @@ public class MainWindow {
 		splitPane.setOneTouchExpandable(true);
 		frame.getContentPane().add(splitPane, BorderLayout.CENTER);
 
-		JPanel panel = new JPanel();
-		splitPane.setLeftComponent(panel);
-		panel.setLayout(new BorderLayout(0, 0));
+		leftSideRootPanel = new JPanel();
+		splitPane.setLeftComponent(leftSideRootPanel);
+		leftSideRootPanel.setLayout(new BorderLayout(0, 0));
 
 		mapPanel = new MapPanel();
-		panel.add(mapPanel, BorderLayout.CENTER);
-		
-		JPanel panel_1 = new JPanel();
-		splitPane.setRightComponent(panel_1);
-		panel_1.setLayout(new BorderLayout(0, 0));
+		leftSideRootPanel.add(mapPanel, BorderLayout.CENTER);
+				
+		rightSideRootPanel = new JPanel();
+		splitPane.setRightComponent(rightSideRootPanel);
+		rightSideRootPanel.setLayout(new BorderLayout(0, 0));
 		
 		sidePanel = new SidePanel();
-		panel_1.add(sidePanel);
+		rightSideRootPanel.add(sidePanel);
 		
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
@@ -186,6 +190,17 @@ public class MainWindow {
 		
 		setZoomAndLocation();
 		
+	}
+	
+	public void startEditMode(GpxViewerTrack trackToEdit) {
+		sidePanel.setEnabled(false);
+		if (editingPanel == null) {
+			editingPanel = new EditingPanel();
+		}
+		leftSideRootPanel.add(editingPanel, BorderLayout.SOUTH);
+		leftSideRootPanel.revalidate();
+		
+		currentMode = MainWindowMode.EDITING;
 	}
 
 	private void restoreWindowGeometry() {
@@ -262,12 +277,20 @@ public class MainWindow {
 	public void setVisible(boolean b) {
 		frame.setVisible(b);
 	}
+
+	public JFrame getFrame() {
+		return frame;
+	}
 	
 	private void showSettingsWindowEventHandler(ActionEvent evt) {
 		SettingsWindow s = new SettingsWindow(this);
 		s.setVisible(true);
 	}
-
+	
+	private void aboutEventHandler(ActionEvent evt) {
+		new InfoDialog().setVisible(true);
+	}
+	
 	private void openFolderEventHandler(ActionEvent evt) {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -281,14 +304,6 @@ public class MainWindow {
 		} catch (HeadlessException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public JFrame getFrame() {
-		return frame;
-	}
-	
-	private void aboutEventHandler(ActionEvent evt) {
-		new InfoDialog().setVisible(true);
 	}
 	
 	private void openGithubEventHandler(ActionEvent evt) {
