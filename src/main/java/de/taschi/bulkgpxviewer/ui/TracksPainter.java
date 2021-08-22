@@ -30,15 +30,13 @@ import java.awt.RenderingHints;
 import java.awt.geom.Point2D;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.painter.Painter;
 import org.jxmapviewer.viewer.GeoPosition;
 
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
-import de.taschi.bulkgpxviewer.settings.ColorConverter;
-import de.taschi.bulkgpxviewer.settings.SettingsManager;
+import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * Paints a route. This class has been shamelessly stolen from the JXMapViewer samples 
@@ -47,26 +45,17 @@ import de.taschi.bulkgpxviewer.settings.SettingsManager;
  *
  * @author Martin Steiger (original), S. Hillebrand (adapted)
  */
-public class RoutesPainter implements Painter<JXMapViewer>
+@Log4j2
+public class TracksPainter implements Painter<JXMapViewer>
 {
-	
-	private static final Logger LOG = LogManager.getLogger(RoutesPainter.class);
 	
     private boolean antiAlias = true;
     
-    private List<Color> colors;
-
     /**
      * @param track the track
      */
-    public RoutesPainter()
+    public TracksPainter()
     {
-        refreshColorList();
-    }
-    
-    public void refreshColorList() {
-    	LOG.info("Refreshing colors list"); //$NON-NLS-1$
-        colors = ColorConverter.convertToAwt(SettingsManager.getInstance().getSettings().getRouteColors());
     }
 
     @Override
@@ -81,17 +70,14 @@ public class RoutesPainter implements Painter<JXMapViewer>
         if (antiAlias)
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        
-        int colorIdx = 0;
-        for (List<GeoPosition> track: LoadedFileManager.getInstance().getLoadedTracks()) {
+        for (GpxViewerTrack track: LoadedFileManager.getInstance().getLoadedTracks()) {
 	        // do the drawing
 	        g.setColor(Color.BLACK);
 	        g.setStroke(new BasicStroke(4));
 	
 	        drawRoute(g, map, track);
 	
-	    	Color color = colors.get(colorIdx);
-	    	colorIdx = (colorIdx + 1) % colors.size();
+	    	Color color = TrackColorUtil.getInstance().getColorForTrack(track);
 	        // do the drawing again
 	        g.setColor(color);
 	        g.setStroke(new BasicStroke(2));

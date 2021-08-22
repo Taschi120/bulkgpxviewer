@@ -261,7 +261,7 @@ public class MainWindow {
 	}
 	
 	public void forceSettingsRefresh() {
-		mapPanel.getRoutesPainter().refreshColorList();
+		mapPanel.repaint();
 		sidePanel.updateModel();
 	}
 	

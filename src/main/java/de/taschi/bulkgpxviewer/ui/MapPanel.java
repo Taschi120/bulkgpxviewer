@@ -48,7 +48,7 @@ public class MapPanel extends JPanel {
 
 	private final JXMapKit mapKit;
 	
-	private final RoutesPainter routesPainter;
+	private final TracksPainter routesPainter;
 			
 	public MapPanel() {
 		super();
@@ -66,7 +66,7 @@ public class MapPanel extends JPanel {
         // Use 8 threads in parallel to load the tiles
         tileFactory.setThreadPoolSize(8);
                 
-        routesPainter = new RoutesPainter();
+        routesPainter = new TracksPainter();
         mapKit.getMainMap().setOverlayPainter(routesPainter);
         
         LoadedFileManager.getInstance().addChangeListener(mapKit::repaint);
@@ -102,14 +102,14 @@ public class MapPanel extends JPanel {
 	}
 	
 	public void forceSettingsRefresh() {
-		routesPainter.refreshColorList();
+		repaint();
 	}
 	
 	public JXMapKit getMapKit() {
 		return mapKit;
 	}
 	
-	public RoutesPainter getRoutesPainter() {
+	public TracksPainter getRoutesPainter() {
 		return routesPainter;
 	}
 }
