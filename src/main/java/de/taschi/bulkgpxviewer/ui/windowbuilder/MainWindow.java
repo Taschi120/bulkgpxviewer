@@ -50,7 +50,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
-import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.geo.GpxFile;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings;
 import de.taschi.bulkgpxviewer.ui.IconHandler;
@@ -193,7 +193,7 @@ public class MainWindow {
 		mapPanel.autoSetZoomAndLocation();
 	}
 	
-	public void startEditMode(GpxViewerTrack trackToEdit) {
+	public void startEditMode(GpxFile trackToEdit) {
 		sidePanel.setEnabled(false);
 		if (editingPanel == null) {
 			editingPanel = new EditingPanel();

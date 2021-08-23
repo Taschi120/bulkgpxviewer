@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.Collections;
 import java.util.List;
 
-import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.geo.GpxFile;
 import de.taschi.bulkgpxviewer.settings.ColorConverter;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.settings.dto.SettingsColor;
@@ -34,7 +34,7 @@ public class TrackColorUtil {
 	 * @param track
 	 * @return
 	 */
-	public Color getColorForTrack(GpxViewerTrack track) {
+	public Color getColorForTrack(GpxFile track) {
 		List<SettingsColor> settingColors = Collections.unmodifiableList(SettingsManager.getInstance().getSettings().getRouteColors());
 		List<Color> colors = ColorConverter.convertToAwt(settingColors);
 		

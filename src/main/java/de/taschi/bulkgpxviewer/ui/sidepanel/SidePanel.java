@@ -49,7 +49,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
-import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.geo.GpxFile;
 import de.taschi.bulkgpxviewer.ui.Messages;
 
 public class SidePanel extends JPanel {
@@ -97,11 +97,11 @@ public class SidePanel extends JPanel {
 			rootNode.removeAllChildren();
 		}
 		
-		List<GpxViewerTrack> tracks = LoadedFileManager.getInstance().getLoadedTracks();
+		List<GpxFile> tracks = LoadedFileManager.getInstance().getLoadedTracks();
 		
 		cullUnnecessaryTrackNodes(tracks);
 		
-		for (GpxViewerTrack track : tracks) {
+		for (GpxFile track : tracks) {
 			DefaultMutableTreeNode yearNode = makeOrUpdateYearNode(track, rootNode);
 			makeOrUpdateTrackNode(track, yearNode);
 		}
@@ -116,8 +116,8 @@ public class SidePanel extends JPanel {
 	/**
 	 * Removes all track nodes which do not correspond with currently loaded files
 	 */
-	private void cullUnnecessaryTrackNodes(List<GpxViewerTrack> loadedTracks) {
-		Set<Path> loadedTrackPaths = loadedTracks.stream().map(GpxViewerTrack::getFileName).collect(Collectors.toSet());
+	private void cullUnnecessaryTrackNodes(List<GpxFile> loadedTracks) {
+		Set<Path> loadedTrackPaths = loadedTracks.stream().map(GpxFile::getFileName).collect(Collectors.toSet());
 		Set<Path> pathsInTree = new HashSet<Path>(trackNodes.keySet());
 		
 		for(Path p : pathsInTree) {
@@ -130,7 +130,7 @@ public class SidePanel extends JPanel {
 		}
 	}
 
-	private DefaultMutableTreeNode makeOrUpdateYearNode(GpxViewerTrack track, DefaultMutableTreeNode parent) {
+	private DefaultMutableTreeNode makeOrUpdateYearNode(GpxFile track, DefaultMutableTreeNode parent) {
 		DefaultMutableTreeNode yearNode;
 		Optional<Instant> startedAt = track.getStartedAt();
 		
@@ -158,7 +158,7 @@ public class SidePanel extends JPanel {
 		return yearNode;
 	}
 
-	private void makeOrUpdateTrackNode(GpxViewerTrack track, DefaultMutableTreeNode parent) {
+	private void makeOrUpdateTrackNode(GpxFile track, DefaultMutableTreeNode parent) {
 		GpxFileTreeNode result = trackNodes.get(track.getFileName());
 		if (result == null) {
 			LOG.debug("Making new tree node for {}", track.getFileName().toString());

@@ -43,7 +43,7 @@ import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
 
-public class GpxViewerTrack {
+public class GpxFile {
 	
 	private GPX gpx;
 	
@@ -52,7 +52,7 @@ public class GpxViewerTrack {
 	private List<WayPoint> allWayPoints;
 	private List<GeoPosition> allGeoPositions;
 		
-	public GpxViewerTrack(Path fileName, GPX gpx) {
+	public GpxFile(Path fileName, GPX gpx) {
 		this.fileName = fileName;
 		this.gpx = gpx;
 		
@@ -149,8 +149,8 @@ public class GpxViewerTrack {
 	}
 
 	public boolean equals(Object o) {
-		if (o instanceof GpxViewerTrack) {
-			var otherGpx = ((GpxViewerTrack) o).getGpx();
+		if (o instanceof GpxFile) {
+			var otherGpx = ((GpxFile) o).getGpx();
 			return gpx.equals(otherGpx);
 		}
 		return false;

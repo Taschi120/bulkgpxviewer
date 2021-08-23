@@ -14,7 +14,7 @@ import javax.swing.SwingUtilities;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.GeoPosition;
 
-import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.geo.GpxFile;
 import io.jenetics.jpx.WayPoint;
 import lombok.extern.log4j.Log4j2;
 
@@ -32,7 +32,7 @@ public class MapSelectionHandler extends MouseAdapter {
 	private final JXMapViewer target;
 	
 	private boolean active = false;
-	private GpxViewerTrack track = null;
+	private GpxFile track = null;
 	
 	/** currently selected points */
 	private Set<WayPoint> selectedPoints = new HashSet<WayPoint>();
@@ -112,7 +112,7 @@ public class MapSelectionHandler extends MouseAdapter {
 	 * Activates this listener
 	 * @param track the track which is being edited
 	 */
-	public void activate(GpxViewerTrack track) {
+	public void activate(GpxFile track) {
 		log.info("Entering edit mode for track {}", track.getFileName());
 		this.track = track;
 		active = true;

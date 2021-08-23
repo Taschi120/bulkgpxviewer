@@ -37,7 +37,7 @@ import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.geo.GpxFile;
 import io.jenetics.jpx.GPX;
 
 /**
@@ -49,11 +49,11 @@ public class LoadedFileManager {
 
 	private static LoadedFileManager INSTANCE;
 
-	private final List<GpxViewerTrack> loadedTracks = new ArrayList<>();
+	private final List<GpxFile> loadedTracks = new ArrayList<>();
 	
 	private final List<LoadedFileChangeListener> changeListeners = new LinkedList<>();
 	
-	private GpxViewerTrack highlightedTrack = null;
+	private GpxFile highlightedTrack = null;
 
 	private Path loadedDirectory;
 
@@ -73,7 +73,7 @@ public class LoadedFileManager {
 		
 		try {
 			var gpx = GPX.read(file);		
-			var track = new GpxViewerTrack(file, gpx);
+			var track = new GpxFile(file, gpx);
 			loadedTracks.add(track);
 			
 			LOG.info("GPX file " + file.toString() + " has been successfully loaded."); //$NON-NLS-1$ //$NON-NLS-2$
@@ -135,15 +135,15 @@ public class LoadedFileManager {
 	 * get all currently loaded tracks
 	 * @return
 	 */
-	public synchronized List<GpxViewerTrack> getLoadedTracks() {
+	public synchronized List<GpxFile> getLoadedTracks() {
 		return Collections.unmodifiableList(loadedTracks);
 	}
 	
-	public synchronized void setHighlightedTrack(GpxViewerTrack track) {
+	public synchronized void setHighlightedTrack(GpxFile track) {
 		highlightedTrack = track;
 	}
 	
-	public synchronized GpxViewerTrack getHighlightedTrack() {
+	public synchronized GpxFile getHighlightedTrack() {
 		return highlightedTrack;
 	}
 

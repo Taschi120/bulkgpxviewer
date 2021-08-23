@@ -39,7 +39,7 @@ import org.jxmapviewer.viewer.GeoPosition;
 
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
 import de.taschi.bulkgpxviewer.geo.GpxToJxMapper;
-import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.geo.GpxFile;
 import de.taschi.bulkgpxviewer.ui.TrackColorUtil;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
@@ -56,7 +56,7 @@ public class TracksPainter implements Painter<JXMapViewer>
 	
     private boolean antiAlias = true;
     
-    private Supplier<Collection<GpxViewerTrack>> provider = getAllRouteProvider();
+    private Supplier<Collection<GpxFile>> provider = getAllRouteProvider();
     
     /**
      * @param track the track
@@ -65,11 +65,11 @@ public class TracksPainter implements Painter<JXMapViewer>
     {
     }
 
-    public Supplier<Collection<GpxViewerTrack>> getAllRouteProvider() {
+    public Supplier<Collection<GpxFile>> getAllRouteProvider() {
 		return () -> LoadedFileManager.getInstance().getLoadedTracks();
 	}
     
-    public Supplier<Collection<GpxViewerTrack>> getSingleTrackProvider(GpxViewerTrack track) {
+    public Supplier<Collection<GpxFile>> getSingleTrackProvider(GpxFile track) {
     	return () -> Arrays.asList(track);
     }
 
@@ -85,7 +85,7 @@ public class TracksPainter implements Painter<JXMapViewer>
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         }
 
-        for (GpxViewerTrack track: provider.get()) {
+        for (GpxFile track: provider.get()) {
 	        // do the drawing
 	        g.setColor(Color.BLACK);
 	        g.setStroke(new BasicStroke(4));
@@ -103,7 +103,7 @@ public class TracksPainter implements Painter<JXMapViewer>
         g.dispose();
     }
 	
-	private void drawGpxFile(Graphics2D g, JXMapViewer map, GpxViewerTrack gpxViewerTrack) {
+	private void drawGpxFile(Graphics2D g, JXMapViewer map, GpxFile gpxViewerTrack) {
 		for(Track track: gpxViewerTrack.getGpx().getTracks()) {
 			drawTrack(g, map, track);
 		}
@@ -149,7 +149,7 @@ public class TracksPainter implements Painter<JXMapViewer>
      * JXMapViewer or JXMapKit instance.
      * @param provider
      */
-    public void setProvider(Supplier<Collection<GpxViewerTrack>> provider) {
+    public void setProvider(Supplier<Collection<GpxFile>> provider) {
     	this.provider = provider;
     }
 }

@@ -30,7 +30,7 @@ import java.util.Optional;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.geo.GpxFile;
 import de.taschi.bulkgpxviewer.math.DurationCalculator;
 import de.taschi.bulkgpxviewer.math.DurationFormatter;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
@@ -38,7 +38,7 @@ import de.taschi.bulkgpxviewer.settings.dto.UnitSystem;
 import de.taschi.bulkgpxviewer.ui.Messages;
 
 /**
- * A {@link JTree} node representing a {@link GpxViewerTrack} in the {@link SidePanel}.
+ * A {@link JTree} node representing a {@link GpxFile} in the {@link SidePanel}.
  */
 public class GpxFileTreeNode extends DefaultMutableTreeNode {
 	
@@ -46,14 +46,14 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode {
 
 	private static final DateTimeFormatter dtf = DateTimeFormatter.RFC_1123_DATE_TIME;
 		
-	private final GpxViewerTrack track;
+	private final GpxFile track;
 	
 	private DefaultMutableTreeNode startDateNode;
 	private DefaultMutableTreeNode trackLengthNode;
 	private DefaultMutableTreeNode durationNode;
 	private DefaultMutableTreeNode avgSpeedNode;
 		
-	public GpxFileTreeNode(GpxViewerTrack track) {
+	public GpxFileTreeNode(GpxFile track) {
 		super(track.getFileName().getFileName());
 
 		this.track = track;
@@ -133,7 +133,7 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode {
 		return String.format(Messages.getString("GpxFileTreeNode.Duration"), formattedDuration);//$NON_NLS-1$
 	}
 
-	public GpxViewerTrack getTrack() {
+	public GpxFile getTrack() {
 		return track;
 	}
 	

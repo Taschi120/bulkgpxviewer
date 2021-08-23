@@ -17,7 +17,7 @@ import org.jxmapviewer.painter.Painter;
 import org.jxmapviewer.viewer.GeoPosition;
 
 import de.taschi.bulkgpxviewer.geo.GpxToJxMapper;
-import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.geo.GpxFile;
 import io.jenetics.jpx.WayPoint;
 import lombok.extern.log4j.Log4j2;
 
@@ -38,7 +38,7 @@ public class SelectionPainter implements Painter<JXMapViewer>
 	
     private boolean antiAlias = true;
     
-    private GpxViewerTrack track = null;
+    private GpxFile track = null;
     
     private List<WayPoint> selection = Collections.<WayPoint>emptyList();
     private List<GeoPosition> selectionAsGeoPositions = Collections.<GeoPosition>emptyList();
@@ -114,7 +114,7 @@ public class SelectionPainter implements Painter<JXMapViewer>
     			map);
 	}
 	
-	public void setTrack(GpxViewerTrack track) {
+	public void setTrack(GpxFile track) {
 		this.track = track;
 	}
 

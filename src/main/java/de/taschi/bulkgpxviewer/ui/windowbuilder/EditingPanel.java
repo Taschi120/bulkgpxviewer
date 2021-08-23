@@ -19,12 +19,12 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.SoftBevelBorder;
 
-import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.geo.GpxFile;
 import io.jenetics.jpx.WayPoint;
 
 public class EditingPanel extends JPanel {
 	
-	private GpxViewerTrack track;
+	private GpxFile track;
 	private List<WayPoint> selection = Collections.<WayPoint>emptyList();
 
 	private static final long serialVersionUID = 6937011900054488316L;
@@ -179,7 +179,7 @@ public class EditingPanel extends JPanel {
 		updateLabels();
 	}
 	
-	public void setTrack(GpxViewerTrack track) {
+	public void setTrack(GpxFile track) {
 		this.track = track;
 	}
 

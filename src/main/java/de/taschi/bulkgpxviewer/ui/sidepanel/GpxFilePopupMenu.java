@@ -35,7 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.taschi.bulkgpxviewer.Application;
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
-import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.geo.GpxFile;
 import de.taschi.bulkgpxviewer.ui.IconHandler;
 import de.taschi.bulkgpxviewer.ui.Messages;
 import lombok.extern.log4j.Log4j2;
@@ -45,7 +45,7 @@ public class GpxFilePopupMenu extends JPopupMenu {
 	
 	private static final long serialVersionUID = -3214637893458879098L;
 	
-	private GpxViewerTrack track;
+	private GpxFile track;
 	private GpxFileTreeNode node;
 	
 	private JMenuItem edit;
