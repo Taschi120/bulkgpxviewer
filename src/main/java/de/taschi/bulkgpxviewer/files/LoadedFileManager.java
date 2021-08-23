@@ -33,6 +33,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.swing.SwingUtilities;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -74,22 +76,13 @@ public class LoadedFileManager {
 		LOG.info("Loading GPX file " + file.toString()); //$NON-NLS-1$
 		
 		try {
-			List<WayPoint> waypoints = GPX.read(file).tracks()
-					.flatMap(Track::segments)
-					.flatMap(TrackSegment::points)
-					.collect(Collectors.toList());
-						
-			GpxViewerTrack track = new GpxViewerTrack(waypoints);
-			track.setFileName(file);
-			if (!waypoints.isEmpty()) {
-				track.setStartedAt(waypoints.get(0).getInstant().orElse(null));
-			}
-			
+			var gpx = GPX.read(file);		
+			var track = new GpxViewerTrack(file, gpx);
 			loadedTracks.add(track);
 			
 			LOG.info("GPX file " + file.toString() + " has been successfully loaded."); //$NON-NLS-1$ //$NON-NLS-2$
 			
-			new Thread(() -> fireChangeListeners()).start();
+			SwingUtilities.invokeLater(() -> fireChangeListeners());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

@@ -34,9 +34,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -51,11 +48,8 @@ import javax.swing.JSplitPane;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jxmapviewer.JXMapKit;
-import org.jxmapviewer.viewer.GeoPosition;
 
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
-import de.taschi.bulkgpxviewer.geo.GpsBoundingBox;
 import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings;
@@ -173,7 +167,6 @@ public class MainWindow {
 		aboutMenuItem.setIcon(IconHandler.loadIcon("question-line"));
 		mnNewMenu_1.add(aboutMenuItem);
 		
-		
 		// TODO move mapSelectionHandler into MapPanel
 		mapSelectionHandler = new MapSelectionHandler(mapPanel.getMapKit().getMainMap());
 		mapPanel.getMapKit().getMainMap();
@@ -195,7 +188,7 @@ public class MainWindow {
         	setCrawlDirectory(new File(lastUsedDirectory));
         }
 		
-		setZoomAndLocation();
+		mapPanel.autoSetZoomAndLocation();
 	}
 	
 	public void startEditMode(GpxViewerTrack trackToEdit) {
@@ -239,31 +232,6 @@ public class MainWindow {
 			frame.setIconImage(image);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-
-	private void setZoomAndLocation() {
-		List<GpxViewerTrack> tracks = LoadedFileManager.getInstance().getLoadedTracks();
-		
-		JXMapKit mapKit = mapPanel.getMapKit();
-		
-		if (tracks.isEmpty()) {
-			// default location
-			mapKit.setZoom(8);
-			mapKit.setAddressLocation(new GeoPosition(50.11, 8.68));
-		} else {
-			GpsBoundingBox bb = new GpsBoundingBox();
-			Set<GeoPosition> allPositions = new LinkedHashSet<GeoPosition>();
-			
-			for(List<GeoPosition> track: tracks) {
-				allPositions.addAll(track);
-				for(GeoPosition pos : track) {
-					bb.clamp(pos);
-				}
-			}
-			
-			mapKit.setAddressLocation(new GeoPosition(bb.getCenterLat(), bb.getCenterLong()));
-			mapKit.setZoom(8);
 		}
 	}
 

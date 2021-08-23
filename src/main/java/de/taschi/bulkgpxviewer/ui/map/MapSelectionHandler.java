@@ -76,17 +76,21 @@ public class MapSelectionHandler extends MouseAdapter {
 	}
 
 	private WayPoint getNearestWaypointToMouseCoords(Point2D mouse) {
-		if (track.isEmpty()) {
+		
+		var points = track.getAllWayPoints();
+		var geoPositions = track.getAllGeoPositions();
+		
+		if (points.isEmpty()) {
 			log.warn("Track is empty, cannot find nearest point");
 			return null;
 		}
 		
-		WayPoint nearestWaypoint = track.getWaypoint(0);
+		WayPoint nearestWaypoint = points.get(0);
 		double nearestDistance = Double.MAX_VALUE;
 		
-		for (int i = 0; i < track.size(); i++) {
-			WayPoint comparison = track.getWaypoint(i);
-			GeoPosition position = track.get(i);
+		for (int i = 0; i < points.size(); i++) {
+			WayPoint comparison = points.get(i);
+			GeoPosition position = geoPositions.get(i);
 			
 			var point = target.convertGeoPositionToPoint(position);
 			double distance = point.distance(mouse);

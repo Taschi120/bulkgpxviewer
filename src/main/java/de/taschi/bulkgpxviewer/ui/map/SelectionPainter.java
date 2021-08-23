@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -122,7 +121,8 @@ public class SelectionPainter implements Painter<JXMapViewer>
 	public void setSelectionFromWayPoints(Set<WayPoint> selection) {
 		log.info("Updating selection, {} items now selected", selection.size());
 		this.selection = new ArrayList<>(selection);
-		this.selection.sort((o1, o2) -> track.indexOfWayPoint(o2) - track.indexOfWayPoint(o1));
+		this.selection.sort((o1, o2) -> 
+			track.indexOfWayPoint(o2).orElseThrow().compareTo(track.indexOfWayPoint(o1).orElseThrow()));
 		
 		selectionAsGeoPositions = this.selection.stream()
 				.map(GpxToJxMapper.getInstance()::waypointToGeoPosition)

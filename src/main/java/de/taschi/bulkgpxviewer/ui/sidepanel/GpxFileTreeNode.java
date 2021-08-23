@@ -25,12 +25,14 @@ package de.taschi.bulkgpxviewer.ui.sidepanel;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import de.taschi.bulkgpxviewer.geo.DurationFormatter;
 import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.math.DurationCalculator;
+import de.taschi.bulkgpxviewer.math.DurationFormatter;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.settings.dto.UnitSystem;
 import de.taschi.bulkgpxviewer.ui.Messages;
@@ -90,26 +92,25 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode {
 	}
 	
 	private void makeOrUpdateStartDateNode() {
-		Instant startedAt = track.getStartedAt();
-		if (startedAt != null) {
-			if (startDateNode != null) {
-				// update existing node
-				startDateNode.setUserObject(getStartDateLabel(startedAt));
-			} else {
-				// create new node
-				startDateNode = new DefaultMutableTreeNode(getStartDateLabel(startedAt));
-				add(startDateNode);
-			}
-		} else if (startDateNode != null) {
-			// remove existing node
-			this.remove(startDateNode);
-			startDateNode = null;
+		var startedAt = track.getStartedAt();
+		
+		if (startDateNode != null) {
+			// update existing node
+			startDateNode.setUserObject(getStartDateLabel(startedAt));
+		} else {
+			// create new node
+			startDateNode = new DefaultMutableTreeNode(getStartDateLabel(startedAt));
+			add(startDateNode);
 		}
 	}
 	
-	private String getStartDateLabel(Instant startedAt) {
+	private String getStartDateLabel(Optional<Instant> startedAt) {
+		var formattedDate = startedAt
+				.map(it -> it.atZone(ZoneId.systemDefault()).format(dtf))
+				.orElse("unknown");
+		
 		return Messages.getString("SidePanel.StartedAt")  //$NON-NLS-1$
-				+ startedAt.atZone(ZoneId.systemDefault()).format(dtf);
+				+ formattedDate;
 	}
 	
 	private String getTrackLengthLabel() {
@@ -125,8 +126,11 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode {
 	}
 	
 	private String getDurationLabel() {
-		return String.format(Messages.getString("GpxFileTreeNode.Duration"), //$NON_NLS-1$
-				DurationFormatter.getInstance().format(track.getTotalDuration())); 
+		var formattedDuration = DurationCalculator.getInstance().getRecordedDurationForGpxFile(track.getGpx())
+				.map(DurationFormatter.getInstance()::format)
+				.orElse("unknown");
+				
+		return String.format(Messages.getString("GpxFileTreeNode.Duration"), formattedDuration);//$NON_NLS-1$
 	}
 
 	public GpxViewerTrack getTrack() {

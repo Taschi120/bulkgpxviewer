@@ -8,23 +8,19 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import org.jxmapviewer.viewer.GeoPosition;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.SoftBevelBorder;
 
 import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
 import io.jenetics.jpx.WayPoint;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.SoftBevelBorder;
-import javax.swing.border.BevelBorder;
 
 public class EditingPanel extends JPanel {
 	
@@ -201,7 +197,8 @@ public class EditingPanel extends JPanel {
 			firstSelectedPointLabel.setText(makeDescriptorString(selection.get(0)));
 			secondSelectedPointLabel.setText("");
 		} else if (size == 2) {
-			selection.sort((o1, o2) -> track.indexOfWayPoint(o2) - track.indexOfWayPoint(o1));
+			selection.sort((o1, o2) -> 
+				track.indexOfWayPoint(o2).orElseThrow().compareTo(track.indexOfWayPoint(o1).orElseThrow()));
 			firstSelectedPointLabel.setText(makeDescriptorString(selection.get(0)));
 			secondSelectedPointLabel.setText(makeDescriptorString(selection.get(1)));
 		}

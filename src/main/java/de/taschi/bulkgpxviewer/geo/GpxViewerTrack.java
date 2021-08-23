@@ -27,47 +27,51 @@ import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
+import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Spliterator;
-import java.util.function.Consumer;
-import java.util.function.IntFunction;
-import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.jxmapviewer.viewer.GeoPosition;
 
+import de.taschi.bulkgpxviewer.math.DurationCalculator;
+import de.taschi.bulkgpxviewer.math.RouteLengthCalculator;
+import de.taschi.bulkgpxviewer.math.UnitConverter;
+import de.taschi.bulkgpxviewer.settings.dto.UnitSystem;
+import io.jenetics.jpx.GPX;
+import io.jenetics.jpx.Track;
+import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class GpxViewerTrack implements List<GeoPosition> {
+public class GpxViewerTrack {
 	
-	private List<WayPoint> waypoints;
-	private List<GeoPosition> internal;
+	private GPX gpx;
 	
-	private Instant startedAt;
 	private Path fileName;
-
-	public GpxViewerTrack() {
-		internal = new ArrayList<>();
+	
+	private List<WayPoint> allWayPoints;
+	private List<GeoPosition> allGeoPositions;
+		
+	public GpxViewerTrack(Path fileName, GPX gpx) {
+		this.fileName = fileName;
+		this.gpx = gpx;
+		
+		updateCachedFields();
 	}
 	
-	public GpxViewerTrack(List<WayPoint> waypoints) {
-		this.waypoints = Collections.unmodifiableList(waypoints);
+	private void updateCachedFields() {
+		allWayPoints = gpx.getTracks().stream()
+				.flatMap(Track::segments)
+				.flatMap(TrackSegment::points)
+				.collect(Collectors.toUnmodifiableList());
 		
-		internal = waypoints.stream()
-				.map(it -> GpxToJxMapper.getInstance().waypointToGeoPosition(it))
+		allGeoPositions = allWayPoints.stream()
+				.map(GpxToJxMapper.getInstance()::waypointToGeoPosition)
 				.collect(Collectors.toUnmodifiableList());
 	}
-	
+
 	/**
 	 * Determine route length in km.
 	 * @return
@@ -84,58 +88,34 @@ public class GpxViewerTrack implements List<GeoPosition> {
 		return new BigDecimal(UnitConverter.kilometersToMiles(getPreciseRouteLengthInKilometers())).setScale(1, RoundingMode.HALF_UP);
 	}
 
-	
-	public Duration getTotalDuration() {
-		if(waypoints.size() < 2) {
-			log.debug("Time calculation impossible: List has fewer than 2 waypoints");
-			return Duration.ZERO;
-		}
-		
-		Instant start = waypoints.get(0).getInstant().orElse(null);
-		Instant end = waypoints.get(waypoints.size() - 1).getInstant().orElse(null);
-	
-		if (start == null || end == null) {
-			log.debug("Time calculation impossible: GPX does not contain timestamps");
-			return Duration.ZERO;
-		}
-		
-		Duration duration = Duration.between(start, end);
-		return duration;
-	}
-	
 	/**
-	 * Get WayPoint #i
-	 * @see get(int)
-	 * @param i
+	 * use appropriate functions in DurationCalculator instead
 	 * @return
 	 */
-	public WayPoint getWaypoint(int i) {
-		return waypoints.get(i);
+	@Deprecated
+	public Optional<Duration> getTotalDuration() {
+		return DurationCalculator.getInstance().getRecordedDurationForGpxFile(gpx);
 	}
 	
+	/** use appropriate functions in RouteLengthCalculator instead */
+	@Deprecated
 	private double getPreciseRouteLengthInKilometers() {
-		if (internal.size() < 2) {
-			return 0;
-		}
-		
-		double result = 0;
-		
-		for (int i = 0; i < internal.size() - 1; i++) {
-			GeoPosition here = get(i);
-			GeoPosition there = get(i + 1);
-			
-			result += HaversineCalculator.getDistance(here, there);
-		}
-		
-		return result;
+		return RouteLengthCalculator.getInstance().getTotalDistance(gpx);
 	}
+	
 	
 	public double getPreciseSpeedInKph() {
-		if (internal.size() < 2) {
-			return Double.NaN;
+		var distance = RouteLengthCalculator.getInstance().getTotalDistance(gpx, UnitSystem.METRIC);
+		var duration = DurationCalculator.getInstance().getRecordedDurationForGpxFile(gpx);
+		
+		if(duration.isPresent()) {
+			var durationInSec = getTotalDuration().get().getSeconds();
+			if (durationInSec != 0) {
+				return distance / durationInSec * 3600;
+			}
 		}
 		
-		return (getPreciseRouteLengthInKilometers() / getTotalDuration().getSeconds()) * 3600;
+		return Double.NaN;
 	}
 	
 	public BigDecimal getSpeedInKph() {
@@ -146,167 +126,92 @@ public class GpxViewerTrack implements List<GeoPosition> {
 		return BigDecimal.valueOf(
 				UnitConverter.kilometersToMiles(getPreciseSpeedInKph()))
 				.setScale(1, RoundingMode.HALF_UP);
+	}
 
+	public Optional<Instant> getStartedAt() {
+		
+		for(var track : gpx.getTracks()) {
+			for(var segment : track.getSegments()) {
+				for(var point : segment.getPoints()) {
+					
+					var timestamp = point.getTime();
+					
+					if (timestamp.isPresent()) {
+						return timestamp.map(ZonedDateTime::toInstant);
+					}
+				}
+			}
+		}
+		
+		return Optional.empty();
 	}
 	
-	// ======================================================================//
-	// Eclipse auto-generated getters and setters from here on.
-	// ======================================================================//
-
-	public Instant getStartedAt() {
-		return startedAt;
-	}
-
-	public void setStartedAt(Instant startedAt) {
-		this.startedAt = startedAt;
-	}
-
 	public Path getFileName() {
 		return fileName;
 	}
 
-	public void setFileName(Path fileName) {
-		this.fileName = fileName;
-	}
-	
-	// ======================================================================//
-	// Eclipse auto-generated proxy methods from here on                     //
-	// Some functions have been edited to prevent any modification           //
-	// ======================================================================//
-
-	public void forEach(Consumer<? super GeoPosition> action) {
-		internal.forEach(action);
-	}
-
-	public int size() {
-		return internal.size();
-	}
-
-	public boolean isEmpty() {
-		return internal.isEmpty();
-	}
-
-	public boolean contains(Object o) {
-		return internal.contains(o);
-	}
-
-	public Iterator<GeoPosition> iterator() {
-		return internal.iterator();
-	}
-
-	public Object[] toArray() {
-		return internal.toArray();
-	}
-
-	public <T> T[] toArray(T[] a) {
-		return internal.toArray(a);
-	}
-
-	public boolean add(GeoPosition e) {
-		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
-	}
-
-	public boolean remove(Object o) {
-		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
-	}
-
-	public boolean containsAll(Collection<?> c) {
-		return internal.containsAll(c);
-	}
-
-	public boolean addAll(Collection<? extends GeoPosition> c) {
-		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
-	}
-
-	public boolean addAll(int index, Collection<? extends GeoPosition> c) {
-		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
-	}
-
-	public boolean removeAll(Collection<?> c) {
-		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
-	}
-
-	public boolean retainAll(Collection<?> c) {
-		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
-	}
-
-	public void replaceAll(UnaryOperator<GeoPosition> operator) {
-		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
-	}
-
-	public <T> T[] toArray(IntFunction<T[]> generator) {
-		return internal.toArray(generator);
-	}
-
-	public void sort(Comparator<? super GeoPosition> c) {
-		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
-	}
-
-	public void clear() {
-		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
-	}
-
 	public boolean equals(Object o) {
-		return internal.equals(o);
+		if (o instanceof GpxViewerTrack) {
+			var otherGpx = ((GpxViewerTrack) o).getGpx();
+			return gpx.equals(otherGpx);
+		}
+		return false;
 	}
 
 	public int hashCode() {
-		return internal.hashCode();
+		return gpx.hashCode();
+	}
+	
+	public GPX getGpx() {
+		return gpx;
 	}
 
-	public GeoPosition get(int index) {
-		return internal.get(index);
+	/**
+	 * Returns a list of all waypoints in this GPX file, without any guarantees as to order.
+	 * @return
+	 */
+	public List<WayPoint> getAllWayPoints() {
+		return allWayPoints;
 	}
 
-	public GeoPosition set(int index, GeoPosition element) {
-		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
+	/**
+	 * Returns a list of all GeoPositions in this GPX file. Order will be consistent with getAllWayPoints, as long as
+	 * the model is not changed in the interim.
+	 * @return
+	 */
+	public List<GeoPosition> getAllGeoPositions() {
+		return allGeoPositions;
 	}
 
-	public void add(int index, GeoPosition element) {
-		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
-	}
-
-	public boolean removeIf(Predicate<? super GeoPosition> filter) {
-		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
-	}
-
-	public GeoPosition remove(int index) {
-		throw new UnsupportedOperationException("List is read-only"); //$NON-NLS-1$
-	}
-
-	public int indexOf(Object o) {
-		return internal.indexOf(o);
-	}
-
-	public int lastIndexOf(Object o) {
-		return internal.lastIndexOf(o);
-	}
-
-	public ListIterator<GeoPosition> listIterator() {
-		return internal.listIterator();
-	}
-
-	public ListIterator<GeoPosition> listIterator(int index) {
-		return internal.listIterator(index);
-	}
-
-	public List<GeoPosition> subList(int fromIndex, int toIndex) {
-		return internal.subList(fromIndex, toIndex);
-	}
-
-	public Spliterator<GeoPosition> spliterator() {
-		return internal.spliterator();
-	}
-
-	public Stream<GeoPosition> stream() {
-		return internal.stream();
-	}
-
-	public Stream<GeoPosition> parallelStream() {
-		return internal.parallelStream();
-	}
-
-	public int indexOfWayPoint(WayPoint o) {
-		return waypoints.indexOf(o);
+	/**
+	 * Find the position of a WayPoint inside the data model
+	 * @param wayPoint
+	 * @return Optional<WaypointIndex> if found, empty optional otherwise.
+	 */
+	public Optional<WaypointIndex> indexOfWayPoint(WayPoint wayPoint) {
+		var tracks = gpx.getTracks();
+		
+		for(var trackId = 0; trackId < tracks.size(); trackId ++) {
+			var segments = tracks.get(trackId).getSegments();
+			
+			for(var segmentId = 0; segmentId < segments.size(); segmentId ++) {
+				var points = segments.get(segmentId).getPoints();
+				
+				for(var pointId = 0; pointId < points.size(); pointId ++) {
+					if (points.get(pointId).equals(wayPoint)) {
+						
+						return Optional.of(
+								WaypointIndex.builder()
+									.gpx(gpx)
+									.trackId(trackId)
+									.segmentId(segmentId)
+									.waypointId(pointId)
+									.build());
+					}
+				}
+			}
+		}
+		
+		return Optional.empty();
 	}
 }

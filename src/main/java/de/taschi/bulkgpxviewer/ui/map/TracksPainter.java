@@ -30,16 +30,19 @@ import java.awt.RenderingHints;
 import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.painter.Painter;
 import org.jxmapviewer.viewer.GeoPosition;
 
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
+import de.taschi.bulkgpxviewer.geo.GpxToJxMapper;
 import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
 import de.taschi.bulkgpxviewer.ui.TrackColorUtil;
+import io.jenetics.jpx.Track;
+import io.jenetics.jpx.TrackSegment;
 
 /**
  * Paints a route. This class has been shamelessly stolen from the JXMapViewer samples 
@@ -71,57 +74,68 @@ public class TracksPainter implements Painter<JXMapViewer>
     }
 
 	@Override
-    public void paint(Graphics2D g, JXMapViewer map, int w, int h)
-    {
+    public void paint(Graphics2D g, JXMapViewer map, int w, int h) {
         g = (Graphics2D) g.create();
 
         // convert from viewport to world bitmap
         Rectangle rect = map.getViewportBounds();
         g.translate(-rect.x, -rect.y);
 
-        if (antiAlias)
+        if (antiAlias) {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        }
 
         for (GpxViewerTrack track: provider.get()) {
 	        // do the drawing
 	        g.setColor(Color.BLACK);
 	        g.setStroke(new BasicStroke(4));
 	
-	        drawRoute(g, map, track);
+	        drawGpxFile(g, map, track);
 	
 	    	Color color = TrackColorUtil.getInstance().getColorForTrack(track);
 	        // do the drawing again
 	        g.setColor(color);
 	        g.setStroke(new BasicStroke(2));
 	
-	        drawRoute(g, map, track);
+	        drawGpxFile(g, map, track);
         }
 
         g.dispose();
     }
+	
+	private void drawGpxFile(Graphics2D g, JXMapViewer map, GpxViewerTrack gpxViewerTrack) {
+		for(Track track: gpxViewerTrack.getGpx().getTracks()) {
+			drawTrack(g, map, track);
+		}
+	}
 
-    /**
-     * @param g the graphics object
-     * @param map the map
-     */
-    private void drawRoute(Graphics2D g, JXMapViewer map, List<GeoPosition> track)
-    {
+    private void drawTrack(Graphics2D g, JXMapViewer map, Track track) {
+		for(TrackSegment segment : track.getSegments()) {
+			drawSegment(g, map, segment);
+		}
+	}
+
+    private void drawSegment(Graphics2D g, JXMapViewer map, TrackSegment segment) {
         int lastX = 0;
         int lastY = 0;
         
         boolean first = true;
+        
+        var wayPoints = segment.getPoints();
+        
+        // FIXME this is a horrible performance drain, refactor ASAP
+        var geoPositions = wayPoints.stream()
+        		.map(GpxToJxMapper.getInstance()::waypointToGeoPosition)
+        		.collect(Collectors.toList());
 
-        for (GeoPosition gp : track)
-        {
+        for (GeoPosition gp : geoPositions) {
             // convert geo-coordinate to world bitmap pixel
             Point2D pt = map.getTileFactory().geoToPixel(gp, map.getZoom());
 
-            if (first)
-            {
+            if (first) {
                 first = false;
             }
-            else
-            {
+            else {
                 g.drawLine(lastX, lastY, (int) pt.getX(), (int) pt.getY());
             }
 

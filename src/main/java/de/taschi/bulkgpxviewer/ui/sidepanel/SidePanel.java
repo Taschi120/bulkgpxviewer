@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -131,9 +132,10 @@ public class SidePanel extends JPanel {
 
 	private DefaultMutableTreeNode makeOrUpdateYearNode(GpxViewerTrack track, DefaultMutableTreeNode parent) {
 		DefaultMutableTreeNode yearNode;
-		Instant startedAt = track.getStartedAt();
-		if (startedAt != null) {
-			ZonedDateTime startDate = startedAt.atZone(ZoneId.systemDefault());
+		Optional<Instant> startedAt = track.getStartedAt();
+		
+		if (startedAt.isPresent()) {
+			ZonedDateTime startDate = startedAt.get().atZone(ZoneId.systemDefault());
 			int year = startDate.getYear();
 			yearNode = yearNodes.get(year);
 			

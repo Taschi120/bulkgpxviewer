@@ -23,9 +23,7 @@ package de.taschi.bulkgpxviewer.ui.map;
  */
 
 import java.awt.BorderLayout;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.JPanel;
 
@@ -37,7 +35,11 @@ import org.jxmapviewer.viewer.TileFactoryInfo;
 
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
 import de.taschi.bulkgpxviewer.geo.GpsBoundingBox;
+import de.taschi.bulkgpxviewer.geo.GpxToJxMapper;
 import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
+import io.jenetics.jpx.GPX;
+import io.jenetics.jpx.Track;
+import io.jenetics.jpx.TrackSegment;
 
 /**
  * A JPanel which wraps the {@link JXMapKit} instance
@@ -94,15 +96,14 @@ public class MapPanel extends JPanel {
 			mapKit.setZoom(8);
 	        mapKit.setAddressLocation(new GeoPosition(50.11, 8.68));
 		} else {
-			GpsBoundingBox bb = new GpsBoundingBox();
-			Set<GeoPosition> allPositions = new LinkedHashSet<GeoPosition>();
+			var bb = new GpsBoundingBox();
 			
-			for(List<GeoPosition> track: tracks) {
-				allPositions.addAll(track);
-				for(GeoPosition pos : track) {
-					bb.clamp(pos);
-				}
-			}
+			tracks.stream().map(GpxViewerTrack::getGpx)
+					.flatMap(GPX::tracks)
+					.flatMap(Track::segments)
+					.flatMap(TrackSegment::points)
+					.map(GpxToJxMapper.getInstance()::waypointToGeoPosition)
+					.forEach(bb::clamp);
 			
 			mapKit.setAddressLocation(new GeoPosition(bb.getCenterLat(), bb.getCenterLong()));
 			mapKit.setZoom(8);
