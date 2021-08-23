@@ -18,7 +18,7 @@ This program is released under GNU GPL 3. See THIRD-PARTY.txt for info on third-
 
 # Building the program
 
-Maven 3.8.1 or higher, Launch4j 3.14 or higher, and a Java Development Kit (JDK) 14 or higher are required. I recommend the JDK distribution from https://adoptopenjdk.net/.
+Maven 3.8.1 or higher, Launch4j 3.14 or higher, and a Java Development Kit (JDK) 14 or higher are required.
 
 To build the program without creating an installer, run `mvn install -Dnsis.disabled=true`.
 
