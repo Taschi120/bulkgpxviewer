@@ -22,6 +22,7 @@ import org.jxmapviewer.viewer.GeoPosition;
 
 import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
 import io.jenetics.jpx.WayPoint;
+import javax.swing.border.EmptyBorder;
 
 public class EditingPanel extends JPanel {
 	
@@ -63,16 +64,18 @@ public class EditingPanel extends JPanel {
 		panel_2.add(btnNewButton_1);
 		
 		JPanel panel_3 = new JPanel();
+		panel_3.setBorder(new EmptyBorder(3, 3, 3, 3));
 		add(panel_3, BorderLayout.CENTER);
 		GridBagLayout gbl_panel_3 = new GridBagLayout();
-		gbl_panel_3.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_panel_3.columnWidths = new int[] {0, 0, 0, 0, 0, 0};
 		gbl_panel_3.rowHeights = new int[] {0, 0, 0};
-		gbl_panel_3.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gbl_panel_3.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0};
 		gbl_panel_3.rowWeights = new double[]{0.0, 0.0, 0.0};
 		panel_3.setLayout(gbl_panel_3);
 		
 		JLabel lblNewLabel = new JLabel("First selected point: ");
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+		gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
 		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNewLabel.gridx = 0;
 		gbc_lblNewLabel.gridy = 0;
@@ -126,6 +129,7 @@ public class EditingPanel extends JPanel {
 		
 		JLabel label2 = new JLabel("Second selected point:");
 		GridBagConstraints gbc_label2 = new GridBagConstraints();
+		gbc_label2.anchor = GridBagConstraints.WEST;
 		gbc_label2.insets = new Insets(0, 0, 5, 5);
 		gbc_label2.gridx = 0;
 		gbc_label2.gridy = 2;
