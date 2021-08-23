@@ -19,6 +19,7 @@ public class RouteLengthCalculator {
 	
 	private RouteLengthCalculator() {
 		// prevent instantiation
+		log.info("Instantiated");
 	}
 	
 	public double getTotalDistance(GPX gpx, UnitSystem system) {

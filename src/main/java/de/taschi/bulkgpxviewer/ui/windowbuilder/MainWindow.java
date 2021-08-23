@@ -76,7 +76,9 @@ public class MainWindow {
 	private String BASE_TITLE = Messages.getString("MainWindow.WindowTitle"); //$NON-NLS-1$
 	private SidePanel sidePanel;
 	
+	@SuppressWarnings("unused")
 	private MainWindowMode currentMode = MainWindowMode.BULK_DISPLAY;
+	
 	private EditingPanel editingPanel = new EditingPanel();
 	private JPanel leftSideRootPanel;
 	private JPanel rightSideRootPanel;

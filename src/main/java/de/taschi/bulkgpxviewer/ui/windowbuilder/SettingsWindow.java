@@ -64,7 +64,7 @@ public class SettingsWindow extends JDialog {
 	private JList<Color> list;
 	
 	private MainWindow mainWindow;
-	private JComboBox unitSystem;
+	private JComboBox<?> unitSystem;
 
 	/**
 	 * Launch the application.
@@ -82,6 +82,7 @@ public class SettingsWindow extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public SettingsWindow(MainWindow mainWindow) {
 		super(mainWindow.getFrame());
 		setTitle(Messages.getString("SettingsWindow.Settings")); //$NON-NLS-1$
@@ -121,7 +122,7 @@ public class SettingsWindow extends JDialog {
 					panel.add(lblNewLabel, gbc_lblNewLabel);
 				}
 				{
-					unitSystem = new JComboBox();
+					unitSystem = new JComboBox<>();
 					unitSystem.setModel(new DefaultComboBoxModel(new String[] {Messages.getString("SettingsWindow.Metric"), Messages.getString("SettingsWindow.Imperial")})); //$NON-NLS-1$ //$NON-NLS-2$
 					GridBagConstraints gbc_unitSystem = new GridBagConstraints();
 					gbc_unitSystem.fill = GridBagConstraints.HORIZONTAL;

@@ -42,9 +42,7 @@ import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
-import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 public class GpxViewerTrack {
 	
 	private GPX gpx;

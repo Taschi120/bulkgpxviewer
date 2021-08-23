@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.swing.SwingUtilities;
 
@@ -40,9 +39,6 @@ import org.apache.logging.log4j.Logger;
 
 import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
 import io.jenetics.jpx.GPX;
-import io.jenetics.jpx.Track;
-import io.jenetics.jpx.TrackSegment;
-import io.jenetics.jpx.WayPoint;
 
 /**
  * Singleton class for access to the loaded files and GPX tracks
