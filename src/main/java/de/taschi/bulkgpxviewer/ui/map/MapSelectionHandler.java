@@ -15,7 +15,6 @@ import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.GeoPosition;
 
 import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
-import de.taschi.bulkgpxviewer.ui.windowbuilder.EditingPanel;
 import io.jenetics.jpx.WayPoint;
 import lombok.extern.log4j.Log4j2;
 

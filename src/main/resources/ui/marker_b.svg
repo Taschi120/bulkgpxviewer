@@ -8,10 +8,10 @@
    version="1.1"
    id="svg5"
    inkscape:version="1.1 (c68e22c387, 2021-05-23)"
-   sodipodi:docname="marker.svg"
-   inkscape:export-filename="E:\Documents\Programme\komoot-map\bulkgpxviewer\src\main\resources\ui\marker24.png"
-   inkscape:export-xdpi="60.959999"
-   inkscape:export-ydpi="60.959999"
+   sodipodi:docname="marker_b.svg"
+   inkscape:export-filename="E:\Documents\Programme\komoot-map\bulkgpxviewer\src\main\resources\ui\marker_b32.png"
+   inkscape:export-xdpi="81.279999"
+   inkscape:export-ydpi="81.279999"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -30,14 +30,14 @@
      showguides="true"
      inkscape:guide-bbox="true"
      inkscape:zoom="11.859035"
-     inkscape:cx="15.473434"
+     inkscape:cx="13.196689"
      inkscape:cy="19.352333"
      inkscape:window-width="1920"
      inkscape:window-height="1017"
      inkscape:window-x="1912"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1">
+     inkscape:current-layer="a8977">
     <sodipodi:guide
        position="0.99999997,9.8661397"
        orientation="-1,0"
@@ -93,5 +93,19 @@
        cx="5"
        cy="5"
        r="3.9999998" />
+    <a
+       id="a8977"
+       transform="translate(-0.02231067,0.06693211)">
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05556px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="2.6772835"
+         y="7.5410147"
+         id="text3119"><tspan
+           sodipodi:role="line"
+           id="tspan9027"
+           x="2.6772835"
+           y="7.5410147">B</tspan></text>
+    </a>
   </g>
 </svg>

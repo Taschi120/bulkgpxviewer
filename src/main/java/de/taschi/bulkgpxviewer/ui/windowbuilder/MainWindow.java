@@ -213,6 +213,7 @@ public class MainWindow {
 		
 		// set up map display
 		mapPanel.getSelectionPainter().setEnabled(true);
+		mapPanel.getSelectionPainter().setTrack(trackToEdit);
 		mapPanel.getRoutesPainter().setProvider(mapPanel.getRoutesPainter().getSingleTrackProvider(trackToEdit));
 		
 		// enable map listener

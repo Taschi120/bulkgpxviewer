@@ -23,6 +23,8 @@ import org.jxmapviewer.viewer.GeoPosition;
 import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
 import io.jenetics.jpx.WayPoint;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.BevelBorder;
 
 public class EditingPanel extends JPanel {
 	
@@ -46,6 +48,7 @@ public class EditingPanel extends JPanel {
 	 * Create the panel.
 	 */
 	public EditingPanel() {
+		setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel = new JPanel();
@@ -73,7 +76,7 @@ public class EditingPanel extends JPanel {
 		gbl_panel_3.rowWeights = new double[]{0.0, 0.0, 0.0};
 		panel_3.setLayout(gbl_panel_3);
 		
-		JLabel lblNewLabel = new JLabel("First selected point: ");
+		JLabel lblNewLabel = new JLabel("Point A:");
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
 		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
@@ -127,7 +130,7 @@ public class EditingPanel extends JPanel {
 		gbc_cropBetween.gridy = 1;
 		panel_3.add(cropBetween, gbc_cropBetween);
 		
-		JLabel label2 = new JLabel("Second selected point:");
+		JLabel label2 = new JLabel("Point B:");
 		GridBagConstraints gbc_label2 = new GridBagConstraints();
 		gbc_label2.anchor = GridBagConstraints.WEST;
 		gbc_label2.insets = new Insets(0, 0, 5, 5);
