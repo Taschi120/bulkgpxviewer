@@ -15,6 +15,7 @@ import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.GeoPosition;
 
 import de.taschi.bulkgpxviewer.geo.GpxViewerTrack;
+import de.taschi.bulkgpxviewer.ui.windowbuilder.EditingPanel;
 import io.jenetics.jpx.WayPoint;
 import lombok.extern.log4j.Log4j2;
 
@@ -29,7 +30,7 @@ public class MapSelectionHandler extends MouseAdapter {
 	 */
 	public static final int SELECTION_THRESHOLD = 20;
 	
-	private JXMapViewer target;
+	private final JXMapViewer target;
 	
 	private boolean active = false;
 	private GpxViewerTrack track = null;

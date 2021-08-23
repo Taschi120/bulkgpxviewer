@@ -305,4 +305,8 @@ public class GpxViewerTrack implements List<GeoPosition> {
 	public Stream<GeoPosition> parallelStream() {
 		return internal.parallelStream();
 	}
+
+	public int indexOfWayPoint(WayPoint o) {
+		return waypoints.indexOf(o);
+	}
 }

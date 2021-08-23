@@ -33,6 +33,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,6 +64,7 @@ import de.taschi.bulkgpxviewer.ui.Messages;
 import de.taschi.bulkgpxviewer.ui.map.MapPanel;
 import de.taschi.bulkgpxviewer.ui.map.MapSelectionHandler;
 import de.taschi.bulkgpxviewer.ui.sidepanel.SidePanel;
+import io.jenetics.jpx.WayPoint;
 
 public class MainWindow {
 	
@@ -81,7 +83,7 @@ public class MainWindow {
 	private SidePanel sidePanel;
 	
 	private MainWindowMode currentMode = MainWindowMode.BULK_DISPLAY;
-	private EditingPanel editingPanel = null;
+	private EditingPanel editingPanel = new EditingPanel();
 	private JPanel leftSideRootPanel;
 	private JPanel rightSideRootPanel;
 	
@@ -177,6 +179,8 @@ public class MainWindow {
 		mapPanel.getMapKit().getMainMap();
 		mapSelectionHandler.addSelectionChangeListener(selection -> 
 			mapPanel.getSelectionPainter().setSelectionFromWayPoints(selection));
+		mapSelectionHandler.addSelectionChangeListener(selection ->
+			editingPanel.setSelection(selection));
 		
 		mapPanel.getMapKit().getMainMap().addMouseListener(mapSelectionHandler);
 		
@@ -203,6 +207,9 @@ public class MainWindow {
 		// show editing controls
 		leftSideRootPanel.add(editingPanel, BorderLayout.SOUTH);
 		leftSideRootPanel.revalidate();
+		
+		editingPanel.setTrack(trackToEdit);
+		editingPanel.setSelection(Collections.<WayPoint>emptySet());
 		
 		// set up map display
 		mapPanel.getSelectionPainter().setEnabled(true);
