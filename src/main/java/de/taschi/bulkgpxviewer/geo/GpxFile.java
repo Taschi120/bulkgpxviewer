@@ -71,17 +71,17 @@ public class GpxFile {
 	
 	public void save() throws IOException {
 		doBackup();
-		log.info("Writing GPX to '{}'", fileName);
+		log.info("Writing GPX to '{}'", fileName); //$NON-NLS-1$
 		GPX.write(getGpx(), fileName);
-		log.info("Written GPX to '{}' successfully", fileName);
+		log.info("Written GPX to '{}' successfully", fileName); //$NON-NLS-1$
 		changed = false;
 	}
 	
 	private void doBackup() throws IOException {
 		File in = fileName.toFile();
-		File out = new File(in.getAbsolutePath() + ".bak");
+		File out = new File(in.getAbsolutePath() + ".bak"); //$NON-NLS-1$
 
-		log.info("Creating backup of '{}' at '{}'", in, out);
+		log.info("Creating backup of '{}' at '{}'", in, out); //$NON-NLS-1$
 		FileUtils.copyFile(in, out);
 	}
 

@@ -23,6 +23,7 @@ import javax.swing.border.SoftBevelBorder;
 
 import de.taschi.bulkgpxviewer.Application;
 import de.taschi.bulkgpxviewer.geo.GpxFile;
+import de.taschi.bulkgpxviewer.ui.Messages;
 import de.taschi.bulkgpxviewer.ui.map.MapSelectionHandler;
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.WayPoint;
@@ -66,11 +67,11 @@ public class EditingPanel extends JPanel {
 		flowLayout.setAlignment(FlowLayout.RIGHT);
 		panel.add(panel_2);
 		
-		cancel = new JButton("Cancel");
+		cancel = new JButton(Messages.getString("EditingPanel.Cancel")); //$NON-NLS-1$
 		cancel.addActionListener(this::onCancel);
 		panel_2.add(cancel);
 		
-		save = new JButton("Save");
+		save = new JButton(Messages.getString("EditingPanel.Save")); //$NON-NLS-1$
 		save.addActionListener(this::onSave);
 		panel_2.add(save);
 		
@@ -84,7 +85,7 @@ public class EditingPanel extends JPanel {
 		gbl_panel_3.rowWeights = new double[]{0.0, 0.0, 0.0};
 		panel_3.setLayout(gbl_panel_3);
 		
-		JLabel lblNewLabel = new JLabel("Point A:");
+		JLabel lblNewLabel = new JLabel(Messages.getString("EditingPanel.PointA")); //$NON-NLS-1$
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
 		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
@@ -92,7 +93,7 @@ public class EditingPanel extends JPanel {
 		gbc_lblNewLabel.gridy = 0;
 		panel_3.add(lblNewLabel, gbc_lblNewLabel);
 		
-		firstSelectedPointLabel = new JLabel("12\u00B034'56\"N, 12\u00B035'56\"W @ Jan 1st, 2021, 17:55 CEST");
+		firstSelectedPointLabel = new JLabel("12\u00B034'56\"N, 12\u00B035'56\"W @ Jan 1st, 2021, 17:55 CEST"); //$NON-NLS-1$
 		GridBagConstraints gbc_firstSelectedPointLabel = new GridBagConstraints();
 		gbc_firstSelectedPointLabel.anchor = GridBagConstraints.WEST;
 		gbc_firstSelectedPointLabel.fill = GridBagConstraints.HORIZONTAL;
@@ -101,7 +102,7 @@ public class EditingPanel extends JPanel {
 		gbc_firstSelectedPointLabel.gridy = 0;
 		panel_3.add(firstSelectedPointLabel, gbc_firstSelectedPointLabel);
 		
-		firstSelectionTransportBack = new JButton("<");
+		firstSelectionTransportBack = new JButton("<"); //$NON-NLS-1$
 		GridBagConstraints gbc_firstSelectionTransportBack = new GridBagConstraints();
 		gbc_firstSelectionTransportBack.insets = new Insets(0, 0, 5, 5);
 		gbc_firstSelectionTransportBack.gridx = 2;
@@ -109,7 +110,7 @@ public class EditingPanel extends JPanel {
 		firstSelectionTransportBack.addActionListener(this::onFirstSelectionTransportBack);
 		panel_3.add(firstSelectionTransportBack, gbc_firstSelectionTransportBack);
 		
-		firstSelectionDeselect = new JButton("X");
+		firstSelectionDeselect = new JButton("X"); //$NON-NLS-1$
 		GridBagConstraints gbc_firstSelectionDeselect = new GridBagConstraints();
 		gbc_firstSelectionDeselect.insets = new Insets(0, 0, 5, 5);
 		gbc_firstSelectionDeselect.gridx = 3;
@@ -117,7 +118,7 @@ public class EditingPanel extends JPanel {
 		firstSelectionDeselect.addActionListener(this::onFirstSelectionDeselect);
 		panel_3.add(firstSelectionDeselect, gbc_firstSelectionDeselect);
 		
-		firstSelectionTransportForward = new JButton(">");
+		firstSelectionTransportForward = new JButton(">"); //$NON-NLS-1$
 		GridBagConstraints gbc_firstSelectionTransportForward = new GridBagConstraints();
 		gbc_firstSelectionTransportForward.insets = new Insets(0, 0, 5, 5);
 		gbc_firstSelectionTransportForward.gridx = 4;
@@ -125,7 +126,7 @@ public class EditingPanel extends JPanel {
 		firstSelectionTransportForward.addActionListener(this::onFirstSelectionTransportForward);
 		panel_3.add(firstSelectionTransportForward, gbc_firstSelectionTransportForward);
 		
-		cropBefore = new JButton("Crop Before");
+		cropBefore = new JButton(Messages.getString("EditingPanel.CropBefore")); //$NON-NLS-1$
 		GridBagConstraints gbc_cropBefore = new GridBagConstraints();
 		gbc_cropBefore.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cropBefore.insets = new Insets(0, 0, 5, 5);
@@ -134,7 +135,7 @@ public class EditingPanel extends JPanel {
 		cropBefore.addActionListener(this::onCropBefore);
 		panel_3.add(cropBefore, gbc_cropBefore);
 		
-		cropBetween = new JButton("Crop Between");
+		cropBetween = new JButton(Messages.getString("EditingPanel.CropBetween")); //$NON-NLS-1$
 		GridBagConstraints gbc_cropBetween = new GridBagConstraints();
 		gbc_cropBetween.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cropBetween.insets = new Insets(0, 0, 5, 5);
@@ -143,7 +144,7 @@ public class EditingPanel extends JPanel {
 		cropBetween.addActionListener(this::onCropBetween);
 		panel_3.add(cropBetween, gbc_cropBetween);
 		
-		JLabel label2 = new JLabel("Point B:");
+		JLabel label2 = new JLabel(Messages.getString("EditingPanel.PointB")); //$NON-NLS-1$
 		GridBagConstraints gbc_label2 = new GridBagConstraints();
 		gbc_label2.anchor = GridBagConstraints.WEST;
 		gbc_label2.insets = new Insets(0, 0, 5, 5);
@@ -151,7 +152,7 @@ public class EditingPanel extends JPanel {
 		gbc_label2.gridy = 2;
 		panel_3.add(label2, gbc_label2);
 		
-		secondSelectedPointLabel = new JLabel("12\u00B034'56\"N, 12\u00B035'56\"W @ Jan 1st, 2021, 17:55 CEST");
+		secondSelectedPointLabel = new JLabel("12\u00B034'56\"N, 12\u00B035'56\"W @ Jan 1st, 2021, 17:55 CEST"); //$NON-NLS-1$
 		GridBagConstraints gbc_secondSelectedPointLabel = new GridBagConstraints();
 		gbc_secondSelectedPointLabel.fill = GridBagConstraints.HORIZONTAL;
 		gbc_secondSelectedPointLabel.anchor = GridBagConstraints.WEST;
@@ -160,7 +161,7 @@ public class EditingPanel extends JPanel {
 		gbc_secondSelectedPointLabel.gridy = 2;
 		panel_3.add(secondSelectedPointLabel, gbc_secondSelectedPointLabel);
 		
-		secondSelectionTransportBack = new JButton("<");
+		secondSelectionTransportBack = new JButton("<"); //$NON-NLS-1$
 		GridBagConstraints gbc_secondSelectionTransportBack = new GridBagConstraints();
 		gbc_secondSelectionTransportBack.insets = new Insets(0, 0, 5, 5);
 		gbc_secondSelectionTransportBack.gridx = 2;
@@ -168,7 +169,7 @@ public class EditingPanel extends JPanel {
 		secondSelectionTransportBack.addActionListener(this::onSecondSelectionTransportBack);
 		panel_3.add(secondSelectionTransportBack, gbc_secondSelectionTransportBack);
 		
-		secondSelectionDeselect = new JButton("X");
+		secondSelectionDeselect = new JButton("X"); //$NON-NLS-1$
 		GridBagConstraints gbc_secondSelectionDeselect = new GridBagConstraints();
 		gbc_secondSelectionDeselect.insets = new Insets(0, 0, 5, 5);
 		gbc_secondSelectionDeselect.gridx = 3;
@@ -176,7 +177,7 @@ public class EditingPanel extends JPanel {
 		secondSelectionDeselect.addActionListener(this::onSecondSelectionDeselect);
 		panel_3.add(secondSelectionDeselect, gbc_secondSelectionDeselect);
 		
-		secondSelectionTransportForward = new JButton(">\r\n");
+		secondSelectionTransportForward = new JButton(">\r\n"); //$NON-NLS-1$
 		GridBagConstraints gbc_secondSelectionTransportForward = new GridBagConstraints();
 		gbc_secondSelectionTransportForward.insets = new Insets(0, 0, 5, 5);
 		gbc_secondSelectionTransportForward.gridx = 4;
@@ -184,7 +185,7 @@ public class EditingPanel extends JPanel {
 		secondSelectionTransportForward.addActionListener(this::onSecondSelectionTransportForward);
 		panel_3.add(secondSelectionTransportForward, gbc_secondSelectionTransportForward);
 		
-		cropAfter = new JButton("Crop After");
+		cropAfter = new JButton(Messages.getString("EditingPanel.CropAfter")); //$NON-NLS-1$
 		GridBagConstraints gbc_cropAfter = new GridBagConstraints();
 		gbc_cropAfter.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cropAfter.insets = new Insets(0, 0, 5, 5);
@@ -215,12 +216,12 @@ public class EditingPanel extends JPanel {
 		var size = selection.size();
 		
 		if (size == 0) {
-			firstSelectedPointLabel.setText("");
-			secondSelectedPointLabel.setText("");
+			firstSelectedPointLabel.setText(Messages.getString("EditingPanel.Empty")); //$NON-NLS-1$
+			secondSelectedPointLabel.setText(Messages.getString("EditingPanel.Empty")); //$NON-NLS-1$
 		}
 		else if (size == 1) {
 			firstSelectedPointLabel.setText(makeDescriptorString(selection.get(0)));
-			secondSelectedPointLabel.setText("");
+			secondSelectedPointLabel.setText(Messages.getString("EditingPanel.Empty")); //$NON-NLS-1$
 		} else if (size == 2) {
 			selection.sort((o1, o2) -> 
 				track.indexOfWayPoint(o2).orElseThrow().compareTo(track.indexOfWayPoint(o1).orElseThrow()));
@@ -230,11 +231,11 @@ public class EditingPanel extends JPanel {
 	}
 
 	private String makeDescriptorString(WayPoint wayPoint) {
-		var lat = doubleToDegMinSec(wayPoint.getLatitude().toDegrees(), "S", "N");
-		var lon = doubleToDegMinSec(wayPoint.getLongitude().toDegrees(), "W", "E");
+		var lat = doubleToDegMinSec(wayPoint.getLatitude().toDegrees(), Messages.getString("EditingPanel.South"), Messages.getString("EditingPanel.North")); //$NON-NLS-1$ //$NON-NLS-2$
+		var lon = doubleToDegMinSec(wayPoint.getLongitude().toDegrees(), Messages.getString("EditingPanel.West"), Messages.getString("EditingPanel.East")); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		var time = wayPoint.getTime().map(DateTimeFormatter.ISO_LOCAL_DATE_TIME::format).orElse("unknown date");
-		return String.format("%s %s @ %s", lat, lon, time);
+		var time = wayPoint.getTime().map(DateTimeFormatter.ISO_LOCAL_DATE_TIME::format).orElse(Messages.getString("EditingPanel.UnknownDate")); //$NON-NLS-1$
+		return String.format(Messages.getString("EditingPanel.WaypointLabelFormat"), lat, lon, time); //$NON-NLS-1$
 	}
 
 	private String doubleToDegMinSec(double lat, String negativeSide, String positiveSide) {
@@ -251,7 +252,7 @@ public class EditingPanel extends JPanel {
 		
 		var sec = (int)Math.floor(lat);
 		
-		return String.format("%02d° %02d' %02d\" %s", deg, min, sec, side);
+		return String.format(Messages.getString("EditingPanel.DegMinSecFormat"), deg, min, sec, side); //$NON-NLS-1$
 	}
 
 	/**
@@ -277,11 +278,11 @@ public class EditingPanel extends JPanel {
 	private void onSave(ActionEvent evt) {
 		try {
 			track.save();
-			JOptionPane.showMessageDialog(Application.getMainWindow().getFrame(), "Save successful.");
+			JOptionPane.showMessageDialog(Application.getMainWindow().getFrame(), Messages.getString("EditingPanel.SaveSuccessful")); //$NON-NLS-1$
 		} catch (Exception e) {
-			log.error("Error while saving GPX file", e);
+			log.error("Error while saving GPX file", e); //$NON-NLS-1$
 			JOptionPane.showMessageDialog(Application.getMainWindow().getFrame(), 
-					String.format("An error occured while saving: %s", e.getLocalizedMessage()));
+					String.format(Messages.getString("EditingPanel.ErrorWhileSaving"), e.getLocalizedMessage())); //$NON-NLS-1$
 		}
 	}
 
@@ -289,7 +290,7 @@ public class EditingPanel extends JPanel {
 		var reallyCancel = false;
 		if (track.isChanged()) {
 			var result = JOptionPane.showConfirmDialog(Application.getMainWindow().getFrame(), 
-					"Do you really want to cancel without saving?", "Really quit?", JOptionPane.YES_NO_OPTION);
+					Messages.getString("EditingPanel.ConfirmCancelWithoutSaving"), Messages.getString("EditingPanel.ReallyQuit"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			reallyCancel = (result == JOptionPane.YES_OPTION);
 		} else {
@@ -468,7 +469,7 @@ public class EditingPanel extends JPanel {
 				track.setGpx(gpx1);
 
 			} else {
-				log.error("Selections not on same track: {} and {}", idx1, idx2);
+				log.error("Selections not on same track: {} and {}", idx1, idx2); //$NON-NLS-1$
 			}
 		}
 	}
