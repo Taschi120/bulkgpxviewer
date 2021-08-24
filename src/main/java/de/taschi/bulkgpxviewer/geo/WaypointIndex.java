@@ -28,4 +28,10 @@ public class WaypointIndex implements Comparable<WaypointIndex> {
 		
 		return o.getWaypointId() - this.getWaypointId();
 	}
+	
+	public boolean isOnSameSegment(WaypointIndex other) {
+		return other.getGpx() == this.gpx
+				&& other.getTrackId() == this.trackId
+				&& other.getSegmentId() == this.segmentId;
+	}
 }

@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.SwingUtilities;
 
@@ -65,8 +66,6 @@ public class MapSelectionHandler extends MouseAdapter {
 			unmodifiableSelectedPoints = Collections.unmodifiableSet(selectedPoints);
 			fireSelectionChangeListeners();
 		}
-		
-		target.repaint();
 	}
 	
 	private void fireSelectionChangeListeners() {
@@ -137,6 +136,17 @@ public class MapSelectionHandler extends MouseAdapter {
 	
 	public boolean removeSelectionChangeListener(WaypointSelectionChangeListener listener) {
 		return selectionChangeListeners.remove(listener);
+	}
+
+	/**
+	 * Change the current selection
+	 * @param selection
+	 */
+	public void setSelection(List<WayPoint> selection) {
+		selectedPoints = selection.stream().distinct().collect(Collectors.toSet());
+		unmodifiableSelectedPoints = Collections.unmodifiableSet(selectedPoints);
+		
+		fireSelectionChangeListeners();
 	}
 	
 }

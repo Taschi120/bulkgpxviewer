@@ -6,6 +6,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,12 +21,18 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.SoftBevelBorder;
 
-import de.taschi.bulkgpxviewer.geo.GpxFile;
-import io.jenetics.jpx.WayPoint;
+import org.jxmapviewer.viewer.Waypoint;
 
+import de.taschi.bulkgpxviewer.geo.GpxFile;
+import de.taschi.bulkgpxviewer.ui.map.MapSelectionHandler;
+import io.jenetics.jpx.WayPoint;
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 public class EditingPanel extends JPanel {
 	
 	private GpxFile track;
+	private MapSelectionHandler selectionHandler;
 	private List<WayPoint> selection = Collections.<WayPoint>emptyList();
 
 	private static final long serialVersionUID = 6937011900054488316L;
@@ -39,6 +47,8 @@ public class EditingPanel extends JPanel {
 	private JButton cropBefore;
 	private JButton firstSelectionDeselect;
 	private JLabel secondSelectedPointLabel;
+	private JButton save;
+	private JButton cancel;
 
 	/**
 	 * Create the panel.
@@ -56,11 +66,13 @@ public class EditingPanel extends JPanel {
 		flowLayout.setAlignment(FlowLayout.RIGHT);
 		panel.add(panel_2);
 		
-		JButton btnNewButton_2 = new JButton("Cancel");
-		panel_2.add(btnNewButton_2);
+		cancel = new JButton("Cancel");
+		cancel.addActionListener(this::onCancel);
+		panel_2.add(cancel);
 		
-		JButton btnNewButton_1 = new JButton("Save");
-		panel_2.add(btnNewButton_1);
+		save = new JButton("Save");
+		save.addActionListener(this::onSave);
+		panel_2.add(save);
 		
 		JPanel panel_3 = new JPanel();
 		panel_3.setBorder(new EmptyBorder(3, 3, 3, 3));
@@ -94,6 +106,7 @@ public class EditingPanel extends JPanel {
 		gbc_firstSelectionTransportBack.insets = new Insets(0, 0, 5, 5);
 		gbc_firstSelectionTransportBack.gridx = 2;
 		gbc_firstSelectionTransportBack.gridy = 0;
+		firstSelectionTransportBack.addActionListener(this::onFirstSelectionTransportBack);
 		panel_3.add(firstSelectionTransportBack, gbc_firstSelectionTransportBack);
 		
 		firstSelectionDeselect = new JButton("X");
@@ -101,6 +114,7 @@ public class EditingPanel extends JPanel {
 		gbc_firstSelectionDeselect.insets = new Insets(0, 0, 5, 5);
 		gbc_firstSelectionDeselect.gridx = 3;
 		gbc_firstSelectionDeselect.gridy = 0;
+		firstSelectionDeselect.addActionListener(this::onFirstSelectionDeselect);
 		panel_3.add(firstSelectionDeselect, gbc_firstSelectionDeselect);
 		
 		firstSelectionTransportForward = new JButton(">");
@@ -108,6 +122,7 @@ public class EditingPanel extends JPanel {
 		gbc_firstSelectionTransportForward.insets = new Insets(0, 0, 5, 5);
 		gbc_firstSelectionTransportForward.gridx = 4;
 		gbc_firstSelectionTransportForward.gridy = 0;
+		firstSelectionTransportForward.addActionListener(this::onFirstSelectionTransportForward);
 		panel_3.add(firstSelectionTransportForward, gbc_firstSelectionTransportForward);
 		
 		cropBefore = new JButton("Crop Before");
@@ -116,6 +131,7 @@ public class EditingPanel extends JPanel {
 		gbc_cropBefore.insets = new Insets(0, 0, 5, 5);
 		gbc_cropBefore.gridx = 5;
 		gbc_cropBefore.gridy = 0;
+		cropBefore.addActionListener(this::onCropBefore);
 		panel_3.add(cropBefore, gbc_cropBefore);
 		
 		cropBetween = new JButton("Crop Between");
@@ -124,6 +140,7 @@ public class EditingPanel extends JPanel {
 		gbc_cropBetween.insets = new Insets(0, 0, 5, 5);
 		gbc_cropBetween.gridx = 5;
 		gbc_cropBetween.gridy = 1;
+		cropBetween.addActionListener(this::onCropBetween);
 		panel_3.add(cropBetween, gbc_cropBetween);
 		
 		JLabel label2 = new JLabel("Point B:");
@@ -148,6 +165,7 @@ public class EditingPanel extends JPanel {
 		gbc_secondSelectionTransportBack.insets = new Insets(0, 0, 5, 5);
 		gbc_secondSelectionTransportBack.gridx = 2;
 		gbc_secondSelectionTransportBack.gridy = 2;
+		secondSelectionTransportBack.addActionListener(this::onSecondSelectionTransportBack);
 		panel_3.add(secondSelectionTransportBack, gbc_secondSelectionTransportBack);
 		
 		secondSelectionDeselect = new JButton("X");
@@ -155,6 +173,7 @@ public class EditingPanel extends JPanel {
 		gbc_secondSelectionDeselect.insets = new Insets(0, 0, 5, 5);
 		gbc_secondSelectionDeselect.gridx = 3;
 		gbc_secondSelectionDeselect.gridy = 2;
+		secondSelectionDeselect.addActionListener(this::onSecondSelectionDeselect);
 		panel_3.add(secondSelectionDeselect, gbc_secondSelectionDeselect);
 		
 		secondSelectionTransportForward = new JButton(">\r\n");
@@ -162,6 +181,7 @@ public class EditingPanel extends JPanel {
 		gbc_secondSelectionTransportForward.insets = new Insets(0, 0, 5, 5);
 		gbc_secondSelectionTransportForward.gridx = 4;
 		gbc_secondSelectionTransportForward.gridy = 2;
+		secondSelectionTransportForward.addActionListener(this::onSecondSelectionTransportForward);
 		panel_3.add(secondSelectionTransportForward, gbc_secondSelectionTransportForward);
 		
 		cropAfter = new JButton("Crop After");
@@ -170,6 +190,7 @@ public class EditingPanel extends JPanel {
 		gbc_cropAfter.insets = new Insets(0, 0, 5, 5);
 		gbc_cropAfter.gridx = 5;
 		gbc_cropAfter.gridy = 2;
+		cropAfter.addActionListener(this::onCropAfter);
 		panel_3.add(cropAfter, gbc_cropAfter);
 	}
 
@@ -181,6 +202,10 @@ public class EditingPanel extends JPanel {
 	
 	public void setTrack(GpxFile track) {
 		this.track = track;
+	}
+	
+	public void setSelectionHandler(MapSelectionHandler handler) {
+		this.selectionHandler = handler;
 	}
 
 	/**
@@ -250,4 +275,101 @@ public class EditingPanel extends JPanel {
 		cropBetween.setEnabled(secondTransportEnabled);	
 	}
 
+	private void onSave(ActionEvent actionevent1) {
+		// TODO
+	}
+
+	private void onCancel(ActionEvent actionevent1) {
+		// TODO
+	}
+	
+	private void onFirstSelectionTransportBack(ActionEvent e) {
+		if(!selection.isEmpty()) {
+			var item = selection.get(0);
+			var index = track.indexOfWayPoint(item).get();
+			
+			if(index.getWaypointId() > 0) {
+				WayPoint newSelection = track.getGpx()
+						.getTracks().get(index.getTrackId())
+						.getSegments().get(index.getSegmentId())
+						.getPoints().get(index.getWaypointId() - 1);
+				
+				selection.set(0, newSelection);
+				selectionHandler.setSelection(selection);
+			}
+		}
+	}
+	
+	private void onFirstSelectionTransportForward(ActionEvent e) {
+		if(!selection.isEmpty()) {
+			var item = selection.get(0);
+			var index = track.indexOfWayPoint(item).get();
+			
+			var segment = track.getGpx()
+					.getTracks().get(index.getTrackId())
+					.getSegments().get(index.getSegmentId());
+			
+			var points = segment.getPoints();
+			if(index.getWaypointId() < points.size() - 1) {
+				var newSelection = points.get(index.getWaypointId() + 1);
+				selection.set(0, newSelection);
+				selectionHandler.setSelection(selection);
+			}
+		}
+	}
+	
+	private void onFirstSelectionDeselect(ActionEvent e) {
+		// TODO
+	}
+
+	private void onSecondSelectionTransportBack(ActionEvent actionevent1) {
+		if(selection.size() >= 2) {
+			var item = selection.get(1);
+			var index = track.indexOfWayPoint(item).get();
+			
+			if(index.getWaypointId() > 0) {
+				WayPoint newSelection = track.getGpx()
+						.getTracks().get(index.getTrackId())
+						.getSegments().get(index.getSegmentId())
+						.getPoints().get(index.getWaypointId() - 1);
+				
+				selection.set(1, newSelection);
+				selectionHandler.setSelection(selection);
+			}
+		}
+	}
+
+	private void onSecondSelectionDeselect(ActionEvent e) {
+		// TODO
+	}
+	
+	private void onSecondSelectionTransportForward(ActionEvent e) {
+		if(selection.size() >= 2) {
+			var item = selection.get(1);
+			var index = track.indexOfWayPoint(item).get();
+			
+			var segment = track.getGpx()
+					.getTracks().get(index.getTrackId())
+					.getSegments().get(index.getSegmentId());
+			
+			var points = segment.getPoints();
+			if(index.getWaypointId() < points.size() - 1) {
+				var newSelection = points.get(index.getWaypointId() + 1);
+				selection.set(1, newSelection);
+				selectionHandler.setSelection(selection);
+			}
+		}
+	}
+	
+	private void onCropBefore(ActionEvent e) {
+		// TODO
+	}
+	
+	private void onCropAfter(ActionEvent e) {
+		// TODO
+	}
+	
+	private void onCropBetween(ActionEvent e) {
+		// TODO
+	}
 }

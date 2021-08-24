@@ -204,12 +204,15 @@ public class MainWindow {
 		leftSideRootPanel.revalidate();
 		
 		editingPanel.setTrack(trackToEdit);
+		editingPanel.setSelectionHandler(mapSelectionHandler);
 		editingPanel.setSelection(Collections.<WayPoint>emptySet());
 		
 		// set up map display
 		mapPanel.getSelectionPainter().setEnabled(true);
 		mapPanel.getSelectionPainter().setTrack(trackToEdit);
 		mapPanel.getRoutesPainter().setProvider(mapPanel.getRoutesPainter().getSingleTrackProvider(trackToEdit));
+		
+		mapSelectionHandler.addSelectionChangeListener((selection) -> mapPanel.repaint());
 		
 		// enable map listener
 		mapSelectionHandler.activate(trackToEdit);
