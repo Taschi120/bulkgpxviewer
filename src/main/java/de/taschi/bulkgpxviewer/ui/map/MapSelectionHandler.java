@@ -124,6 +124,7 @@ public class MapSelectionHandler extends MouseAdapter {
 		log.info("Exiting edit mode"); //$NON-NLS-1$
 		track = null;
 		active = false;
+		selectedPoints = Collections.emptySet();
 	}
 	
 	public Set<WayPoint> getSelectedWayPoints() {

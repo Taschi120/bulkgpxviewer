@@ -212,6 +212,8 @@ public class MainWindow {
 		mapPanel.getSelectionPainter().setTrack(trackToEdit);
 		mapPanel.getRoutesPainter().setProvider(mapPanel.getRoutesPainter().getSingleTrackProvider(trackToEdit));
 		
+		// TODO with multiple switches from regular mode to edit mode, there will be multiple event handlers,
+		// wasting computing time. Refactor to fix this.
 		mapSelectionHandler.addSelectionChangeListener((selection) -> mapPanel.repaint());
 		
 		// enable map listener
@@ -319,6 +321,21 @@ public class MainWindow {
     	public void windowClosing(WindowEvent e) {
     		closeEventHandler(null);
     	}
+	}
+
+	public void exitEditingMode() {
+		leftSideRootPanel.remove(editingPanel);
+		
+		mapSelectionHandler.deactivate();
+		mapPanel.getSelectionPainter().setEnabled(false);
+		mapPanel.getRoutesPainter().setProvider(mapPanel.getRoutesPainter().getAllRouteProvider());
+		
+		sidePanel.setEnabled(true);
+		frame.validate();
+		
+		LoadedFileManager.getInstance().fireChangeListeners();
+		
+		currentMode = MainWindowMode.BULK_DISPLAY;
 	}
 }
 

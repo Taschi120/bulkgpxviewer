@@ -15,11 +15,13 @@ import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.SoftBevelBorder;
 
+import de.taschi.bulkgpxviewer.Application;
 import de.taschi.bulkgpxviewer.geo.GpxFile;
 import de.taschi.bulkgpxviewer.ui.map.MapSelectionHandler;
 import io.jenetics.jpx.GPX;
@@ -272,12 +274,31 @@ public class EditingPanel extends JPanel {
 		cropBetween.setEnabled(secondTransportEnabled);	
 	}
 
-	private void onSave(ActionEvent actionevent1) {
-		// TODO
+	private void onSave(ActionEvent evt) {
+		try {
+			track.save();
+			JOptionPane.showMessageDialog(Application.getMainWindow().getFrame(), "Save successful.");
+		} catch (Exception e) {
+			log.error("Error while saving GPX file", e);
+			JOptionPane.showMessageDialog(Application.getMainWindow().getFrame(), 
+					String.format("An error occured while saving: %s", e.getLocalizedMessage()));
+		}
 	}
 
-	private void onCancel(ActionEvent actionevent1) {
-		// TODO
+	private void onCancel(ActionEvent evt) {
+		var reallyCancel = false;
+		if (track.isChanged()) {
+			var result = JOptionPane.showConfirmDialog(Application.getMainWindow().getFrame(), 
+					"Do you really want to cancel without saving?", "Really quit?", JOptionPane.YES_NO_OPTION);
+			
+			reallyCancel = (result == JOptionPane.YES_OPTION);
+		} else {
+			reallyCancel = true;
+		}
+		
+		if (reallyCancel) {
+			Application.getMainWindow().exitEditingMode();
+		}
 	}
 	
 	private void onFirstSelectionTransportBack(ActionEvent e) {

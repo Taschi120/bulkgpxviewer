@@ -1,5 +1,7 @@
 package de.taschi.bulkgpxviewer.geo;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -7,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.jxmapviewer.viewer.GeoPosition;
 
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
@@ -15,7 +18,9 @@ import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class GpxFile {
 	
 	private GPX gpx;
@@ -64,6 +69,22 @@ public class GpxFile {
 		return Optional.empty();
 	}
 	
+	public void save() throws IOException {
+		doBackup();
+		log.info("Writing GPX to '{}'", fileName);
+		GPX.write(getGpx(), fileName);
+		log.info("Written GPX to '{}' successfully", fileName);
+		changed = false;
+	}
+	
+	private void doBackup() throws IOException {
+		File in = fileName.toFile();
+		File out = new File(in.getAbsolutePath() + ".bak");
+
+		log.info("Creating backup of '{}' at '{}'", in, out);
+		FileUtils.copyFile(in, out);
+	}
+
 	public Path getFileName() {
 		return fileName;
 	}
