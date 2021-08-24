@@ -23,6 +23,7 @@ import javax.swing.border.SoftBevelBorder;
 
 import de.taschi.bulkgpxviewer.Application;
 import de.taschi.bulkgpxviewer.geo.GpxFile;
+import de.taschi.bulkgpxviewer.ui.IconHandler;
 import de.taschi.bulkgpxviewer.ui.Messages;
 import de.taschi.bulkgpxviewer.ui.map.MapSelectionHandler;
 import io.jenetics.jpx.GPX;
@@ -102,7 +103,7 @@ public class EditingPanel extends JPanel {
 		gbc_firstSelectedPointLabel.gridy = 0;
 		panel_3.add(firstSelectedPointLabel, gbc_firstSelectedPointLabel);
 		
-		firstSelectionTransportBack = new JButton("<"); //$NON-NLS-1$
+		firstSelectionTransportBack = new JButton(IconHandler.loadIcon("arrow-left-s-line")); //$NON-NLS-1$
 		GridBagConstraints gbc_firstSelectionTransportBack = new GridBagConstraints();
 		gbc_firstSelectionTransportBack.insets = new Insets(0, 0, 5, 5);
 		gbc_firstSelectionTransportBack.gridx = 2;
@@ -110,7 +111,7 @@ public class EditingPanel extends JPanel {
 		firstSelectionTransportBack.addActionListener(this::onFirstSelectionTransportBack);
 		panel_3.add(firstSelectionTransportBack, gbc_firstSelectionTransportBack);
 		
-		firstSelectionDeselect = new JButton("X"); //$NON-NLS-1$
+		firstSelectionDeselect = new JButton(IconHandler.loadIcon("close-circle-line")); //$NON-NLS-1$
 		GridBagConstraints gbc_firstSelectionDeselect = new GridBagConstraints();
 		gbc_firstSelectionDeselect.insets = new Insets(0, 0, 5, 5);
 		gbc_firstSelectionDeselect.gridx = 3;
@@ -118,7 +119,7 @@ public class EditingPanel extends JPanel {
 		firstSelectionDeselect.addActionListener(this::onFirstSelectionDeselect);
 		panel_3.add(firstSelectionDeselect, gbc_firstSelectionDeselect);
 		
-		firstSelectionTransportForward = new JButton(">"); //$NON-NLS-1$
+		firstSelectionTransportForward = new JButton(IconHandler.loadIcon("arrow-right-s-line")); //$NON-NLS-1$
 		GridBagConstraints gbc_firstSelectionTransportForward = new GridBagConstraints();
 		gbc_firstSelectionTransportForward.insets = new Insets(0, 0, 5, 5);
 		gbc_firstSelectionTransportForward.gridx = 4;
@@ -127,6 +128,7 @@ public class EditingPanel extends JPanel {
 		panel_3.add(firstSelectionTransportForward, gbc_firstSelectionTransportForward);
 		
 		cropBefore = new JButton(Messages.getString("EditingPanel.CropBefore")); //$NON-NLS-1$
+		cropBefore.setIcon(IconHandler.loadIcon("scissors-cut-line"));
 		GridBagConstraints gbc_cropBefore = new GridBagConstraints();
 		gbc_cropBefore.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cropBefore.insets = new Insets(0, 0, 5, 5);
@@ -136,6 +138,7 @@ public class EditingPanel extends JPanel {
 		panel_3.add(cropBefore, gbc_cropBefore);
 		
 		cropBetween = new JButton(Messages.getString("EditingPanel.CropBetween")); //$NON-NLS-1$
+		cropBetween.setIcon(IconHandler.loadIcon("scissors-cut-line"));
 		GridBagConstraints gbc_cropBetween = new GridBagConstraints();
 		gbc_cropBetween.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cropBetween.insets = new Insets(0, 0, 5, 5);
@@ -161,7 +164,7 @@ public class EditingPanel extends JPanel {
 		gbc_secondSelectedPointLabel.gridy = 2;
 		panel_3.add(secondSelectedPointLabel, gbc_secondSelectedPointLabel);
 		
-		secondSelectionTransportBack = new JButton("<"); //$NON-NLS-1$
+		secondSelectionTransportBack = new JButton(IconHandler.loadIcon("arrow-left-s-line")); //$NON-NLS-1$
 		GridBagConstraints gbc_secondSelectionTransportBack = new GridBagConstraints();
 		gbc_secondSelectionTransportBack.insets = new Insets(0, 0, 5, 5);
 		gbc_secondSelectionTransportBack.gridx = 2;
@@ -169,7 +172,7 @@ public class EditingPanel extends JPanel {
 		secondSelectionTransportBack.addActionListener(this::onSecondSelectionTransportBack);
 		panel_3.add(secondSelectionTransportBack, gbc_secondSelectionTransportBack);
 		
-		secondSelectionDeselect = new JButton("X"); //$NON-NLS-1$
+		secondSelectionDeselect = new JButton(IconHandler.loadIcon("close-circle-line")); //$NON-NLS-1$
 		GridBagConstraints gbc_secondSelectionDeselect = new GridBagConstraints();
 		gbc_secondSelectionDeselect.insets = new Insets(0, 0, 5, 5);
 		gbc_secondSelectionDeselect.gridx = 3;
@@ -177,7 +180,7 @@ public class EditingPanel extends JPanel {
 		secondSelectionDeselect.addActionListener(this::onSecondSelectionDeselect);
 		panel_3.add(secondSelectionDeselect, gbc_secondSelectionDeselect);
 		
-		secondSelectionTransportForward = new JButton(">\r\n"); //$NON-NLS-1$
+		secondSelectionTransportForward = new JButton(IconHandler.loadIcon("arrow-right-s-line")); //$NON-NLS-1$
 		GridBagConstraints gbc_secondSelectionTransportForward = new GridBagConstraints();
 		gbc_secondSelectionTransportForward.insets = new Insets(0, 0, 5, 5);
 		gbc_secondSelectionTransportForward.gridx = 4;
@@ -186,6 +189,7 @@ public class EditingPanel extends JPanel {
 		panel_3.add(secondSelectionTransportForward, gbc_secondSelectionTransportForward);
 		
 		cropAfter = new JButton(Messages.getString("EditingPanel.CropAfter")); //$NON-NLS-1$
+		cropAfter.setIcon(IconHandler.loadIcon("scissors-cut-line"));
 		GridBagConstraints gbc_cropAfter = new GridBagConstraints();
 		gbc_cropAfter.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cropAfter.insets = new Insets(0, 0, 5, 5);
