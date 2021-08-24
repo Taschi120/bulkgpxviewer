@@ -319,7 +319,10 @@ public class EditingPanel extends JPanel {
 	}
 	
 	private void onFirstSelectionDeselect(ActionEvent e) {
-		// TODO
+		if(!selection.isEmpty()) {
+			selection.remove(0);
+			selectionHandler.setSelection(selection);
+		}
 	}
 
 	private void onSecondSelectionTransportBack(ActionEvent actionevent1) {
@@ -340,7 +343,10 @@ public class EditingPanel extends JPanel {
 	}
 
 	private void onSecondSelectionDeselect(ActionEvent e) {
-		// TODO
+		if(selection.size() >= 2) {
+			selection.remove(1);
+			selectionHandler.setSelection(selection);
+		}
 	}
 	
 	private void onSecondSelectionTransportForward(ActionEvent e) {
