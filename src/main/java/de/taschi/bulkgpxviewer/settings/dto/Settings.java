@@ -24,46 +24,13 @@ package de.taschi.bulkgpxviewer.settings.dto;
 
 import java.util.List;
 
+import lombok.Data;
+
+@Data
 public class Settings {
 
 	private String lastUsedDirectory;
-	
 	private List<SettingsColor> routeColors;
-	
 	private MainWindowSettings mainWindowSettings;
-	
 	private UnitSystem unitSystem;
-
-	public String getLastUsedDirectory() {
-		return lastUsedDirectory;
-	}
-
-	public void setLastUsedDirectory(String lastUsedDirectory) {
-		this.lastUsedDirectory = lastUsedDirectory;
-	}
-
-	public List<SettingsColor> getRouteColors() {
-		return routeColors;
-	}
-
-	public void setRouteColors(List<SettingsColor> routeColors) {
-		this.routeColors = routeColors;
-	}
-
-	public MainWindowSettings getMainWindowSettings() {
-		return mainWindowSettings;
-	}
-
-	public void setMainWindowSettings(MainWindowSettings mainWindowSettings) {
-		this.mainWindowSettings = mainWindowSettings;
-	}
-
-	public UnitSystem getUnitSystem() {
-		return unitSystem;
-	}
-
-	public void setUnitSystem(UnitSystem unitSystem) {
-		this.unitSystem = unitSystem;
-	}
-	
 }

@@ -7,7 +7,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,10 +20,9 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.SoftBevelBorder;
 
-import org.jxmapviewer.viewer.Waypoint;
-
 import de.taschi.bulkgpxviewer.geo.GpxFile;
 import de.taschi.bulkgpxviewer.ui.map.MapSelectionHandler;
+import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.WayPoint;
 import lombok.extern.log4j.Log4j2;
 
@@ -230,7 +228,6 @@ public class EditingPanel extends JPanel {
 	}
 
 	private String makeDescriptorString(WayPoint wayPoint) {
-		// TODO Auto-generated method stub
 		var lat = doubleToDegMinSec(wayPoint.getLatitude().toDegrees(), "S", "N");
 		var lon = doubleToDegMinSec(wayPoint.getLongitude().toDegrees(), "W", "E");
 		
@@ -368,14 +365,90 @@ public class EditingPanel extends JPanel {
 	}
 	
 	private void onCropBefore(ActionEvent e) {
-		// TODO
+		if(!selection.isEmpty()) {
+			var endpoint = selection.get(0);
+			var index = track.indexOfWayPoint(endpoint).get();
+			
+			var toBeDeleted = track.getGpx().getTracks().get(index.getTrackId())
+					.getSegments().get(index.getSegmentId()).getPoints().subList(0, index.getWaypointId());
+			
+			final GPX gpx1 = track.getGpx().toBuilder()
+			    .trackFilter()
+			        .map(track -> track.toBuilder()
+			            .map(segment -> segment.toBuilder()
+			                .filter((it) -> !toBeDeleted.contains(it))
+			                .build())
+			            .build())
+			        .build()
+			    .build();
+			
+			track.setGpx(gpx1);
+		}
 	}
 	
 	private void onCropAfter(ActionEvent e) {
-		// TODO
+		if(!selection.isEmpty()) {
+			var endPoint = selection.get(selection.size() - 1);
+			var index = track.indexOfWayPoint(endPoint).get();
+			
+			var points =  track.getGpx().getTracks().get(index.getTrackId())
+					.getSegments().get(index.getSegmentId()).getPoints();
+			
+			var toBeDeleted = points.subList(index.getWaypointId() + 1, points.size());
+
+			final GPX gpx1 = track.getGpx().toBuilder()
+				    .trackFilter()
+				        .map(track -> track.toBuilder()
+				            .map(segment -> segment.toBuilder()
+				                .filter((it) -> !toBeDeleted.contains(it))
+				                .build())
+				            .build())
+				        .build()
+				    .build();
+							
+			track.setGpx(gpx1);
+		}
+
 	}
 	
 	private void onCropBetween(ActionEvent e) {
-		// TODO
+		if(selection.size() == 2) {
+			var point1 = selection.get(0);
+			var point2 = selection.get(1);
+			
+			var idx1 = track.indexOfWayPoint(point1).get();
+			var idx2 = track.indexOfWayPoint(point2).get();
+			
+			if(idx1.isOnSameSegment(idx2)) {
+				var i1 = idx1.getWaypointId();
+				var i2 = idx2.getWaypointId();
+				
+				if (i1 > i2) {
+					var o = i2;
+					i2 = i1;
+					i1 = o;
+				}
+				
+				var points =  track.getGpx().getTracks().get(idx1.getTrackId())
+						.getSegments().get(idx1.getSegmentId()).getPoints();
+				
+				var toBeDeleted = points.subList(i1 + 1, i2);
+				
+				final GPX gpx1 = track.getGpx().toBuilder()
+					    .trackFilter()
+					        .map(track -> track.toBuilder()
+					            .map(segment -> segment.toBuilder()
+					                .filter((it) -> !toBeDeleted.contains(it))
+					                .build())
+					            .build())
+					        .build()
+					    .build();
+								
+				track.setGpx(gpx1);
+
+			} else {
+				log.error("Selections not on same track: {} and {}", idx1, idx2);
+			}
+		}
 	}
 }

@@ -78,16 +78,18 @@ public class LoadedFileManager {
 			
 			LOG.info("GPX file " + file.toString() + " has been successfully loaded."); //$NON-NLS-1$ //$NON-NLS-2$
 			
-			SwingUtilities.invokeLater(() -> fireChangeListeners());
+			fireChangeListeners();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	private void fireChangeListeners() {
-		for (LoadedFileChangeListener listener: changeListeners) {
-			listener.onLoadedFileChange();
-		}
+	public void fireChangeListeners() {
+		SwingUtilities.invokeLater(() -> {
+			for (LoadedFileChangeListener listener: changeListeners) {
+				listener.onLoadedFileChange();
+			}
+		});
 	}
 
 	/**

@@ -9,10 +9,12 @@ import java.util.stream.Collectors;
 
 import org.jxmapviewer.viewer.GeoPosition;
 
+import de.taschi.bulkgpxviewer.files.LoadedFileManager;
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
+import lombok.Getter;
 
 public class GpxFile {
 	
@@ -22,6 +24,9 @@ public class GpxFile {
 	
 	private List<WayPoint> allWayPoints;
 	private List<GeoPosition> allGeoPositions;
+	
+	@Getter
+	private boolean changed = false;
 		
 	public GpxFile(Path fileName, GPX gpx) {
 		this.fileName = fileName;
@@ -127,4 +132,14 @@ public class GpxFile {
 		
 		return Optional.empty();
 	}
+
+	public void setGpx(GPX gpx) {
+		if (this.gpx.equals(gpx)) {
+			return;
+		}
+		changed = true;
+		this.gpx = gpx;
+		LoadedFileManager.getInstance().fireChangeListeners();
+	}
+
 }
