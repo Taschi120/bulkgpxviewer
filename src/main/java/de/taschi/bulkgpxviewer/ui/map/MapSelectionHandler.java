@@ -55,10 +55,10 @@ public class MapSelectionHandler extends MouseAdapter {
 		WayPoint wp = getNearestWaypointToMouseCoords(e.getPoint());
 		if (wp != null) {
 			if (selectedPoints.contains(wp)) {
-				log.info("Deselecting waypoint at {}|{}", wp.getLatitude(), wp.getLongitude());
+				log.info("Deselecting waypoint at {}|{}", wp.getLatitude(), wp.getLongitude()); //$NON-NLS-1$
 				selectedPoints.remove(wp);
 			} else {
-				log.info("Selecting waypoint at {}|{}", wp.getLatitude(), wp.getLongitude());
+				log.info("Selecting waypoint at {}|{}", wp.getLatitude(), wp.getLongitude()); //$NON-NLS-1$
 				selectedPoints.add(wp);
 			}
 			
@@ -81,7 +81,7 @@ public class MapSelectionHandler extends MouseAdapter {
 		var geoPositions = track.getAllGeoPositions();
 		
 		if (points.isEmpty()) {
-			log.warn("Track is empty, cannot find nearest point");
+			log.warn("Track is empty, cannot find nearest point"); //$NON-NLS-1$
 			return null;
 		}
 		
@@ -113,7 +113,7 @@ public class MapSelectionHandler extends MouseAdapter {
 	 * @param track the track which is being edited
 	 */
 	public void activate(GpxFile track) {
-		log.info("Entering edit mode for track {}", track.getFileName());
+		log.info("Entering edit mode for track {}", track.getFileName()); //$NON-NLS-1$
 		this.track = track;
 		active = true;
 	}
@@ -122,7 +122,7 @@ public class MapSelectionHandler extends MouseAdapter {
 	 * Deactivates this listener
 	 */
 	public void deactivate() {
-		log.info("Exiting edit mode");
+		log.info("Exiting edit mode"); //$NON-NLS-1$
 		track = null;
 		active = false;
 	}

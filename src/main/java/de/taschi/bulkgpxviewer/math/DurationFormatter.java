@@ -24,6 +24,8 @@ package de.taschi.bulkgpxviewer.math;
 
 import java.time.Duration;
 
+import de.taschi.bulkgpxviewer.ui.Messages;
+
 public class DurationFormatter {
 	
 	private static DurationFormatter INSTANCE = null;
@@ -41,6 +43,6 @@ public class DurationFormatter {
 	
 	public String format(Duration duration) {
 		long seconds = duration.getSeconds();
-		return String.format("%d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, (seconds % 60));
+		return String.format(Messages.getString("DurationFormatter.HrMinSecFormat"), seconds / 3600, (seconds % 3600) / 60, (seconds % 60)); //$NON-NLS-1$
 	}
 }

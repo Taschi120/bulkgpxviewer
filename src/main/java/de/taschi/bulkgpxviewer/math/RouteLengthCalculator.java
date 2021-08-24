@@ -1,6 +1,10 @@
 package de.taschi.bulkgpxviewer.math;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import de.taschi.bulkgpxviewer.settings.dto.UnitSystem;
+import de.taschi.bulkgpxviewer.ui.Messages;
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
@@ -19,7 +23,21 @@ public class RouteLengthCalculator {
 	
 	private RouteLengthCalculator() {
 		// prevent instantiation
-		log.info("Instantiated");
+		log.info("Instantiated"); //$NON-NLS-1$
+	}
+	
+	public String getFormattedTotalDistance(GPX gpx, UnitSystem system) {
+		var distance = BigDecimal.valueOf(getTotalDistance(gpx, system))
+				.setScale(1, RoundingMode.HALF_UP);
+		
+		String unit;
+		switch (system) {
+			case IMPERIAL: unit = Messages.getString("RouteLengthCalculator.UnitMiles"); break; //$NON-NLS-1$
+			case METRIC:
+			default: unit = Messages.getString("RouteLengthCalculator.UnitKilometers"); break; //$NON-NLS-1$
+		}
+		
+		return String.format(Messages.getString("RouteLengthCalculator.RouteLengthFormat"), distance, unit); //$NON-NLS-1$
 	}
 	
 	public double getTotalDistance(GPX gpx, UnitSystem system) {

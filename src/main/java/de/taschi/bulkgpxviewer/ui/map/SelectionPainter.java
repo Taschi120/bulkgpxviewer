@@ -45,11 +45,11 @@ public class SelectionPainter implements Painter<JXMapViewer>
 
     public SelectionPainter() {
     	try {
-    		markerNeutral = ImageIO.read(ClassLoader.getSystemResource("ui/marker16.png"));
-			markerA = ImageIO.read(ClassLoader.getSystemResource("ui/marker_a16.png"));
-			markerB = ImageIO.read(ClassLoader.getSystemResource("ui/marker_b16.png"));
+    		markerNeutral = ImageIO.read(ClassLoader.getSystemResource("ui/marker16.png")); //$NON-NLS-1$
+			markerA = ImageIO.read(ClassLoader.getSystemResource("ui/marker_a16.png")); //$NON-NLS-1$
+			markerB = ImageIO.read(ClassLoader.getSystemResource("ui/marker_b16.png")); //$NON-NLS-1$
 		} catch (Exception e) {
-			log.error("Could not load marker image", e);
+			log.error("Could not load marker image", e); //$NON-NLS-1$
 			markerA = null;
 			markerB = null;
 		}
@@ -119,7 +119,7 @@ public class SelectionPainter implements Painter<JXMapViewer>
 	}
 
 	public void setSelectionFromWayPoints(Set<WayPoint> selection) {
-		log.info("Updating selection, {} items now selected", selection.size());
+		log.info("Updating selection, {} items now selected", selection.size()); //$NON-NLS-1$
 		this.selection = new ArrayList<>(selection);
 		this.selection.sort((o1, o2) -> 
 			track.indexOfWayPoint(o2).orElseThrow().compareTo(track.indexOfWayPoint(o1).orElseThrow()));

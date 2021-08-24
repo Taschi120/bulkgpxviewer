@@ -80,7 +80,7 @@ public class DurationCalculator {
 		var waypoints = segment.getPoints();
 		
 		if(waypoints.size() < 2) {
-			log.debug("Time calculation impossible: List has fewer than 2 waypoints");
+			log.debug("Time calculation impossible: List has fewer than 2 waypoints"); //$NON-NLS-1$
 			return Optional.of(Duration.ZERO);
 		}
 		
@@ -88,7 +88,7 @@ public class DurationCalculator {
 		var end = waypoints.get(waypoints.size() - 1).getInstant().orElse(null);
 	
 		if (start == null || end == null) {
-			log.debug("Time calculation impossible: GPX does not contain timestamps");
+			log.debug("Time calculation impossible: GPX does not contain timestamps"); //$NON-NLS-1$
 			return Optional.empty();
 		}
 		

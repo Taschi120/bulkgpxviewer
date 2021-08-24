@@ -33,8 +33,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import de.taschi.bulkgpxviewer.geo.GpxFile;
 import de.taschi.bulkgpxviewer.math.DurationCalculator;
 import de.taschi.bulkgpxviewer.math.DurationFormatter;
+import de.taschi.bulkgpxviewer.math.RouteLengthCalculator;
+import de.taschi.bulkgpxviewer.math.SpeedCalculator;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
-import de.taschi.bulkgpxviewer.settings.dto.UnitSystem;
 import de.taschi.bulkgpxviewer.ui.Messages;
 
 /**
@@ -69,18 +70,6 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode {
 		add(avgSpeedNode);
 	}
 
-	private Object getAvgSpeedLabel() {
-		if (SettingsManager.getInstance().getSettings().getUnitSystem() == UnitSystem.METRIC) {
-			return Messages.getString("SidePanel.AvgSpeed")  //$NON-NLS-1$
-					+ track.getSpeedInKph() 
-					+ Messages.getString("SidePanel.Unit_kph"); //$NON-NLS-1$
-		} else {
-			return Messages.getString("SidePanel.AvgSpeed")  //$NON-NLS-1$
-					+ track.getSpeedInMph()
-					+ Messages.getString("SidePanel.Unit_mph"); //$NON-NLS-1$
-		}
-	}
-
 	/**
 	 * Update this node, and all child nodes, if needed.
 	 */
@@ -107,34 +96,37 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode {
 	private String getStartDateLabel(Optional<Instant> startedAt) {
 		var formattedDate = startedAt
 				.map(it -> it.atZone(ZoneId.systemDefault()).format(dtf))
-				.orElse("unknown");
+				.orElse(Messages.getString("GpxFileTreeNode.unknown")); //$NON-NLS-1$
 		
-		return Messages.getString("SidePanel.StartedAt")  //$NON-NLS-1$
-				+ formattedDate;
+		return String.format(Messages.getString("GpxFileTreeNode.StartedAt"), formattedDate); //$NON-NLS-1$
 	}
 	
 	private String getTrackLengthLabel() {
-		if (SettingsManager.getInstance().getSettings().getUnitSystem() == UnitSystem.METRIC) {
-			return Messages.getString("SidePanel.RouteLength")  //$NON-NLS-1$
-					+ track.getRouteLengthInKilometers() 
-					+ Messages.getString("SidePanel.Unit_km"); //$NON-NLS-1$
-		} else {
-			return Messages.getString("SidePanel.RouteLength")  //$NON-NLS-1$
-					+ track.getRouteLengthInMiles() 
-					+ Messages.getString("SidePanel.Unit_miles"); //$NON-NLS-1$
-		}
+		var unitSystem = SettingsManager.getInstance().getSettings().getUnitSystem();
+		var distance = RouteLengthCalculator.getInstance().getFormattedTotalDistance(track.getGpx(), unitSystem);
+		
+		return String.format(Messages.getString("GpxFileTreeNode.TrackLength"), distance);  //$NON-NLS-1$		
 	}
 	
 	private String getDurationLabel() {
 		var formattedDuration = DurationCalculator.getInstance().getRecordedDurationForGpxFile(track.getGpx())
 				.map(DurationFormatter.getInstance()::format)
-				.orElse("unknown");
+				.orElse(Messages.getString("GpxFileTreeNode.unknown")); //$NON-NLS-1$
 				
-		return String.format(Messages.getString("GpxFileTreeNode.Duration"), formattedDuration);//$NON_NLS-1$
+		return String.format(Messages.getString("GpxFileTreeNode.Duration"), formattedDuration);//$NON_NLS-1$ //$NON-NLS-1$
+	}
+	
+	private String getAvgSpeedLabel() {
+		var unitSystem = SettingsManager.getInstance().getSettings().getUnitSystem();
+		var formattedSpeed = SpeedCalculator.getInstance().getFormattedAverageSpeed(track.getGpx(), unitSystem);
+		
+		return String.format(Messages.getString("GpxFileTreeNode.AverageSpeedLabelFormat"), formattedSpeed); //$NON-NLS-1$
 	}
 
 	public GpxFile getTrack() {
 		return track;
 	}
+	
+	
 	
 }

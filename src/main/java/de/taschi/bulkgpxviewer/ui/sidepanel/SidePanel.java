@@ -92,7 +92,7 @@ public class SidePanel extends JPanel {
 		LOG.info("Recreating tree model"); //$NON-NLS-1$
 		
 		if (rootNode == null) {
-			rootNode = new DefaultMutableTreeNode(Messages.getString("SidePanel.AllFiles")); //$NON-NLS-1$
+			rootNode = new DefaultMutableTreeNode(Messages.getString("SidePanel.allFiles")); //$NON-NLS-1$
 		} else {
 			rootNode.removeAllChildren();
 		}
@@ -148,7 +148,7 @@ public class SidePanel extends JPanel {
 			
 		} else {
 			if (unknownYearNode == null) {
-				unknownYearNode = new DefaultMutableTreeNode(Messages.getString("SidePanel.unknownYear"));
+				unknownYearNode = new DefaultMutableTreeNode(Messages.getString("SidePanel.unknownYear")); //$NON-NLS-1$
 				rootNode.add(unknownYearNode);
 			}
 			yearNode = unknownYearNode;
@@ -161,12 +161,12 @@ public class SidePanel extends JPanel {
 	private void makeOrUpdateTrackNode(GpxFile track, DefaultMutableTreeNode parent) {
 		GpxFileTreeNode result = trackNodes.get(track.getFileName());
 		if (result == null) {
-			LOG.debug("Making new tree node for {}", track.getFileName().toString());
+			LOG.debug("Making new tree node for {}", track.getFileName().toString()); //$NON-NLS-1$
 			result = new GpxFileTreeNode(track);
 			trackNodes.put(track.getFileName(), result);
 			parent.add(result);
 		} else {
-			LOG.debug("Updating tree node for {}", track.getFileName().toString());
+			LOG.debug("Updating tree node for {}", track.getFileName().toString()); //$NON-NLS-1$
 			result.update();
 		}
 	}

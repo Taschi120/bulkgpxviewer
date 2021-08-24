@@ -39,7 +39,7 @@ public class TrackColorUtil {
 		List<Color> colors = ColorConverter.convertToAwt(settingColors);
 		
 		if (colors.isEmpty()) {
-			log.error("List of available colors is empty");
+			log.error("List of available colors is empty"); //$NON-NLS-1$
 			return Color.RED;
 		}
 		

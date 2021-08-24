@@ -149,12 +149,12 @@ public class MainWindow {
 		
 		settingsMenuItem = new JMenuItem(Messages.getString("MainWindow.SettingsMenuItem")); //$NON-NLS-1$
 		settingsMenuItem.addActionListener(this::showSettingsWindowEventHandler);
-		settingsMenuItem.setIcon(IconHandler.loadIcon("settings-5-line"));
+		settingsMenuItem.setIcon(IconHandler.loadIcon("settings-5-line")); //$NON-NLS-1$
 		mnNewMenu.add(settingsMenuItem);
 		
 		quitMenuItem = new JMenuItem(Messages.getString("MainWindow.QuitMenuItem")); //$NON-NLS-1$
 		quitMenuItem.addActionListener(this::closeEventHandler);
-		quitMenuItem.setIcon(IconHandler.loadIcon("door-open-line"));
+		quitMenuItem.setIcon(IconHandler.loadIcon("door-open-line")); //$NON-NLS-1$
 		mnNewMenu.add(quitMenuItem);
 		
 		JMenu mnNewMenu_1 = new JMenu(Messages.getString("MainWindow.HelpMenuItem")); //$NON-NLS-1$
@@ -166,7 +166,7 @@ public class MainWindow {
 		
 		aboutMenuItem = new JMenuItem(Messages.getString("MainWindow.AboutMenuItem")); //$NON-NLS-1$
 		aboutMenuItem.addActionListener(this::aboutEventHandler);
-		aboutMenuItem.setIcon(IconHandler.loadIcon("question-line"));
+		aboutMenuItem.setIcon(IconHandler.loadIcon("question-line")); //$NON-NLS-1$
 		mnNewMenu_1.add(aboutMenuItem);
 		
 		// TODO move mapSelectionHandler into MapPanel
