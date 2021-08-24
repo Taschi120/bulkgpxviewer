@@ -119,12 +119,11 @@
 						<goals>
 							<goal>update-file-header</goal>
 						</goals>
-						<phase>process-sources</phase>
 						<configuration>
 							<licenseName>gpl_v3</licenseName>
-							<excludes>
-								<exclude>${project.basedir}/src/main/resources/icons/**</exclude>
-							</excludes>
+							<roots>
+								<root>${project.basedir}/src/main/java</root>
+							</roots>
 						</configuration>
 					</execution>
 				</executions>
