@@ -58,7 +58,7 @@ public class MapSelectionHandler extends MouseAdapter {
 			if (selectedPoints.contains(wp)) {
 				log.info("Deselecting waypoint at {}|{}", wp.getLatitude(), wp.getLongitude()); //$NON-NLS-1$
 				selectedPoints.remove(wp);
-			} else {
+			} else if (selectedPoints.size() < 2) {
 				log.info("Selecting waypoint at {}|{}", wp.getLatitude(), wp.getLongitude()); //$NON-NLS-1$
 				selectedPoints.add(wp);
 			}
