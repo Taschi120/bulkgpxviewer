@@ -113,7 +113,22 @@
 							<goal>download-licenses</goal>
 						</goals>
 					</execution>
+
+					<execution>
+						<id>update-file-header</id>
+						<goals>
+							<goal>update-file-header</goal>
+						</goals>
+						<phase>process-sources</phase>
+						<configuration>
+							<licenseName>gpl_v3</licenseName>
+							<excludes>
+								<exclude>${project.basedir}/src/main/resources/icons/**</exclude>
+							</excludes>
+						</configuration>
+					</execution>
 				</executions>
+
 			</plugin>
 
 			<plugin>
