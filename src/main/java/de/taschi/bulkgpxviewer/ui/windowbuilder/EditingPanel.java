@@ -44,7 +44,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.SoftBevelBorder;
 
 import de.taschi.bulkgpxviewer.Application;
-import de.taschi.bulkgpxviewer.geo.GpxFile;
+import de.taschi.bulkgpxviewer.files.GpxFile;
 import de.taschi.bulkgpxviewer.ui.IconHandler;
 import de.taschi.bulkgpxviewer.ui.Messages;
 import de.taschi.bulkgpxviewer.ui.map.MapSelectionHandler;

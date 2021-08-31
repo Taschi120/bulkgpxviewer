@@ -26,7 +26,7 @@ import java.awt.Color;
 import java.util.Collections;
 import java.util.List;
 
-import de.taschi.bulkgpxviewer.geo.GpxFile;
+import de.taschi.bulkgpxviewer.files.GpxFile;
 import de.taschi.bulkgpxviewer.settings.ColorConverter;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.settings.dto.SettingsColor;

@@ -1,7 +1,6 @@
 package de.taschi.bulkgpxviewer.math;
 
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,8 +10,6 @@ import java.util.stream.Collectors;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-
-import com.sun.net.httpserver.Authenticator.Result;
 
 import io.jenetics.jpx.TrackSegment;
 import lombok.extern.log4j.Log4j2;

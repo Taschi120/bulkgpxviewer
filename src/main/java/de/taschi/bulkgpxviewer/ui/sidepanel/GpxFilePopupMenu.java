@@ -34,8 +34,8 @@ import javax.swing.JTree;
 import org.apache.commons.lang3.StringUtils;
 
 import de.taschi.bulkgpxviewer.Application;
+import de.taschi.bulkgpxviewer.files.GpxFile;
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
-import de.taschi.bulkgpxviewer.geo.GpxFile;
 import de.taschi.bulkgpxviewer.ui.IconHandler;
 import de.taschi.bulkgpxviewer.ui.Messages;
 import lombok.extern.log4j.Log4j2;

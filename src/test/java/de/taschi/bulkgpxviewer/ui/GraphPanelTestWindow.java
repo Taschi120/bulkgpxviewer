@@ -5,7 +5,7 @@ import java.awt.BorderLayout;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
-import de.taschi.bulkgpxviewer.geo.GpxFile;
+import de.taschi.bulkgpxviewer.files.GpxFile;
 import de.taschi.bulkgpxviewer.ui.graphs.DistanceOverTimePanel;
 import de.taschi.bulkgpxviewer.ui.graphs.SpeedOverTimePanel;
 import io.jenetics.jpx.GPX;

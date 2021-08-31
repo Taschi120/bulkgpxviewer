@@ -1,4 +1,4 @@
-package de.taschi.bulkgpxviewer.geo;
+package de.taschi.bulkgpxviewer.files;
 
 /*-
  * #%L
@@ -34,7 +34,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.jxmapviewer.viewer.GeoPosition;
 
-import de.taschi.bulkgpxviewer.files.LoadedFileManager;
+import de.taschi.bulkgpxviewer.geo.GpxToJxMapper;
+import de.taschi.bulkgpxviewer.geo.WaypointIndex;
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;

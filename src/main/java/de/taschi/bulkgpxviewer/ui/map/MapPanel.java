@@ -26,7 +26,6 @@ import java.awt.BorderLayout;
 import java.util.List;
 
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
 import org.jxmapviewer.JXMapKit;
 import org.jxmapviewer.OSMTileFactoryInfo;
@@ -34,10 +33,10 @@ import org.jxmapviewer.viewer.DefaultTileFactory;
 import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.TileFactoryInfo;
 
+import de.taschi.bulkgpxviewer.files.GpxFile;
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
 import de.taschi.bulkgpxviewer.geo.GpsBoundingBox;
 import de.taschi.bulkgpxviewer.geo.GpxToJxMapper;
-import de.taschi.bulkgpxviewer.geo.GpxFile;
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;

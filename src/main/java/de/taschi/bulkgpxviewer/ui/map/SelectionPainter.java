@@ -38,8 +38,8 @@ import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.painter.Painter;
 import org.jxmapviewer.viewer.GeoPosition;
 
+import de.taschi.bulkgpxviewer.files.GpxFile;
 import de.taschi.bulkgpxviewer.geo.GpxToJxMapper;
-import de.taschi.bulkgpxviewer.geo.GpxFile;
 import io.jenetics.jpx.WayPoint;
 import lombok.extern.log4j.Log4j2;
 

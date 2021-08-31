@@ -37,7 +37,6 @@ import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.taschi.bulkgpxviewer.geo.GpxFile;
 import io.jenetics.jpx.GPX;
 
 /**

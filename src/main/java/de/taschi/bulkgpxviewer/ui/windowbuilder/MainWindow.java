@@ -44,23 +44,22 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.taschi.bulkgpxviewer.files.GpxFile;
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
-import de.taschi.bulkgpxviewer.geo.GpxFile;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings;
 import de.taschi.bulkgpxviewer.ui.IconHandler;
 import de.taschi.bulkgpxviewer.ui.Messages;
+import de.taschi.bulkgpxviewer.ui.graphs.SpeedOverTimePanel;
 import de.taschi.bulkgpxviewer.ui.map.MapPanel;
-import de.taschi.bulkgpxviewer.ui.map.MapSelectionHandler;
 import de.taschi.bulkgpxviewer.ui.sidepanel.SidePanel;
 import io.jenetics.jpx.WayPoint;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JTabbedPane;
 
 public class MainWindow {
 	
@@ -87,6 +86,7 @@ public class MainWindow {
 	private JSplitPane splitPane_1;
 	private JTabbedPane tabbedPane;
 	private EditingPanel editingPanel;
+	private SpeedOverTimePanel speedOverTimePanel;
 	
 	/**
 	 * Launch the application.
@@ -143,6 +143,9 @@ public class MainWindow {
 		
 		editingPanel = new EditingPanel();
 		tabbedPane.addTab(Messages.getString("MainWindow.editingPanel_1.title"), null, editingPanel, null); //$NON-NLS-1$
+		
+		speedOverTimePanel = new SpeedOverTimePanel();
+		tabbedPane.addTab(Messages.getString("MainWindow.speedOverTimePanel.title"), null, speedOverTimePanel, null); //$NON-NLS-1$
 		
 		mapPanel.getSelectionHandler().addSelectionChangeListener(selection ->
 			editingPanel.setSelection(selection));

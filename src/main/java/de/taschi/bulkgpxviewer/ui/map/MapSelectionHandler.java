@@ -37,7 +37,7 @@ import javax.swing.SwingUtilities;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.GeoPosition;
 
-import de.taschi.bulkgpxviewer.geo.GpxFile;
+import de.taschi.bulkgpxviewer.files.GpxFile;
 import io.jenetics.jpx.WayPoint;
 import lombok.extern.log4j.Log4j2;
 
