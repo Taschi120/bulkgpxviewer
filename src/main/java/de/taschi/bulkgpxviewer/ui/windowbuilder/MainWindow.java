@@ -348,7 +348,9 @@ public class MainWindow {
 
 	public void setSelectedGpxFile(Optional<GpxFile> file) {
 		Optional<TrackSegment> firstSegment = file.map(it -> it.getFirstSegment()).orElse(Optional.empty());
+		
 		speedOverTimePanel.setGpxTrackSegment(firstSegment.orElse(null));
+		mapPanel.setSelectedFile(file.orElse(null));
 	}
 }
 

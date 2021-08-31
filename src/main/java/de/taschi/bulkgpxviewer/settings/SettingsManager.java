@@ -100,6 +100,12 @@ public class SettingsManager {
 			LOG.info("Updating settings to v0.3.0"); //$NON-NLS-1$
 			getSettings().setUnitSystem(UnitSystem.METRIC);
 		}
+		if (getSettings().getSelectedRouteColor() == null) {
+			getSettings().setSelectedRouteColor(new SettingsColor(255, 0, 0));
+		}
+		if (getSettings().getUnselectedRouteColor() == null) {
+			getSettings().setUnselectedRouteColor(new SettingsColor(128, 128, 128));
+		}
 	}
 	
 	public void saveSettings() {

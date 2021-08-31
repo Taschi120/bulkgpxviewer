@@ -40,6 +40,8 @@ import org.jxmapviewer.viewer.GeoPosition;
 import de.taschi.bulkgpxviewer.files.GpxFile;
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
 import de.taschi.bulkgpxviewer.geo.GpxToJxMapper;
+import de.taschi.bulkgpxviewer.settings.ColorConverter;
+import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.ui.TrackColorUtil;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
@@ -53,16 +55,14 @@ import io.jenetics.jpx.TrackSegment;
  */
 public class TracksPainter implements Painter<JXMapViewer>
 {
+	private MapPanel parent;
 	
     private boolean antiAlias = true;
     
     private Supplier<Collection<GpxFile>> provider = getAllRouteProvider();
     
-    /**
-     * @param track the track
-     */
-    public TracksPainter()
-    {
+    public TracksPainter(MapPanel parent) {
+    	this.parent = parent;
     }
 
     public Supplier<Collection<GpxFile>> getAllRouteProvider() {
@@ -86,24 +86,41 @@ public class TracksPainter implements Painter<JXMapViewer>
         }
 
         for (GpxFile track: provider.get()) {
-	        // do the drawing
-	        g.setColor(Color.BLACK);
-	        g.setStroke(new BasicStroke(4));
-	
-	        drawGpxFile(g, map, track);
-	
-	    	Color color = TrackColorUtil.getInstance().getColorForTrack(track);
-	        // do the drawing again
-	        g.setColor(color);
-	        g.setStroke(new BasicStroke(2));
-	
-	        drawGpxFile(g, map, track);
+        	if (track == parent.getSelectedFile()) continue; // selected file needs to be drawn last!
+        	
+	        drawGpxFileWithOutline(track, g, map, w, h);
+        }
+        
+        if (parent.getSelectedFile() != null) {
+        	drawGpxFileWithOutline(parent.getSelectedFile(), g, map, w, h);
         }
 
         g.dispose();
     }
 	
-	private void drawGpxFile(Graphics2D g, JXMapViewer map, GpxFile gpxViewerTrack) {
+	private void drawGpxFileWithOutline(GpxFile track, Graphics2D g, JXMapViewer map, int w, int h) {
+		// do the drawing
+        g.setColor(Color.BLACK);
+        g.setStroke(new BasicStroke(4));
+
+        drawGpxFileSinglePass(g, map, track);
+
+        Color color;
+        if(parent.getSelectedFile() == null) {
+        	color = TrackColorUtil.getInstance().getColorForTrack(track);
+        } else if (parent.getSelectedFile() == track) { // pointer comparison should be ok here
+        	color = ColorConverter.convert(SettingsManager.getInstance().getSettings().getSelectedRouteColor());
+        } else {
+        	color = ColorConverter.convert(SettingsManager.getInstance().getSettings().getUnselectedRouteColor());
+        }
+        // do the drawing again
+        g.setColor(color);
+        g.setStroke(new BasicStroke(2));
+
+        drawGpxFileSinglePass(g, map, track);
+	}
+	
+	private void drawGpxFileSinglePass(Graphics2D g, JXMapViewer map, GpxFile gpxViewerTrack) {
 		for(Track track: gpxViewerTrack.getGpx().getTracks()) {
 			drawTrack(g, map, track);
 		}

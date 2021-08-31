@@ -40,6 +40,7 @@ import de.taschi.bulkgpxviewer.geo.GpxToJxMapper;
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
+import lombok.Getter;
 
 /**
  * A JPanel which wraps the {@link JXMapKit} instance
@@ -53,6 +54,9 @@ public class MapPanel extends JPanel {
 	private final TracksPainter routesPainter;
 	private final SelectionPainter selectionPainter;
 	private final CompositePainter compositePainter;
+	
+	@Getter
+	private GpxFile selectedFile = null;
 	
 	private MapSelectionHandler selectionHandler;
 			
@@ -71,7 +75,7 @@ public class MapPanel extends JPanel {
         // Use 8 threads in parallel to load the tiles
         tileFactory.setThreadPoolSize(8);
                 
-        routesPainter = new TracksPainter();
+        routesPainter = new TracksPainter(this);
         selectionPainter = new SelectionPainter();
         
         compositePainter = new CompositePainter();
@@ -136,4 +140,14 @@ public class MapPanel extends JPanel {
 	public MapSelectionHandler getSelectionHandler() {
 		return selectionHandler;
 	}
+
+	/**
+	 * Set the selected (highlighted) file. Use "null" as the parameter to unselect.
+	 * @param selectedFile
+	 */
+	public void setSelectedFile(GpxFile selectedFile) {
+		this.selectedFile = selectedFile;
+		repaint();
+	}
+	
 }

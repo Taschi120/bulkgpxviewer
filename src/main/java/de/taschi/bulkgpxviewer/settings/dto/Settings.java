@@ -33,4 +33,7 @@ public class Settings {
 	private List<SettingsColor> routeColors;
 	private MainWindowSettings mainWindowSettings;
 	private UnitSystem unitSystem;
+	private SettingsColor unselectedRouteColor;
+	private SettingsColor selectedRouteColor;
+	
 }
