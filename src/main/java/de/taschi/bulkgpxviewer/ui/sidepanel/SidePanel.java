@@ -48,10 +48,13 @@ import javax.swing.tree.DefaultTreeModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.taschi.bulkgpxviewer.Application;
 import de.taschi.bulkgpxviewer.files.GpxFile;
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
 import de.taschi.bulkgpxviewer.ui.Messages;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class SidePanel extends JPanel {
 	
 	private static final Logger LOG = LogManager.getLogger(SidePanel.class);
@@ -80,7 +83,7 @@ public class SidePanel extends JPanel {
 	            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
 		filePopupMenu = new GpxFilePopupMenu();
-		treeView.addMouseListener(new MouseListener());
+		treeView.addMouseListener(new SidePanelMouseListener());
 		
 		add(scrollPane, BorderLayout.CENTER);
 		
@@ -193,11 +196,11 @@ public class SidePanel extends JPanel {
 		createTreeModel();
 	}
 	
-	private class MouseListener extends MouseAdapter {
+	private class SidePanelMouseListener extends MouseAdapter {
 		public void mouseClicked(MouseEvent e) {
 
 		    if (SwingUtilities.isRightMouseButton(e)) {
-
+		    	// check if we need to open context menu
 		        var row = treeView.getRowForLocation(e.getX(), e.getY());
 		        treeView.setSelectionRow(row);
 		        
@@ -211,6 +214,24 @@ public class SidePanel extends JPanel {
 				        filePopupMenu.openOnTreeItem(treeView, (GpxFileTreeNode) selected, e.getX(), e.getY());
 			        }
 			    }
+		    } else if (SwingUtilities.isLeftMouseButton(e)) {
+		    	// if exactly one GPX file is now selected, update graph panels
+		    	var selectionModel = treeView.getSelectionModel();
+		    	if(selectionModel.getSelectionCount() == 1) {
+		    		var selected = selectionModel.getLeadSelectionPath().getLastPathComponent();
+		    		if (selected instanceof GpxFileRelatedNode) {
+		    			var node = (GpxFileRelatedNode) selected;
+		    			var file = node.getGpxFile();
+		    			
+		    			log.info("Selected GPX file is now {}", file.getFileName());
+		    			
+		    			Application.getMainWindow().setSelectedGpxFile(Optional.of(file));
+		    		} else {
+		    			Application.getMainWindow().setSelectedGpxFile(Optional.empty());
+		    		}
+		    	} else {
+	    			Application.getMainWindow().setSelectedGpxFile(Optional.empty());
+		    	}
 		    }
 		}
 	}

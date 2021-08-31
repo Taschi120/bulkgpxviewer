@@ -51,7 +51,10 @@ public class TrackStatisticsManager {
 		return getDistanceDifferences(segment).stream().collect(Collectors.summingDouble(it -> it));
 	}
 	
-	public List<Double> getDistanceDifferences(TrackSegment segment) {
+	public List<Double> getDistanceDifferences(TrackSegment segment) {	
+		if (segment == null) { 
+			return Collections.emptyList();
+		}
 		// TODO cache me!
 		var waypoints = segment.getPoints();
 		
@@ -87,6 +90,10 @@ public class TrackStatisticsManager {
 	}
 
 	private List<Double> getTotalDistancesWithoutCache(TrackSegment segment) {
+		if (segment == null) { 
+			return Collections.emptyList();
+		}
+		
 		var waypoints = segment.getPoints();
 		
 		if(waypoints.size() == 0) {
@@ -127,6 +134,10 @@ public class TrackStatisticsManager {
 
 	
 	private List<Duration> getTotalTimesWithoutCaching(TrackSegment segment) {
+		if (segment == null) { 
+			return Collections.emptyList();
+		}
+		
 		var waypoints = segment.getPoints();
 				
 		if(waypoints.isEmpty()) {
@@ -173,6 +184,10 @@ public class TrackStatisticsManager {
 	}
 
 	private List<Double> getSpeedsWithoutCaching(TrackSegment segment) {
+		if (segment == null) { 
+			return Collections.emptyList();
+		}
+		
 		var distances = getDistanceDifferences(segment);
 		var times = getTimeDifferences(segment);
 		
@@ -194,7 +209,6 @@ public class TrackStatisticsManager {
 				result.add(0.0);
 			} else {
 				var speed = distance / millis * 3_600_000;
-				log.debug("{} km in {} seconds = {} kph", distance, time, speed);
 				if (speed < STANDING_SPEED_THRESHOLD) {
 					if (i > 0) {
 						result.set(i - 1, 0.0);
@@ -210,6 +224,10 @@ public class TrackStatisticsManager {
 	}
 	
 	private List<Duration> getTimeDifferences(TrackSegment segment) {
+		
+		if (segment == null) { 
+			return Collections.emptyList();
+		}
 		// TODO cache me!
 		var waypoints = segment.getPoints();
 		

@@ -8,7 +8,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import de.taschi.bulkgpxviewer.files.GpxFile;
 import de.taschi.bulkgpxviewer.ui.Messages;
 
-public class StartDateTreeNode extends DefaultMutableTreeNode implements GpxFileSubnode {
+public class StartDateTreeNode extends DefaultMutableTreeNode implements GpxFileRelatedNode {
 
 	private static final long serialVersionUID = -5351575012833312751L;
 	private static final DateTimeFormatter dtf = DateTimeFormatter.RFC_1123_DATE_TIME;	

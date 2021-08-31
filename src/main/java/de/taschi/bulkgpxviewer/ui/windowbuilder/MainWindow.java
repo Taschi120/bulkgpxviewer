@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
+import java.util.Optional;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -59,6 +60,7 @@ import de.taschi.bulkgpxviewer.ui.Messages;
 import de.taschi.bulkgpxviewer.ui.graphs.SpeedOverTimePanel;
 import de.taschi.bulkgpxviewer.ui.map.MapPanel;
 import de.taschi.bulkgpxviewer.ui.sidepanel.SidePanel;
+import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
 
 public class MainWindow {
@@ -342,6 +344,11 @@ public class MainWindow {
 		LoadedFileManager.getInstance().fireChangeListeners();
 		
 		currentMode = MainWindowMode.BULK_DISPLAY;
+	}
+
+	public void setSelectedGpxFile(Optional<GpxFile> file) {
+		Optional<TrackSegment> firstSegment = file.map(it -> it.getFirstSegment()).orElse(Optional.empty());
+		speedOverTimePanel.setGpxTrackSegment(firstSegment.orElse(null));
 	}
 }
 

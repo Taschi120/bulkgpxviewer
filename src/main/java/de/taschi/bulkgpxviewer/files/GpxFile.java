@@ -186,4 +186,20 @@ public class GpxFile {
 		LoadedFileManager.getInstance().fireChangeListeners();
 	}
 
+	public Optional<TrackSegment> getFirstSegment() {
+		var tracks = getGpx().getTracks();
+		
+		if (tracks.isEmpty()) {
+			return Optional.empty();
+		}
+		
+		var segments = tracks.get(0).getSegments();
+		
+		if (segments.isEmpty()) {
+			return Optional.empty();
+		}
+		
+		return Optional.of(segments.get(0));
+	}
+
 }

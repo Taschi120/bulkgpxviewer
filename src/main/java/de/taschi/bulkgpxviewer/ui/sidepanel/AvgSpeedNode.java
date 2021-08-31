@@ -7,7 +7,7 @@ import de.taschi.bulkgpxviewer.math.SpeedCalculator;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.ui.Messages;
 
-public class AvgSpeedNode extends DefaultMutableTreeNode implements GpxFileSubnode {
+public class AvgSpeedNode extends DefaultMutableTreeNode implements GpxFileRelatedNode {
 		
 	private static final long serialVersionUID = -123087122558756515L;
 	

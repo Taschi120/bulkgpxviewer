@@ -7,7 +7,7 @@ import de.taschi.bulkgpxviewer.math.RouteLengthCalculator;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.ui.Messages;
 
-public class DistanceNode extends DefaultMutableTreeNode implements GpxFileSubnode {
+public class DistanceNode extends DefaultMutableTreeNode implements GpxFileRelatedNode {
 	
 	private static final long serialVersionUID = 4744651843197435586L;
 	

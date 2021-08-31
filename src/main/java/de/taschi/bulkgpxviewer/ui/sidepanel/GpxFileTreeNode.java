@@ -8,7 +8,7 @@ import de.taschi.bulkgpxviewer.files.GpxFile;
 /**
  * A {@link JTree} node representing a {@link GpxFile} in the {@link SidePanel}.
  */
-public class GpxFileTreeNode extends DefaultMutableTreeNode {
+public class GpxFileTreeNode extends DefaultMutableTreeNode implements GpxFileRelatedNode {
 	
 	private static final long serialVersionUID = 6138013700158255219L;
 
@@ -62,7 +62,9 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode {
 	public GpxFile getTrack() {
 		return track;
 	}
-	
-	
-	
+
+	@Override
+	public GpxFileTreeNode getGpxFileTreeNode() {
+		return this;
+	}
 }

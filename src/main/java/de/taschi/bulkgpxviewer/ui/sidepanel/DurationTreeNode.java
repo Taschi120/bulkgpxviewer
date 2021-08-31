@@ -7,7 +7,7 @@ import de.taschi.bulkgpxviewer.math.DurationCalculator;
 import de.taschi.bulkgpxviewer.math.DurationFormatter;
 import de.taschi.bulkgpxviewer.ui.Messages;
 
-public class DurationTreeNode extends DefaultMutableTreeNode implements GpxFileSubnode {
+public class DurationTreeNode extends DefaultMutableTreeNode implements GpxFileRelatedNode {
 
 	private static final long serialVersionUID = 5167185250543279471L;
 	

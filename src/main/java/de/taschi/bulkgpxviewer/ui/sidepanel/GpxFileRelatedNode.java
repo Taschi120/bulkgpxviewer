@@ -5,7 +5,7 @@ import de.taschi.bulkgpxviewer.files.GpxFile;
 /**
  * Interface for all GPX tree nodes that are below a {@linkplain GpxFileTreeNode} in the side view.
  */
-public interface GpxFileSubnode {
+public interface GpxFileRelatedNode {
 	
 	/**
 	 * Returns the parent {@link GpxFileTreeNode}
