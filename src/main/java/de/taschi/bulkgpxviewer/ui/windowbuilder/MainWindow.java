@@ -59,6 +59,8 @@ import de.taschi.bulkgpxviewer.ui.map.MapPanel;
 import de.taschi.bulkgpxviewer.ui.map.MapSelectionHandler;
 import de.taschi.bulkgpxviewer.ui.sidepanel.SidePanel;
 import io.jenetics.jpx.WayPoint;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JTabbedPane;
 
 public class MainWindow {
 	
@@ -79,11 +81,12 @@ public class MainWindow {
 	@SuppressWarnings("unused")
 	private MainWindowMode currentMode = MainWindowMode.BULK_DISPLAY;
 	
-	private EditingPanel editingPanel = new EditingPanel();
 	private JPanel leftSideRootPanel;
 	private JPanel rightSideRootPanel;
 	
-	private MapSelectionHandler mapSelectionHandler;
+	private JSplitPane splitPane_1;
+	private JTabbedPane tabbedPane;
+	private EditingPanel editingPanel;
 	
 	/**
 	 * Launch the application.
@@ -125,9 +128,26 @@ public class MainWindow {
 		leftSideRootPanel = new JPanel();
 		splitPane.setLeftComponent(leftSideRootPanel);
 		leftSideRootPanel.setLayout(new BorderLayout(0, 0));
-
+		
+		splitPane_1 = new JSplitPane();
+		splitPane_1.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		splitPane_1.setOneTouchExpandable(true);
+		splitPane_1.setResizeWeight(0.75);
+		leftSideRootPanel.add(splitPane_1, BorderLayout.CENTER);
+		
 		mapPanel = new MapPanel();
-		leftSideRootPanel.add(mapPanel, BorderLayout.CENTER);
+		splitPane_1.setLeftComponent(mapPanel);
+		
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		splitPane_1.setRightComponent(tabbedPane);
+		
+		editingPanel = new EditingPanel();
+		tabbedPane.addTab(Messages.getString("MainWindow.editingPanel_1.title"), null, editingPanel, null); //$NON-NLS-1$
+		
+		mapPanel.getSelectionHandler().addSelectionChangeListener(selection ->
+			editingPanel.setSelection(selection));
+						
+		mapPanel.autoSetZoomAndLocation();
 				
 		rightSideRootPanel = new JPanel();
 		splitPane.setRightComponent(rightSideRootPanel);
@@ -169,16 +189,6 @@ public class MainWindow {
 		aboutMenuItem.setIcon(IconHandler.loadIcon("question-line")); //$NON-NLS-1$
 		mnNewMenu_1.add(aboutMenuItem);
 		
-		// TODO move mapSelectionHandler into MapPanel
-		mapSelectionHandler = new MapSelectionHandler(mapPanel.getMapKit().getMainMap());
-		mapPanel.getMapKit().getMainMap();
-		mapSelectionHandler.addSelectionChangeListener(selection -> 
-			mapPanel.getSelectionPainter().setSelectionFromWayPoints(selection));
-		mapSelectionHandler.addSelectionChangeListener(selection ->
-			editingPanel.setSelection(selection));
-		
-		mapPanel.getMapKit().getMainMap().addMouseListener(mapSelectionHandler);
-		
 		restoreWindowGeometry();
 		loadAndSetIcon();
 		
@@ -189,22 +199,13 @@ public class MainWindow {
         if (!StringUtils.isEmpty(lastUsedDirectory)) {
         	setCrawlDirectory(new File(lastUsedDirectory));
         }
-		
-		mapPanel.autoSetZoomAndLocation();
 	}
 	
 	public void startEditMode(GpxFile trackToEdit) {
 		sidePanel.setEnabled(false);
-		if (editingPanel == null) {
-			editingPanel = new EditingPanel();
-		}
-		
-		// show editing controls
-		leftSideRootPanel.add(editingPanel, BorderLayout.SOUTH);
-		leftSideRootPanel.revalidate();
 		
 		editingPanel.setTrack(trackToEdit);
-		editingPanel.setSelectionHandler(mapSelectionHandler);
+		editingPanel.setSelectionHandler(mapPanel.getSelectionHandler());
 		editingPanel.setSelection(Collections.<WayPoint>emptySet());
 		
 		// set up map display
@@ -214,10 +215,10 @@ public class MainWindow {
 		
 		// TODO with multiple switches from regular mode to edit mode, there will be multiple event handlers,
 		// wasting computing time. Refactor to fix this.
-		mapSelectionHandler.addSelectionChangeListener((selection) -> mapPanel.repaint());
+		mapPanel.getSelectionHandler().addSelectionChangeListener((selection) -> mapPanel.repaint());
 		
 		// enable map listener
-		mapSelectionHandler.activate(trackToEdit);
+		mapPanel.getSelectionHandler().activate(trackToEdit);
 		
 		currentMode = MainWindowMode.EDITING;
 	}
@@ -226,7 +227,7 @@ public class MainWindow {
 		MainWindowSettings settings = SettingsManager.getInstance().getSettings().getMainWindowSettings();
 		
 		frame.setLocation(settings.getX(), settings.getY());
-		frame.setSize(settings.getWidth(), settings.getHeight());
+		frame.setSize(1185, 646);
 		
 		if (settings.isMaximized()) {
 			frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
@@ -326,7 +327,7 @@ public class MainWindow {
 	public void exitEditingMode() {
 		leftSideRootPanel.remove(editingPanel);
 		
-		mapSelectionHandler.deactivate();
+		mapPanel.getSelectionHandler().deactivate();
 		mapPanel.getSelectionPainter().setEnabled(false);
 		mapPanel.getRoutesPainter().setProvider(mapPanel.getRoutesPainter().getAllRouteProvider());
 		

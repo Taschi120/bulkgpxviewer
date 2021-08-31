@@ -26,6 +26,7 @@ import java.awt.BorderLayout;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 
 import org.jxmapviewer.JXMapKit;
 import org.jxmapviewer.OSMTileFactoryInfo;
@@ -53,10 +54,11 @@ public class MapPanel extends JPanel {
 	private final TracksPainter routesPainter;
 	private final SelectionPainter selectionPainter;
 	private final CompositePainter compositePainter;
+	
+	private MapSelectionHandler selectionHandler;
 			
 	public MapPanel() {
 		super();
-		
 		setLayout(new BorderLayout());
 		
 		mapKit = new JXMapKit();
@@ -81,6 +83,12 @@ public class MapPanel extends JPanel {
         
         LoadedFileManager.getInstance().addChangeListener(mapKit::repaint);
         autoSetZoomAndLocation();
+        
+        selectionHandler = new MapSelectionHandler(mapKit.getMainMap());
+		selectionHandler.addSelectionChangeListener(selection -> 
+			getSelectionPainter().setSelectionFromWayPoints(selection));
+
+		getMapKit().getMainMap().addMouseListener(selectionHandler);
 	}
 
 	/**
@@ -124,5 +132,9 @@ public class MapPanel extends JPanel {
 	
 	public SelectionPainter getSelectionPainter() {
 		return selectionPainter;
+	}
+
+	public MapSelectionHandler getSelectionHandler() {
+		return selectionHandler;
 	}
 }
