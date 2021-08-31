@@ -202,6 +202,8 @@ public class MainWindow {
         if (!StringUtils.isEmpty(lastUsedDirectory)) {
         	setCrawlDirectory(new File(lastUsedDirectory));
         }
+        
+        mapPanel.autoSetZoomAndLocation();
 	}
 	
 	public void startEditMode(GpxFile trackToEdit) {
