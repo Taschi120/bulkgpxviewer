@@ -7,6 +7,8 @@ import javax.swing.JTabbedPane;
 
 import de.taschi.bulkgpxviewer.files.GpxFile;
 import de.taschi.bulkgpxviewer.ui.graphs.DistanceOverTimePanel;
+import de.taschi.bulkgpxviewer.ui.graphs.GradientOverDistancePanel;
+import de.taschi.bulkgpxviewer.ui.graphs.HeightProfilePanel;
 import de.taschi.bulkgpxviewer.ui.graphs.SpeedOverTimePanel;
 import io.jenetics.jpx.GPX;
 import lombok.extern.log4j.Log4j2;
@@ -32,6 +34,12 @@ public class GraphPanelTestWindow {
 		var distanceOverTimePanel = new DistanceOverTimePanel();
 		tabber.add("Distance over time", distanceOverTimePanel);
 		
+		var heightProfilePanel = new HeightProfilePanel();
+		tabber.add("Height profile", heightProfilePanel);
+		
+		var gradientPanel = new GradientOverDistancePanel();
+		tabber.add("Gradients", gradientPanel);
+		
 		frame.setSize(600, 400);
 		frame.setVisible(true);
 		
@@ -44,6 +52,8 @@ public class GraphPanelTestWindow {
 			
 			speedOverTimePanel.setGpxTrackSegment(segment);
 			distanceOverTimePanel.setGpxTrackSegment(segment);
+			heightProfilePanel.setGpxTrackSegment(segment);
+			gradientPanel.setGpxTrackSegment(segment);
 		} catch (Exception e) {
 			log.error("blah", e);
 		}

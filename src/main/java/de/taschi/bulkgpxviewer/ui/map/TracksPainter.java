@@ -151,8 +151,7 @@ public class TracksPainter implements Painter<JXMapViewer>
 
             if (first) {
                 first = false;
-            }
-            else {
+            } else {
                 g.drawLine(lastX, lastY, (int) pt.getX(), (int) pt.getY());
             }
 

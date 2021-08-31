@@ -11,7 +11,9 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import io.jenetics.jpx.Length;
 import io.jenetics.jpx.TrackSegment;
+import io.jenetics.jpx.Length.Unit;
 import lombok.extern.log4j.Log4j2;
 
 /**
@@ -29,6 +31,8 @@ public class TrackStatisticsManager {
 	 * the GPS receiver is not actually moving.
 	 */
 	private static final double STANDING_SPEED_THRESHOLD = 2;
+	
+	private static final Length ZERO_LENGTH = Length.of(0, Unit.METER);
 	
 	private HashMap<TrackSegment, List<Double>> distanceDiffs = new HashMap<>();
 	private HashMap<TrackSegment, List<Double>> totalDistances = new HashMap<>();
@@ -256,24 +260,86 @@ public class TrackStatisticsManager {
 		return result;
 	}
 	
-	public XYDataset getDistanceOverTimeAsXY(TrackSegment segment) {
-		var times = getTotalTimes(segment);
-		var distances = getTotalDistances(segment);
+	public List<Double> getElevations(TrackSegment segment) {
+		// TODO cache me!
+		var waypoints = segment.getPoints();
+		var elevations = waypoints.stream()
+				.map(it -> it.getElevation().orElse(ZERO_LENGTH).to(Unit.METER))
+				.collect(Collectors.toUnmodifiableList());
 		
-		var result = new XYSeries("Distance over Time");
+		return elevations;
+	}
+	
+	/**
+	 * Gets a list in which element X represents the gradient (in percent) between 
+	 * waypoint X - 1 and waypoint X.
+	 * 
+	 * The first element is 0.
+	 * 
+	 * @param segment
+	 * @return
+	 */
+	public List<Double> getGradients(TrackSegment segment) {
+		var distanceDifferences = getDistanceDifferences(segment);
+		var elevations = smootheWithoutZeroSnap(getElevations(segment), 50);
 		
-		if (times.size() != distances.size()) {
-			var errorMessage = String.format("Can not build dataset for speed over time: inconsistent data row lengths (%s and %s)", 
-					times.size(), distances.size());
+		if (distanceDifferences.size() != elevations.size()) {
+			var errorMessage = String.format("Can not build dataset for gradients: inconsistent data row lengths (%s and %s)", 
+					distanceDifferences.size(), elevations.size());
 			log.error(errorMessage);
 			throw new RuntimeException(errorMessage);
 		}
 		
-		for(int i = 0; i < times.size(); i++) {
-			result.add(times.get(i).toSeconds(), distances.get(i));
+		var result = new ArrayList<Double>(distanceDifferences.size());
+		result.add(0.0);
+				
+		for(int i = 1; i < elevations.size(); i++) {
+			var distance = distanceDifferences.get(i);
+			
+			if (distance == 0) {
+				result.add(0.0);
+			} else {
+				var first = elevations.get(i - 1);
+				var second = elevations.get(i);
+				
+				// factor 1000 is necessary because distances are in kilometers,
+				// while altitudes are in meters
+				var gradient = (second - first) * 1000 / distance;
+				
+				result.add(gradient);
+			}
+		}
+		
+		return result;
+	}
+	
+	public XYDataset getHeightProfileAsXY(TrackSegment segment) {
+		var altitudes = getElevations(segment);
+		var distances = getTotalDistances(segment);
+		
+		var result = new XYSeries("Distance over Time");
+		
+		if (altitudes.size() != distances.size()) {
+			var errorMessage = String.format("Can not build dataset for speed over time: inconsistent data row lengths (%s and %s)", 
+					altitudes.size(), distances.size());
+			log.error(errorMessage);
+			throw new RuntimeException(errorMessage);
+		}
+		
+		for(int i = 0; i < altitudes.size(); i++) {
+			result.add(distances.get(i), altitudes.get(i));
 		}
 		
 		return new XYSeriesCollection(result);
+	}
+	
+	public XYDataset getDistanceOverTimeAsXY(TrackSegment segment) {
+		var times = getTotalTimes(segment).stream()
+				.map(it -> (double) it.getSeconds())
+				.collect(Collectors.toList());
+		var distances = getTotalDistances(segment);
+		
+		return buildXYDataset("Distance over Time", times, distances);
 	}
 
 	/**
@@ -285,27 +351,34 @@ public class TrackStatisticsManager {
 	 */
 	public XYDataset getSpeedOverTimeAsXY(TrackSegment segment) {
 		// TODO cache me!
-		var times = getTotalTimes(segment);
+		var times = getTotalTimes(segment).stream()
+				.map(it -> it.toMillis() / 1000.0)
+				.collect(Collectors.toList());
 		var speeds = getSpeeds(segment);
-		speeds = smoothe(speeds, 5);
+		speeds = smootheWithZeroSnap(speeds, 5);
 		
-		var result = new XYSeries("speedOverTime");
-		
-		if (times.size() != speeds.size()) {
-			var errorMessage = String.format("Can not build dataset for speed over time: inconsistent data row lengths (%s and %s)", 
-					times.size(), speeds.size());
-			log.error(errorMessage);
-			throw new RuntimeException(errorMessage);
-		}
-		
-		for(int i = 0; i < times.size(); i++) {
-			result.add(times.get(i).getSeconds(), speeds.get(i));
-		}
-		log.info("Calculated speed over time. {} datapoints.", result.getItemCount());
-		return new XYSeriesCollection(result);
+		return buildXYDataset("Speed over Time", times, speeds);
 	}
 	
-	private List<Double> smoothe(List<Double> input, int halfWindowSize) {
+
+	public XYDataset getGradientOverDistanceAsXY(TrackSegment segment) {
+		var gradients = getGradients(segment);
+		//gradients = smootheWithoutZeroSnap(gradients, 50);
+		var distances = getTotalDistances(segment);
+		
+		return buildXYDataset("Gradient over Distance", distances, gradients);
+	}
+	
+	private List<Double> smootheWithoutZeroSnap(List<Double> input, int halfWindowSize) {
+		List<Double> output = new ArrayList<>(input.size());
+		for(int i = 0; i < input.size(); i++) {
+			output.add(average(input, i - halfWindowSize, i + halfWindowSize));
+		}
+		
+		return output;
+	}
+	
+	private List<Double> smootheWithZeroSnap(List<Double> input, int halfWindowSize) {
 		List<Double> output = new ArrayList<>(input.size());
 		for(int i = 0; i < input.size(); i++) {
 			var original = input.get(i);
@@ -341,5 +414,20 @@ public class TrackStatisticsManager {
 		
 		return sum / num;
 	}
-	
+
+	private static XYDataset buildXYDataset(String name, List<Double> xAxis, List<Double> yAxis) {
+		var result = new XYSeries("speedOverTime");
+		
+		if (xAxis.size() != yAxis.size()) {
+			var errorMessage = String.format("Can not build dataset: inconsistent data row lengths (%s and %s)", 
+					xAxis.size(), yAxis.size());
+			log.error(errorMessage);
+			throw new RuntimeException(errorMessage);
+		}
+		
+		for(int i = 0; i < xAxis.size(); i++) {
+			result.add(xAxis.get(i), yAxis.get(i));
+		}
+		return new XYSeriesCollection(result);
+	}
 }
