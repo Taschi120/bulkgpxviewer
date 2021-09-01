@@ -65,7 +65,6 @@ public class TrackStatisticsManager {
 		if (segment == null) { 
 			return Collections.emptyList();
 		}
-		// TODO cache me!
 		var waypoints = segment.getPoints();
 		
 		List<Double> result = new ArrayList<>(waypoints.size());
@@ -252,7 +251,6 @@ public class TrackStatisticsManager {
 	}
 	
 	private List<Double> calculateElevations(TrackSegment segment) {
-		// TODO cache me
 		var waypoints = segment.getPoints();
 		var elevations = waypoints.stream()
 				.map(it -> it.getElevation().orElse(ZERO_LENGTH).to(Unit.METER))
