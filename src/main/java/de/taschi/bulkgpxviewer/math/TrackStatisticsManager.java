@@ -39,6 +39,8 @@ public class TrackStatisticsManager {
 	private HashMap<TrackSegment, List<Duration>> totalTimes = new HashMap<>();
 	private HashMap<TrackSegment, List<Duration>> timeDiffs = new HashMap<>();
 	private HashMap<TrackSegment, List<Double>> speeds = new HashMap<>();
+	private HashMap<TrackSegment, List<Double>> elevations = new HashMap<>();
+	private HashMap<TrackSegment, List<Double>> gradients = new HashMap<>();
 	
 	public static TrackStatisticsManager getInstance() {
 		if (INSTANCE == null) {
@@ -55,7 +57,11 @@ public class TrackStatisticsManager {
 		return getDistanceDifferences(segment).stream().collect(Collectors.summingDouble(it -> it));
 	}
 	
-	public List<Double> getDistanceDifferences(TrackSegment segment) {	
+	public List<Double> getDistanceDifferences(TrackSegment segment) {
+		return resolveCache(distanceDiffs, segment, this::calculateDistanceDifferences);
+	}
+
+	private List<Double> calculateDistanceDifferences(TrackSegment segment) {	
 		if (segment == null) { 
 			return Collections.emptyList();
 		}
@@ -83,17 +89,10 @@ public class TrackStatisticsManager {
 	 * @return
 	 */
 	public List<Double> getTotalDistances(TrackSegment segment) {
-		var cached = totalDistances.get(segment);
-		if(cached != null) {
-			return cached;
-		} else {
-			var uncached = getTotalDistancesWithoutCache(segment);
-			totalDistances.put(segment, uncached);
-			return uncached;
-		}
+		return resolveCache(totalDistances, segment, this::calculateTotalDistances);
 	}
 
-	private List<Double> getTotalDistancesWithoutCache(TrackSegment segment) {
+	private List<Double> calculateTotalDistances(TrackSegment segment) {
 		if (segment == null) { 
 			return Collections.emptyList();
 		}
@@ -126,18 +125,10 @@ public class TrackStatisticsManager {
 	 * @return
 	 */
 	public List<Duration> getTotalTimes(TrackSegment segment) {
-		var cached = totalTimes.get(segment);
-		if(cached != null) {
-			return cached;
-		} else {
-			var uncached = getTotalTimesWithoutCaching(segment);
-			totalTimes.put(segment, uncached);
-			return uncached;
-		}
+		return resolveCache(totalTimes, segment, this::calculateTotalTimes);
 	}
 
-	
-	private List<Duration> getTotalTimesWithoutCaching(TrackSegment segment) {
+	private List<Duration> calculateTotalTimes(TrackSegment segment) {
 		if (segment == null) { 
 			return Collections.emptyList();
 		}
@@ -177,17 +168,10 @@ public class TrackStatisticsManager {
 	 * @return
 	 */
 	public List<Double> getSpeeds(TrackSegment segment) {
-		var cached = speeds.get(segment);
-		if(cached != null) {
-			return cached;
-		} else {
-			var uncached = getSpeedsWithoutCaching(segment);
-			speeds.put(segment, uncached);
-			return uncached;
-		}
+		return resolveCache(speeds, segment, this::calculateSpeeds);
 	}
 
-	private List<Double> getSpeedsWithoutCaching(TrackSegment segment) {
+	private List<Double> calculateSpeeds(TrackSegment segment) {
 		if (segment == null) { 
 			return Collections.emptyList();
 		}
@@ -227,14 +211,17 @@ public class TrackStatisticsManager {
 		return result;
 	}
 	
-	private List<Duration> getTimeDifferences(TrackSegment segment) {
+	public List<Duration> getTimeDifferences(TrackSegment segment) {
+		return resolveCache(timeDiffs, segment, this::calculateTimeDifferences);
+	}
+	
+	private List<Duration> calculateTimeDifferences(TrackSegment segment) {
 		
 		if (segment == null) { 
 			return Collections.emptyList();
 		}
-		// TODO cache me!
+
 		var waypoints = segment.getPoints();
-		
 		var times = waypoints.stream()
 				.map(it -> it.getTime())
 				.map(it -> it.orElse(null))
@@ -261,7 +248,11 @@ public class TrackStatisticsManager {
 	}
 	
 	public List<Double> getElevations(TrackSegment segment) {
-		// TODO cache me!
+		return resolveCache(elevations, segment, this::calculateElevations);
+	}
+	
+	private List<Double> calculateElevations(TrackSegment segment) {
+		// TODO cache me
 		var waypoints = segment.getPoints();
 		var elevations = waypoints.stream()
 				.map(it -> it.getElevation().orElse(ZERO_LENGTH).to(Unit.METER))
@@ -280,6 +271,10 @@ public class TrackStatisticsManager {
 	 * @return
 	 */
 	public List<Double> getGradients(TrackSegment segment) {
+		return resolveCache(gradients, segment, this::calculateGradients);
+	}
+	
+	private List<Double> calculateGradients(TrackSegment segment) {
 		var distanceDifferences = getDistanceDifferences(segment);
 		var elevations = smootheWithoutZeroSnap(getElevations(segment), 50);
 		
@@ -350,7 +345,6 @@ public class TrackStatisticsManager {
 	 * @return
 	 */
 	public XYDataset getSpeedOverTimeAsXY(TrackSegment segment) {
-		// TODO cache me!
 		var times = getTotalTimes(segment).stream()
 				.map(it -> it.toMillis() / 1000.0)
 				.collect(Collectors.toList());
@@ -367,6 +361,21 @@ public class TrackStatisticsManager {
 		var distances = getTotalDistances(segment);
 		
 		return buildXYDataset("Gradient over Distance", distances, gradients);
+	}
+	
+	private <T> List<T> resolveCache(HashMap<TrackSegment, List<T>> cache, TrackSegment segment, Calculator<T> calculator) {
+		if (segment == null || segment.isEmpty()) {
+			return Collections.emptyList();
+		}
+		
+		var cached = cache.get(segment);
+		if (cached != null) {
+			return cached;
+		} else {
+			var calculated = calculator.calculate(segment);
+			cache.put(segment, calculated);
+			return calculated;
+		}
 	}
 	
 	private List<Double> smootheWithoutZeroSnap(List<Double> input, int halfWindowSize) {
@@ -429,5 +438,9 @@ public class TrackStatisticsManager {
 			result.add(xAxis.get(i), yAxis.get(i));
 		}
 		return new XYSeriesCollection(result);
+	}
+	
+	private interface Calculator<T> {
+		public List<T> calculate(TrackSegment t); 
 	}
 }

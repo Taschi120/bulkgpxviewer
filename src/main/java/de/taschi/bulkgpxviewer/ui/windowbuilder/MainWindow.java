@@ -62,6 +62,7 @@ import de.taschi.bulkgpxviewer.ui.map.MapPanel;
 import de.taschi.bulkgpxviewer.ui.sidepanel.SidePanel;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
+import de.taschi.bulkgpxviewer.ui.graphs.HeightProfilePanel;
 
 public class MainWindow {
 	
@@ -89,6 +90,7 @@ public class MainWindow {
 	private JTabbedPane tabbedPane;
 	private EditingPanel editingPanel;
 	private SpeedOverTimePanel speedOverTimePanel;
+	private HeightProfilePanel heightProfilePanel;
 	
 	/**
 	 * Launch the application.
@@ -148,6 +150,9 @@ public class MainWindow {
 		
 		speedOverTimePanel = new SpeedOverTimePanel();
 		tabbedPane.addTab(Messages.getString("MainWindow.speedOverTimePanel.title"), null, speedOverTimePanel, null); //$NON-NLS-1$
+		
+		heightProfilePanel = new HeightProfilePanel();
+		tabbedPane.addTab(Messages.getString("MainWindow.heightProfilePanel.title"), null, heightProfilePanel, null); //$NON-NLS-1$
 		
 		mapPanel.getSelectionHandler().addSelectionChangeListener(selection ->
 			editingPanel.setSelection(selection));
@@ -350,6 +355,7 @@ public class MainWindow {
 		Optional<TrackSegment> firstSegment = file.map(it -> it.getFirstSegment()).orElse(Optional.empty());
 		
 		speedOverTimePanel.setGpxTrackSegment(firstSegment.orElse(null));
+		heightProfilePanel.setGpxTrackSegment(firstSegment.orElse(null));
 		mapPanel.setSelectedFile(file.orElse(null));
 	}
 }
