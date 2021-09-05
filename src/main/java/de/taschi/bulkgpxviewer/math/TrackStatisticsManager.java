@@ -11,6 +11,7 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import de.taschi.bulkgpxviewer.settings.dto.UnitSystem;
 import io.jenetics.jpx.Length;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.Length.Unit;
@@ -334,19 +335,25 @@ public class TrackStatisticsManager {
 		
 		return buildXYDataset("Distance over Time", times, distances);
 	}
-
+	
 	/**
 	 * Returns a JFreeChart data set of speed over time for a given TrackSegment.
 	 * 
-	 * (The speed is given in km/h and needs to be converted in the UI layer if necessary.)
+	 * Times are in minutes, distances are in km or miles depending on UnitSystem parameter.
+	 * 
 	 * @param segment
 	 * @return
 	 */
-	public XYDataset getSpeedOverTimeAsXY(TrackSegment segment) {
+	public XYDataset getSpeedOverTimeAsXY(TrackSegment segment, UnitSystem unitSystem) {
 		var times = getTotalTimes(segment).stream()
 				.map(it -> it.toMillis() / 1000.0)
-				.collect(Collectors.toList());
-		var speeds = getSpeeds(segment);
+				.map(it -> it / 60.0)
+				.collect(Collectors.toUnmodifiableList());
+		
+		var speeds = getSpeeds(segment).stream()
+				.map(it -> unitSystem == UnitSystem.IMPERIAL ? UnitConverter.kilometersToMiles(it) : it)
+				.collect(Collectors.toUnmodifiableList());
+		
 		speeds = smootheWithZeroSnap(speeds, 5);
 		
 		return buildXYDataset("Speed over Time", times, speeds);

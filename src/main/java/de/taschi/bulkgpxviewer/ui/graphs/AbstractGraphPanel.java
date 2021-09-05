@@ -7,8 +7,6 @@ import java.awt.Color;
 import javax.swing.JPanel;
 
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartMouseEvent;
-import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.block.BlockBorder;
@@ -17,11 +15,15 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataset;
 
+import de.taschi.bulkgpxviewer.settings.SettingsManager;
+import de.taschi.bulkgpxviewer.settings.SettingsUpdateListener;
 import io.jenetics.jpx.TrackSegment;
 
-public abstract class AbstractGraphPanel extends JPanel {
+public abstract class AbstractGraphPanel extends JPanel implements SettingsUpdateListener {
 		
 	private static final long serialVersionUID = 1948085630207508743L;
+	
+	private TrackSegment currentSegment;
 	
 	private XYPlot plot;
 	private JFreeChart chart;
@@ -49,11 +51,14 @@ public abstract class AbstractGraphPanel extends JPanel {
         plot.setDomainGridlinePaint(Color.BLACK);
 
 		add(chartPanel, BorderLayout.CENTER);
+		
+		SettingsManager.getInstance().addSettingsUpdateListener(this);
 	}
 	
 	public void setGpxTrackSegment(TrackSegment segment) {
-		var dataset = getDataset(segment);
+		currentSegment = segment;
 		
+		var dataset = getDataset(segment);
 		plot.setDataset(dataset);
 		chart = makeChart(dataset);
 		chartPanel.setChart(chart);
@@ -93,6 +98,12 @@ public abstract class AbstractGraphPanel extends JPanel {
         chart.getLegend().setFrame(BlockBorder.NONE);
         
         return chart;
+	}
+	
+	@Override
+	public void onSettingsUpdated() {
+		// Force re-creation of the diagram because unit system might have changed
+		setGpxTrackSegment(currentSegment);
 	}
 	
 	public abstract String getXAxisLabel();

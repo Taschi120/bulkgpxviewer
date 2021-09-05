@@ -54,6 +54,7 @@ import org.apache.logging.log4j.Logger;
 import de.taschi.bulkgpxviewer.files.GpxFile;
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
+import de.taschi.bulkgpxviewer.settings.SettingsUpdateListener;
 import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings;
 import de.taschi.bulkgpxviewer.ui.IconHandler;
 import de.taschi.bulkgpxviewer.ui.Messages;
@@ -64,7 +65,7 @@ import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
 import de.taschi.bulkgpxviewer.ui.graphs.HeightProfilePanel;
 
-public class MainWindow {
+public class MainWindow implements SettingsUpdateListener {
 	
 	private static final Logger LOG = LogManager.getLogger(MainWindow.class);
 
@@ -211,6 +212,8 @@ public class MainWindow {
         }
         
         mapPanel.autoSetZoomAndLocation();
+        
+        SettingsManager.getInstance().addSettingsUpdateListener(this);
 	}
 	
 	public void startEditingMode(GpxFile trackToEdit) {
@@ -268,7 +271,8 @@ public class MainWindow {
 		}
 	}
 	
-	public void forceSettingsRefresh() {
+	@Override
+	public void onSettingsUpdated() {
 		mapPanel.repaint();
 		sidePanel.updateModel();
 	}

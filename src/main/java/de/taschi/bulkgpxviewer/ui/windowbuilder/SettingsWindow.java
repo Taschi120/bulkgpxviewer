@@ -246,9 +246,8 @@ public class SettingsWindow extends JDialog {
 			settings.setUnitSystem(UnitSystem.IMPERIAL);
 		}
 		SettingsManager.getInstance().saveSettings();
+		SettingsManager.getInstance().fireNotifications();
 		
-		// TODO replace this with a listener queue
-		mainWindow.forceSettingsRefresh();
 		setVisible(false);
 	}
 

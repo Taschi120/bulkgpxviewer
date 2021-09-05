@@ -28,8 +28,11 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -44,33 +47,63 @@ import de.taschi.bulkgpxviewer.settings.dto.SettingsColor;
 import de.taschi.bulkgpxviewer.settings.dto.UnitSystem;
 
 public class SettingsManager {
-	
+
 	private static Logger LOG = LogManager.getLogger(SettingsManager.class);
-	
+
 	private static SettingsManager INSTANCE;
-	
+
+	private static final List<Color> DEFAULT_TRACK_COLORS = Arrays.asList(
+			Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.GRAY, 
+			Color.WHITE, Color.PINK);
+
+	private Settings settings;
+
+	/** Objects which want to be notified about settings changes */
+	private List<SettingsUpdateListener> updateListeners = new ArrayList<>();
+
 	public static SettingsManager getInstance() {
 		if (INSTANCE == null) {
 			INSTANCE = new SettingsManager();
 		}
 		return INSTANCE;
 	}
-	
-	private static final List<Color> DEFAULT_TRACK_COLORS = Arrays.asList(
-			Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.GRAY, 
-			Color.WHITE, Color.PINK);
-	
-	private Settings settings;
-	
+
 	private SettingsManager() {
 		LOG.info("Loading settings"); //$NON-NLS-1$
 		loadOrInitSettings(getSettingsFile());
 	}
-	
+
 	public Settings getSettings() {
 		return settings;
 	}
-	
+
+	public void addSettingsUpdateListener(SettingsUpdateListener r) {
+		if (!updateListeners.contains(r)) {
+			updateListeners.add(r);
+		}
+	}
+
+	public boolean removeSettingsUpdateListener(SettingsUpdateListener r) {
+		return updateListeners.remove(r);
+	}
+
+	public void fireNotifications() {
+		SwingUtilities.invokeLater(() -> {
+			for (SettingsUpdateListener r: updateListeners) {
+				r.onSettingsUpdated();
+			}
+		});
+	}
+
+	public void saveSettings() {
+		try {
+			FileUtils.forceMkdirParent(getSettingsFile().toFile());
+			JSON.std.write(settings, getSettingsFile().toFile());
+		} catch (IOException e) {
+			handleException(e);
+		}
+	}
+
 	private void loadOrInitSettings(Path settingsFile) {
 		if(Files.exists(settingsFile)) {
 			loadSettings(settingsFile);
@@ -94,7 +127,7 @@ public class SettingsManager {
 			getSettings().setMainWindowSettings(s);
 		}
 	}
-	
+
 	private void migrateToV0_3_0() {
 		if (getSettings().getUnitSystem() == null) {
 			LOG.info("Updating settings to v0.3.0"); //$NON-NLS-1$
@@ -107,19 +140,10 @@ public class SettingsManager {
 			getSettings().setUnselectedRouteColor(new SettingsColor(128, 128, 128));
 		}
 	}
-	
-	public void saveSettings() {
-		try {
-			FileUtils.forceMkdirParent(getSettingsFile().toFile());
-			JSON.std.write(settings, getSettingsFile().toFile());
-		} catch (IOException e) {
-			handleException(e);
-		}
-	}
 
 	private void makeNewSettings() {
 		settings = new Settings();
-		
+
 		List<SettingsColor> colors = ColorConverter.convertToSettings(DEFAULT_TRACK_COLORS);
 		settings.setRouteColors(colors);
 		migrateIfNecessary();
@@ -129,8 +153,8 @@ public class SettingsManager {
 		try {
 			String jsonDoc = FileUtils.readFileToString(settingsFile.toFile(), Charset.forName("UTF-8")); //$NON-NLS-1$
 			settings = JSON.std
-				    .with(Feature.PRETTY_PRINT_OUTPUT).
-				    beanFrom(Settings.class, jsonDoc);
+					.with(Feature.PRETTY_PRINT_OUTPUT).
+					beanFrom(Settings.class, jsonDoc);
 		} catch (IOException e) {
 			handleException(e);
 		}

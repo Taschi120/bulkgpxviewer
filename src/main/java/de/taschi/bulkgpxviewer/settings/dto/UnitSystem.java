@@ -23,6 +23,27 @@ package de.taschi.bulkgpxviewer.settings.dto;
  */
 
 public enum UnitSystem {
-	METRIC,
-	IMPERIAL
+	METRIC("Metric", "km", "kph"),
+	IMPERIAL("Imperial", "miles", "mph");
+	
+	private final String displayName, defaultDisplayUnit, defaultSpeedUnit;
+	
+	private UnitSystem(String displayName, String defaultDistanceUnit, String defaultSpeedUnit) {
+		this.displayName = displayName;
+		this.defaultDisplayUnit = defaultDistanceUnit;
+		this.defaultSpeedUnit = defaultSpeedUnit;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public String getDefaultDisplayUnit() {
+		return defaultDisplayUnit;
+	}
+
+	public String getDefaultSpeedUnit() {
+		return defaultSpeedUnit;
+	}
+	
 }
