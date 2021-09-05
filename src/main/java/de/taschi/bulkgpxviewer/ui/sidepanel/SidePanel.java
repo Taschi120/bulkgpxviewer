@@ -178,8 +178,8 @@ public class SidePanel extends JPanel {
 		List<Integer> years = new ArrayList<>(yearNodes.keySet());
 		for (Integer year : years) {
 			DefaultMutableTreeNode node = yearNodes.get(year);
-			if(node.getChildCount() == 0) {
-				((DefaultMutableTreeNode)node.getParent()).remove(year);
+			if (node != null && rootNode.isNodeChild(node) && node.getChildCount() == 0) {
+				rootNode.remove(node);
 				yearNodes.remove(year);
 			}
 		}
