@@ -131,7 +131,7 @@ public class GpxFilePopupMenu extends JPopupMenu {
 	}
 
 	private void onEdit(ActionEvent e) {
-		Application.getMainWindow().startEditMode(track);
+		Application.getMainWindow().startEditingMode(track);
 	}
 	
 }

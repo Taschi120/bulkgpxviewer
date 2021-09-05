@@ -88,7 +88,7 @@ public class MainWindow {
 	
 	private JSplitPane splitPane_1;
 	private JTabbedPane tabbedPane;
-	private EditingPanel editingPanel;
+	private EditingPanelWrapper editingPanel;
 	private SpeedOverTimePanel speedOverTimePanel;
 	private HeightProfilePanel heightProfilePanel;
 	
@@ -145,7 +145,7 @@ public class MainWindow {
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		splitPane_1.setRightComponent(tabbedPane);
 		
-		editingPanel = new EditingPanel();
+		editingPanel = new EditingPanelWrapper();
 		tabbedPane.addTab(Messages.getString("MainWindow.editingPanel_1.title"), null, editingPanel, null); //$NON-NLS-1$
 		
 		speedOverTimePanel = new SpeedOverTimePanel();
@@ -213,9 +213,10 @@ public class MainWindow {
         mapPanel.autoSetZoomAndLocation();
 	}
 	
-	public void startEditMode(GpxFile trackToEdit) {
+	public void startEditingMode(GpxFile trackToEdit) {
 		sidePanel.setEnabled(false);
 		
+		editingPanel.startEditingMode();
 		editingPanel.setTrack(trackToEdit);
 		editingPanel.setSelectionHandler(mapPanel.getSelectionHandler());
 		editingPanel.setSelection(Collections.<WayPoint>emptySet());
@@ -342,6 +343,8 @@ public class MainWindow {
 		mapPanel.getSelectionHandler().deactivate();
 		mapPanel.getSelectionPainter().setEnabled(false);
 		mapPanel.getRoutesPainter().setProvider(mapPanel.getRoutesPainter().getAllRouteProvider());
+		
+		editingPanel.exitEditingMode();
 		
 		sidePanel.setEnabled(true);
 		frame.validate();
