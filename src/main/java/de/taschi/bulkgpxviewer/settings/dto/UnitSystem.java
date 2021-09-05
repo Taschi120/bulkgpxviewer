@@ -1,5 +1,7 @@
 package de.taschi.bulkgpxviewer.settings.dto;
 
+import de.taschi.bulkgpxviewer.ui.Messages;
+
 /*-
  * #%L
  * bulkgpxviewer
@@ -23,8 +25,8 @@ package de.taschi.bulkgpxviewer.settings.dto;
  */
 
 public enum UnitSystem {
-	METRIC("Metric", "km", "kph"),
-	IMPERIAL("Imperial", "miles", "mph");
+	METRIC(Messages.getString("UnitSystem.Metric"), Messages.getString("UnitSystem.Unit_kilometers"), Messages.getString("UnitSystem.Unit_kph")), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	IMPERIAL(Messages.getString("UnitSystem.Imperial"), Messages.getString("UnitSystem.Unit_miles"), Messages.getString("UnitSystem.Unit_mph")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	
 	private final String displayName, defaultDisplayUnit, defaultSpeedUnit;
 	

@@ -12,6 +12,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import de.taschi.bulkgpxviewer.settings.dto.UnitSystem;
+import de.taschi.bulkgpxviewer.ui.Messages;
 import io.jenetics.jpx.Length;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.Length.Unit;
@@ -51,7 +52,7 @@ public class TrackStatisticsManager {
 	}
 	
 	private TrackStatisticsManager() {
-		log.info("Instantiation");
+		log.info("Instantiation"); //$NON-NLS-1$
 	}
 	
 	public double getTotalDistance(TrackSegment segment) {
@@ -180,7 +181,7 @@ public class TrackStatisticsManager {
 		var times = getTimeDifferences(segment);
 		
 		if (distances.size() != times.size()) {
-			log.error("Speed calculation impossible: data rows have incompatible sizes ({} and {}])", 
+			log.error("Speed calculation impossible: data rows have incompatible sizes ({} and {}])",  //$NON-NLS-1$
 					distances.size(), times.size());
 			return Collections.emptyList();
 		}
@@ -229,7 +230,7 @@ public class TrackStatisticsManager {
 		
 		if (times.contains(null)) {
 			// TODO better error handling
-			log.error("gpx point without timestamp!");
+			log.error("gpx point without timestamp!"); //$NON-NLS-1$
 		}
 		
 		List<Duration> result = new ArrayList<>(waypoints.size());
@@ -278,7 +279,7 @@ public class TrackStatisticsManager {
 		var elevations = smootheWithoutZeroSnap(getElevations(segment), 50);
 		
 		if (distanceDifferences.size() != elevations.size()) {
-			var errorMessage = String.format("Can not build dataset for gradients: inconsistent data row lengths (%s and %s)", 
+			var errorMessage = String.format("Can not build dataset for gradients: inconsistent data row lengths (%s and %s)",  //$NON-NLS-1$
 					distanceDifferences.size(), elevations.size());
 			log.error(errorMessage);
 			throw new RuntimeException(errorMessage);
@@ -311,10 +312,10 @@ public class TrackStatisticsManager {
 		var altitudes = getElevations(segment);
 		var distances = getTotalDistances(segment);
 		
-		var result = new XYSeries("Distance over Time");
+		var result = new XYSeries(Messages.getString("TrackStatisticsManager.HeightProfileDiagramLabel")); //$NON-NLS-1$
 		
 		if (altitudes.size() != distances.size()) {
-			var errorMessage = String.format("Can not build dataset for speed over time: inconsistent data row lengths (%s and %s)", 
+			var errorMessage = String.format("Can not build dataset for speed over time: inconsistent data row lengths (%s and %s)",  //$NON-NLS-1$
 					altitudes.size(), distances.size());
 			log.error(errorMessage);
 			throw new RuntimeException(errorMessage);
@@ -333,7 +334,7 @@ public class TrackStatisticsManager {
 				.collect(Collectors.toList());
 		var distances = getTotalDistances(segment);
 		
-		return buildXYDataset("Distance over Time", times, distances);
+		return buildXYDataset(Messages.getString("TrackStatisticsManager.DistanceOverTimeDiagramLabel"), times, distances); //$NON-NLS-1$
 	}
 	
 	/**
@@ -356,7 +357,7 @@ public class TrackStatisticsManager {
 		
 		speeds = smootheWithZeroSnap(speeds, 5);
 		
-		return buildXYDataset("Speed over Time", times, speeds);
+		return buildXYDataset(Messages.getString("TrackStatisticsManager.SpeedOverTimeDiagramLabel"), times, speeds); //$NON-NLS-1$
 	}
 	
 
@@ -365,7 +366,7 @@ public class TrackStatisticsManager {
 		//gradients = smootheWithoutZeroSnap(gradients, 50);
 		var distances = getTotalDistances(segment);
 		
-		return buildXYDataset("Gradient over Distance", distances, gradients);
+		return buildXYDataset(Messages.getString("TrackStatisticsManager.GradientOverDistanceDiagramLabel"), distances, gradients); //$NON-NLS-1$
 	}
 	
 	private <T> List<T> resolveCache(HashMap<TrackSegment, List<T>> cache, TrackSegment segment, Calculator<T> calculator) {
@@ -430,10 +431,10 @@ public class TrackStatisticsManager {
 	}
 
 	private static XYDataset buildXYDataset(String name, List<Double> xAxis, List<Double> yAxis) {
-		var result = new XYSeries("speedOverTime");
+		var result = new XYSeries(name);
 		
 		if (xAxis.size() != yAxis.size()) {
-			var errorMessage = String.format("Can not build dataset: inconsistent data row lengths (%s and %s)", 
+			var errorMessage = String.format("Can not build dataset: inconsistent data row lengths (%s and %s)",  //$NON-NLS-1$
 					xAxis.size(), yAxis.size());
 			log.error(errorMessage);
 			throw new RuntimeException(errorMessage);
