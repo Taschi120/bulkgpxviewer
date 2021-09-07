@@ -18,6 +18,7 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode implements GpxFileRe
 	private DistanceNode trackLengthNode;
 	private DurationTreeNode durationNode;
 	private AvgSpeedNode avgSpeedNode;
+	private TagNode tagNode;
 		
 	public GpxFileTreeNode(GpxFile track) {
 		super(track.getFileName().getFileName());
@@ -33,6 +34,9 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode implements GpxFileRe
 		
 		avgSpeedNode = new AvgSpeedNode(this);
 		add(avgSpeedNode);
+		
+		tagNode = new TagNode(this);
+		add(tagNode);
 	}
 
 	/**
@@ -46,6 +50,7 @@ public class GpxFileTreeNode extends DefaultMutableTreeNode implements GpxFileRe
 		trackLengthNode.update();
 		durationNode.update();
 		avgSpeedNode.update();
+		tagNode.update();
 	}
 	
 	private void makeOrUpdateStartDateNode() {
