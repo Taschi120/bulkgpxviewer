@@ -33,6 +33,8 @@ import javax.swing.JTree;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.inject.Inject;
+
 import de.taschi.bulkgpxviewer.Application;
 import de.taschi.bulkgpxviewer.files.GpxFile;
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
@@ -52,8 +54,13 @@ public class GpxFilePopupMenu extends JPopupMenu {
 	private JMenuItem rename;
 	private JMenuItem addTag;
 
+	@Inject
+	private LoadedFileManager loadedFileManager;
+
 	public GpxFilePopupMenu() {
 		super();
+		
+		Application.getInjector().injectMembers(this);
 		
 		edit = new JMenuItem(Messages.getString("GpxFilePopupMenu.Edit")); //$NON-NLS-1$
 		edit.setIcon(IconHandler.loadIcon("edit-line")); //$NON-NLS-1$
@@ -123,7 +130,7 @@ public class GpxFilePopupMenu extends JPopupMenu {
 		}
 		
 		try {
-			LoadedFileManager.getInstance().refresh();
+			loadedFileManager.refresh();
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, String.format(Messages.getString("GpxFilePopupMenu.ErrorWhileReloading") //$NON-NLS-1$
 					, e.getLocalizedMessage()));

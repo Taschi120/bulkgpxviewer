@@ -37,6 +37,9 @@ import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.painter.Painter;
 import org.jxmapviewer.viewer.GeoPosition;
 
+import com.google.inject.Inject;
+
+import de.taschi.bulkgpxviewer.Application;
 import de.taschi.bulkgpxviewer.files.GpxFile;
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
 import de.taschi.bulkgpxviewer.geo.GpxToJxMapper;
@@ -53,20 +56,29 @@ import io.jenetics.jpx.TrackSegment;
  *
  * @author Martin Steiger (original), S. Hillebrand (adapted)
  */
-public class TracksPainter implements Painter<JXMapViewer>
-{
+public class TracksPainter implements Painter<JXMapViewer> {
 	private MapPanel parent;
 	
     private boolean antiAlias = true;
     
     private Supplier<Collection<GpxFile>> provider = getAllRouteProvider();
     
+    @Inject
+    private LoadedFileManager loadedFileManager;
+    
+    @Inject
+    private TrackColorUtil trackColorUtil;
+    
+    @Inject
+    private SettingsManager settingsManager;
+    
     public TracksPainter(MapPanel parent) {
     	this.parent = parent;
+    	Application.getInjector().injectMembers(this);
     }
 
     public Supplier<Collection<GpxFile>> getAllRouteProvider() {
-		return () -> LoadedFileManager.getInstance().getLoadedTracks();
+		return () -> loadedFileManager.getLoadedTracks();
 	}
     
     public Supplier<Collection<GpxFile>> getSingleTrackProvider(GpxFile track) {
@@ -107,11 +119,11 @@ public class TracksPainter implements Painter<JXMapViewer>
 
         Color color;
         if(parent.getSelectedFile() == null) {
-        	color = TrackColorUtil.getInstance().getColorForTrack(track);
+        	color = trackColorUtil.getColorForTrack(track);
         } else if (parent.getSelectedFile() == track) { // pointer comparison should be ok here
-        	color = ColorConverter.convert(SettingsManager.getInstance().getSettings().getSelectedRouteColor());
+        	color = ColorConverter.convert(settingsManager.getSettings().getSelectedRouteColor());
         } else {
-        	color = ColorConverter.convert(SettingsManager.getInstance().getSettings().getUnselectedRouteColor());
+        	color = ColorConverter.convert(settingsManager.getSettings().getUnselectedRouteColor());
         }
         // do the drawing again
         g.setColor(color);

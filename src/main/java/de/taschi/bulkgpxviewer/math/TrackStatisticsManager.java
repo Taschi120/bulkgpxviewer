@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -24,8 +26,6 @@ import lombok.extern.log4j.Log4j2;
  */
 @Log4j2
 public class TrackStatisticsManager {
-
-	private static TrackStatisticsManager INSTANCE;
 	
 	/**
 	 * If speed between two points is below this threshold, it will be rounded down to 0.
@@ -36,6 +36,7 @@ public class TrackStatisticsManager {
 	
 	private static final Length ZERO_LENGTH = Length.of(0, Unit.METER);
 	
+	/** Caches */
 	private HashMap<TrackSegment, List<Double>> distanceDiffs = new HashMap<>();
 	private HashMap<TrackSegment, List<Double>> totalDistances = new HashMap<>();
 	private HashMap<TrackSegment, List<Duration>> totalTimes = new HashMap<>();
@@ -44,16 +45,11 @@ public class TrackStatisticsManager {
 	private HashMap<TrackSegment, List<Double>> elevations = new HashMap<>();
 	private HashMap<TrackSegment, List<Double>> gradients = new HashMap<>();
 	
-	public static TrackStatisticsManager getInstance() {
-		if (INSTANCE == null) {
-			INSTANCE = new TrackStatisticsManager();
-		}
-		return INSTANCE;
-	}
+	@Inject
+	private HaversineCalculator haversineCalculator;
 	
-	private TrackStatisticsManager() {
-		log.info("Instantiation"); //$NON-NLS-1$
-	}
+	@Inject
+	private UnitConverter unitConverter;
 	
 	public double getTotalDistance(TrackSegment segment) {
 		return getDistanceDifferences(segment).stream().collect(Collectors.summingDouble(it -> it));
@@ -77,7 +73,7 @@ public class TrackStatisticsManager {
 			} else {
 				var prev = waypoints.get(i - 1);
 				var now = waypoints.get(i);
-				result.add(HaversineCalculator.getDistance(prev, now));
+				result.add(haversineCalculator.getDistance(prev, now));
 			}
 		}
 		
@@ -110,7 +106,7 @@ public class TrackStatisticsManager {
 		var prevWaypoint = waypoints.get(0);
 		
 		for(var waypoint: waypoints) {
-			distanceSoFar += HaversineCalculator.getDistance(prevWaypoint, waypoint);
+			distanceSoFar += haversineCalculator.getDistance(prevWaypoint, waypoint);
 			result.add(distanceSoFar);
 			prevWaypoint = waypoint;
 		}
@@ -352,7 +348,7 @@ public class TrackStatisticsManager {
 				.collect(Collectors.toUnmodifiableList());
 		
 		var speeds = getSpeeds(segment).stream()
-				.map(it -> unitSystem == UnitSystem.IMPERIAL ? UnitConverter.kilometersToMiles(it) : it)
+				.map(it -> unitSystem == UnitSystem.IMPERIAL ? unitConverter.kilometersToMiles(it) : it)
 				.collect(Collectors.toUnmodifiableList());
 		
 		speeds = smootheWithZeroSnap(speeds, 5);

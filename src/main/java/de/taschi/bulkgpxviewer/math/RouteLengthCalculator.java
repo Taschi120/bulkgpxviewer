@@ -25,28 +25,21 @@ package de.taschi.bulkgpxviewer.math;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import com.google.inject.Inject;
+
 import de.taschi.bulkgpxviewer.settings.dto.UnitSystem;
 import de.taschi.bulkgpxviewer.ui.Messages;
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
-import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 public class RouteLengthCalculator {
-	private static RouteLengthCalculator INSTANCE;
 	
-	public static RouteLengthCalculator getInstance() {
-		if (INSTANCE == null) {
-			INSTANCE = new RouteLengthCalculator();
-		}
-		return INSTANCE;
-	}
+	@Inject
+	private HaversineCalculator haversineCalculator;
 	
-	private RouteLengthCalculator() {
-		// prevent instantiation
-		log.info("Instantiated"); //$NON-NLS-1$
-	}
+	@Inject
+	private UnitConverter unitConverter;
 	
 	public String getFormattedTotalDistance(GPX gpx, UnitSystem system) {
 		var distance = BigDecimal.valueOf(getTotalDistance(gpx, system))
@@ -68,7 +61,7 @@ public class RouteLengthCalculator {
 		if (system == UnitSystem.METRIC) {
 			return distanceInKm;
 		} else {
-			return UnitConverter.kilometersToMiles(distanceInKm);
+			return unitConverter.kilometersToMiles(distanceInKm);
 		}
 	}
 	
@@ -78,7 +71,7 @@ public class RouteLengthCalculator {
 		if (system == UnitSystem.METRIC) {
 			return distanceInKm;
 		} else {
-			return UnitConverter.kilometersToMiles(distanceInKm);
+			return unitConverter.kilometersToMiles(distanceInKm);
 		}
 	}
 	
@@ -88,7 +81,7 @@ public class RouteLengthCalculator {
 		if (system == UnitSystem.METRIC) {
 			return distanceInKm;
 		} else {
-			return UnitConverter.kilometersToMiles(distanceInKm);
+			return unitConverter.kilometersToMiles(distanceInKm);
 		}
 	}
 
@@ -122,7 +115,7 @@ public class RouteLengthCalculator {
 				var here = points.get(i);
 				var there = points.get(i + 1);
 				
-				result += HaversineCalculator.getDistance(here, there);
+				result += haversineCalculator.getDistance(here, there);
 			}
 			
 			return result;

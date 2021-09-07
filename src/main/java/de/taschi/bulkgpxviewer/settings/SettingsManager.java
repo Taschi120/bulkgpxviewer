@@ -40,17 +40,17 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.fasterxml.jackson.jr.ob.JSON.Feature;
+import com.google.inject.Singleton;
 
 import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings;
 import de.taschi.bulkgpxviewer.settings.dto.Settings;
 import de.taschi.bulkgpxviewer.settings.dto.SettingsColor;
 import de.taschi.bulkgpxviewer.settings.dto.UnitSystem;
 
+@Singleton
 public class SettingsManager {
 
 	private static Logger LOG = LogManager.getLogger(SettingsManager.class);
-
-	private static SettingsManager INSTANCE;
 
 	private static final List<Color> DEFAULT_TRACK_COLORS = Arrays.asList(
 			Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.GRAY, 
@@ -61,14 +61,7 @@ public class SettingsManager {
 	/** Objects which want to be notified about settings changes */
 	private List<SettingsUpdateListener> updateListeners = new ArrayList<>();
 
-	public static SettingsManager getInstance() {
-		if (INSTANCE == null) {
-			INSTANCE = new SettingsManager();
-		}
-		return INSTANCE;
-	}
-
-	private SettingsManager() {
+	public SettingsManager() {
 		LOG.info("Loading settings"); //$NON-NLS-1$
 		loadOrInitSettings(getSettingsFile());
 	}

@@ -23,17 +23,14 @@ package de.taschi.bulkgpxviewer.math;
  */
 
 public class UnitConverter {
-	private UnitConverter() {
-		// prevent instantiation
-	}
 	
 	private static final double KILOMETERS_TO_MILES = 0.621371;
 	
-	public static double kilometersToMiles(double km) {
+	public double kilometersToMiles(double km) {
 		return km * KILOMETERS_TO_MILES;
 	}
 	
-	public static double milesToKilometers(double miles) {
+	public double milesToKilometers(double miles) {
 		return miles / KILOMETERS_TO_MILES;
 	}
 }

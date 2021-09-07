@@ -34,6 +34,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.jxmapviewer.viewer.GeoPosition;
 
+import com.google.inject.Inject;
+
 import de.taschi.bulkgpxviewer.geo.GpxToJxMapper;
 import de.taschi.bulkgpxviewer.geo.WaypointIndex;
 import io.jenetics.jpx.GPX;
@@ -52,6 +54,9 @@ public class GpxFile {
 	
 	private List<WayPoint> allWayPoints;
 	private List<GeoPosition> allGeoPositions;
+	
+	@Inject
+	private LoadedFileManager loadedFileManager;
 	
 	@Getter
 	private boolean changed = false;
@@ -183,7 +188,7 @@ public class GpxFile {
 		}
 		changed = true;
 		this.gpx = gpx;
-		LoadedFileManager.getInstance().fireChangeListeners();
+		loadedFileManager.fireChangeListeners();
 	}
 
 	public Optional<TrackSegment> getFirstSegment() {

@@ -39,7 +39,7 @@ public class HaversineCalculator {
 	 * 
 	 * @return the distance, in kilometers
 	 */
-	public static double getDistance(double lat1, double lon1, double lat2, double lon2) {
+	public double getDistance(double lat1, double lon1, double lat2, double lon2) {
 		var dLat = deg2rad(lat2 - lat1);
 		var dLon = deg2rad(lon2 - lon1);
 		
@@ -59,7 +59,7 @@ public class HaversineCalculator {
 	 * convert degrees to radians
 	 * @return
 	 */
-	private static double deg2rad(double deg) {
+	private double deg2rad(double deg) {
 		return deg * (Math.PI / 180);
 	}
 
@@ -74,7 +74,7 @@ public class HaversineCalculator {
 	 * @param there the second set of coordinates
 	 * @return the distance, in kilometers
 	 */
-	public static double getDistance(GeoPosition here, GeoPosition there) {
+	public double getDistance(GeoPosition here, GeoPosition there) {
 		return getDistance(here.getLatitude(), here.getLongitude(), 
 				there.getLatitude(), there.getLongitude());
 	}
@@ -89,7 +89,7 @@ public class HaversineCalculator {
 	 * @param there the second set of coordinates
 	 * @return the distance, in kilometers
 	 */
-	public static double getDistance(WayPoint here, WayPoint there) {
+	public double getDistance(WayPoint here, WayPoint there) {
 		return getDistance(here.getLatitude().doubleValue(), here.getLongitude().doubleValue(), 
 				there.getLatitude().doubleValue(), there.getLongitude().doubleValue());
 	}

@@ -28,19 +28,6 @@ import de.taschi.bulkgpxviewer.ui.Messages;
 
 public class DurationFormatter {
 	
-	private static DurationFormatter INSTANCE = null;
-	
-	private DurationFormatter() {
-		// Singleton, prevent instantiation
-	}
-	
-	public static DurationFormatter getInstance() {
-		if (INSTANCE == null) {
-			INSTANCE = new DurationFormatter();
-		}
-		return INSTANCE;
-	}
-	
 	public String format(Duration duration) {
 		long seconds = duration.getSeconds();
 		return String.format(Messages.getString("DurationFormatter.HrMinSecFormat"), seconds / 3600, (seconds % 3600) / 60, (seconds % 60)); //$NON-NLS-1$

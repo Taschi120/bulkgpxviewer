@@ -37,16 +37,17 @@ import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.inject.Singleton;
+
 import io.jenetics.jpx.GPX;
 
 /**
  * Singleton class for access to the loaded files and GPX tracks
  */
+@Singleton
 public class LoadedFileManager {
 	
 	private static final Logger LOG = LogManager.getLogger(LoadedFileManager.class);
-
-	private static LoadedFileManager INSTANCE;
 
 	private final List<GpxFile> loadedTracks = new ArrayList<>();
 	
@@ -55,13 +56,6 @@ public class LoadedFileManager {
 	private GpxFile highlightedTrack = null;
 
 	private Path loadedDirectory;
-
-	public static LoadedFileManager getInstance() {
-		if (INSTANCE == null) {
-			INSTANCE = new LoadedFileManager();
-		}
-		return INSTANCE;
-	}
 
 	/**
 	 * Load one GPX file

@@ -15,6 +15,9 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataset;
 
+import com.google.inject.Inject;
+
+import de.taschi.bulkgpxviewer.Application;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.settings.SettingsUpdateListener;
 import io.jenetics.jpx.TrackSegment;
@@ -23,6 +26,9 @@ public abstract class AbstractGraphPanel extends JPanel implements SettingsUpdat
 		
 	private static final long serialVersionUID = 1948085630207508743L;
 	
+	@Inject
+	protected SettingsManager settingsManager;
+	
 	private TrackSegment currentSegment;
 	
 	private XYPlot plot;
@@ -30,6 +36,8 @@ public abstract class AbstractGraphPanel extends JPanel implements SettingsUpdat
 	private ChartPanel chartPanel;
 	
 	public AbstractGraphPanel() {
+		Application.getInjector().injectMembers(this);
+		
 		setLayout(new BorderLayout());
 		
 		plot = new XYPlot();
@@ -52,7 +60,7 @@ public abstract class AbstractGraphPanel extends JPanel implements SettingsUpdat
 
 		add(chartPanel, BorderLayout.CENTER);
 		
-		SettingsManager.getInstance().addSettingsUpdateListener(this);
+		settingsManager.addSettingsUpdateListener(this);
 	}
 	
 	public void setGpxTrackSegment(TrackSegment segment) {

@@ -25,17 +25,16 @@ package de.taschi.bulkgpxviewer.math;
 import java.time.Duration;
 import java.util.Optional;
 
+import com.google.inject.Singleton;
+
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
+@Singleton
 public class DurationCalculator {
-	
-	public DurationCalculator() {
-		
-	}
 	
 	/**
 	 * Get the recorded duration of all tracks of a {@link GPX} file, disregarding any gaps between 

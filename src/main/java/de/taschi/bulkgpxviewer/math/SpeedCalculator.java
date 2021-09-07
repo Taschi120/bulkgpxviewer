@@ -36,6 +36,12 @@ public class SpeedCalculator {
 	@Inject
 	private DurationCalculator durationCalculator;
 	
+	@Inject
+	private RouteLengthCalculator routeLengthCalculator;
+	
+	@Inject
+	private UnitConverter unitConverter;
+	
 	public String getFormattedAverageSpeed(GPX gpx, UnitSystem unitSystem) {
 		var averageSpeed = getAverageSpeed(gpx, unitSystem);
 		
@@ -57,7 +63,7 @@ public class SpeedCalculator {
 	}
 	
 	public double getAverageSpeed(GPX gpx, UnitSystem unitSystem) {
-		var distance = RouteLengthCalculator.getInstance().getTotalDistance(gpx, unitSystem);
+		var distance = routeLengthCalculator.getTotalDistance(gpx, unitSystem);
 		var optionalTime = durationCalculator.getRecordedDurationForGpxFile(gpx);
 		
 		if(optionalTime.isPresent()) {
@@ -67,7 +73,7 @@ public class SpeedCalculator {
 			} else {
 				var speedInKph = distance / time * 3600;
 				if (unitSystem == UnitSystem.IMPERIAL) {
-					return UnitConverter.kilometersToMiles(speedInKph);
+					return unitConverter.kilometersToMiles(speedInKph);
 				} else {
 					return speedInKph;
 				}

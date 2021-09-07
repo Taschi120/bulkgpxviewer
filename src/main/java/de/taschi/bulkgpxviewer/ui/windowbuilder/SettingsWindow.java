@@ -43,6 +43,9 @@ import javax.swing.JTabbedPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 
+import com.google.inject.Inject;
+
+import de.taschi.bulkgpxviewer.Application;
 import de.taschi.bulkgpxviewer.settings.ColorConverter;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.ui.ColorListItemRenderer;
@@ -63,8 +66,10 @@ public class SettingsWindow extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JList<Color> list;
 	
-	private MainWindow mainWindow;
 	private JComboBox<?> unitSystem;
+	
+	@Inject
+	private SettingsManager settingsManager;
 
 	/**
 	 * Launch the application.
@@ -85,8 +90,10 @@ public class SettingsWindow extends JDialog {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public SettingsWindow(MainWindow mainWindow) {
 		super(mainWindow.getFrame());
+		
+		Application.getInjector().injectMembers(this);
+		
 		setTitle(Messages.getString("SettingsWindow.Settings")); //$NON-NLS-1$
-		this.mainWindow = mainWindow;
 		
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -237,7 +244,7 @@ public class SettingsWindow extends JDialog {
 	}
 
 	protected void onOk() {
-		Settings settings = SettingsManager.getInstance().getSettings();
+		Settings settings = settingsManager.getSettings();
 		settings.setRouteColors(ColorConverter.convertToSettings(colorsIntl));
 		
 		if(unitSystem.getSelectedIndex() == 0) {
@@ -245,14 +252,14 @@ public class SettingsWindow extends JDialog {
 		} else {
 			settings.setUnitSystem(UnitSystem.IMPERIAL);
 		}
-		SettingsManager.getInstance().saveSettings();
-		SettingsManager.getInstance().fireNotifications();
+		settingsManager.saveSettings();
+		settingsManager.fireNotifications();
 		
 		setVisible(false);
 	}
 
 	private void initModel() {
-		Settings settings = SettingsManager.getInstance().getSettings();
+		Settings settings = settingsManager.getSettings();
 		
 		colorsIntl = ColorConverter.convertToAwt(settings.getRouteColors());
 		getColorList().setCellRenderer(new ColorListItemRenderer());

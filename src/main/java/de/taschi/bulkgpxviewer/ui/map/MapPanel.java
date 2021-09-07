@@ -33,6 +33,9 @@ import org.jxmapviewer.viewer.DefaultTileFactory;
 import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.TileFactoryInfo;
 
+import com.google.inject.Inject;
+
+import de.taschi.bulkgpxviewer.Application;
 import de.taschi.bulkgpxviewer.files.GpxFile;
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
 import de.taschi.bulkgpxviewer.geo.GpsBoundingBox;
@@ -58,10 +61,16 @@ public class MapPanel extends JPanel {
 	@Getter
 	private GpxFile selectedFile = null;
 	
+	@Inject
+	private LoadedFileManager loadedFileManager;
+	
 	private MapSelectionHandler selectionHandler;
 			
 	public MapPanel() {
 		super();
+		
+		Application.getInjector().injectMembers(this);
+		
 		setLayout(new BorderLayout());
 		
 		mapKit = new JXMapKit();
@@ -84,7 +93,7 @@ public class MapPanel extends JPanel {
         
         mapKit.getMainMap().setOverlayPainter(compositePainter);
         
-        LoadedFileManager.getInstance().addChangeListener(mapKit::repaint);
+        loadedFileManager.addChangeListener(mapKit::repaint);
         autoSetZoomAndLocation();
         
         selectionHandler = new MapSelectionHandler(mapKit.getMainMap());
@@ -100,7 +109,7 @@ public class MapPanel extends JPanel {
 	 * TODO Better logic, including for setting the zoom level, is needed here.
 	 */
 	public void autoSetZoomAndLocation() {
-		List<GpxFile> tracks = LoadedFileManager.getInstance().getLoadedTracks();
+		List<GpxFile> tracks = loadedFileManager.getLoadedTracks();
 		
 		if (tracks.isEmpty()) {
 			// default location

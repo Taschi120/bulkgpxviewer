@@ -48,6 +48,8 @@ import javax.swing.tree.DefaultTreeModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.inject.Inject;
+
 import de.taschi.bulkgpxviewer.Application;
 import de.taschi.bulkgpxviewer.files.GpxFile;
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
@@ -70,8 +72,13 @@ public class SidePanel extends JPanel {
 	
 	private GpxFilePopupMenu filePopupMenu;
 	
+	@Inject
+	private LoadedFileManager loadedFileManager;
+	
 	public SidePanel() {
 		super();
+		
+		Application.getInjector().injectMembers(this);
 		
 		setLayout(new BorderLayout());
 		
@@ -87,7 +94,7 @@ public class SidePanel extends JPanel {
 		
 		add(scrollPane, BorderLayout.CENTER);
 		
-		LoadedFileManager.getInstance().addChangeListener(this::createTreeModel);
+		loadedFileManager.addChangeListener(this::createTreeModel);
 	}
 
 	private synchronized void createTreeModel() {
@@ -100,7 +107,7 @@ public class SidePanel extends JPanel {
 			rootNode.removeAllChildren();
 		}
 		
-		List<GpxFile> tracks = LoadedFileManager.getInstance().getLoadedTracks();
+		List<GpxFile> tracks = loadedFileManager.getLoadedTracks();
 		
 		cullUnnecessaryTrackNodes(tracks);
 		

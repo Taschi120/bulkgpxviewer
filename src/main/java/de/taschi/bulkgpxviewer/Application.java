@@ -34,13 +34,17 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class Application {
 		
-	private static MainWindow mainWindow;
+	private static Application INSTANCE;
 	
-	public static MainWindow getMainWindow() {
-		return mainWindow;
+	private MainWindow mainWindow;
+	private Injector injector;
+	
+	private Application() {  
+		injector = Guice.createInjector(new CoreGuiceModule());
+		log.info("Guice dependency injector created");    
 	}
 	
-	public static void main(String[] args) {
+	private void start() {
 		log.info("Application startup"); //$NON-NLS-1$
 		
 		try {
@@ -48,11 +52,35 @@ public class Application {
 		} catch (Exception e) {
 			log.error("Error while setting system look and feel", e); //$NON-NLS-1$
 		}
-		    
-		Injector injector = Guice.createInjector(new CoreGuiceModule());
-		log.info("Guice dependency injector created");    
-		
-		mainWindow = injector.getInstance(MainWindow.class);
+
+		mainWindow = new MainWindow();
 		mainWindow.setVisible(true);
+	}
+	
+	private static Application getInstance() {
+		if (INSTANCE == null) {
+			INSTANCE = new Application();
+		}
+		return INSTANCE;
+	}
+	
+	public static MainWindow getMainWindow() {
+		return getInstance().getMainWindowIntl();
+	}
+
+	private MainWindow getMainWindowIntl() {
+		return mainWindow;
+	}
+	
+	public static Injector getInjector() {
+		return getInstance().getInjectorIntl();
+	}
+
+	private Injector getInjectorIntl() {
+		return injector;
+	}
+
+	public static void main(String[] args) {
+		getInstance().start();
 	}
 }

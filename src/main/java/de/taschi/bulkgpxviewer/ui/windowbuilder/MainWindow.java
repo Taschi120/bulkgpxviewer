@@ -51,6 +51,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.inject.Inject;
+
+import de.taschi.bulkgpxviewer.Application;
 import de.taschi.bulkgpxviewer.files.GpxFile;
 import de.taschi.bulkgpxviewer.files.LoadedFileManager;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
@@ -93,6 +96,12 @@ public class MainWindow implements SettingsUpdateListener {
 	private SpeedOverTimePanel speedOverTimePanel;
 	private HeightProfilePanel heightProfilePanel;
 	
+	@Inject
+	private SettingsManager settingsManager;
+	
+	@Inject
+	private LoadedFileManager loadedFileManager;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -101,6 +110,7 @@ public class MainWindow implements SettingsUpdateListener {
 			public void run() {
 				try {
 					MainWindow window = new MainWindow();
+					Application.getInjector().injectMembers(window);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -113,6 +123,7 @@ public class MainWindow implements SettingsUpdateListener {
 	 * Create the application.
 	 */
 	public MainWindow() {
+		Application.getInjector().injectMembers(this);
 		initialize();
 	}
 
@@ -205,7 +216,7 @@ public class MainWindow implements SettingsUpdateListener {
 		
 		frame.addWindowListener(new LocalWindowAdapter());
         
-        String lastUsedDirectory = SettingsManager.getInstance().getSettings().getLastUsedDirectory();
+        String lastUsedDirectory = settingsManager.getSettings().getLastUsedDirectory();
         
         if (!StringUtils.isEmpty(lastUsedDirectory)) {
         	setCrawlDirectory(new File(lastUsedDirectory));
@@ -213,7 +224,7 @@ public class MainWindow implements SettingsUpdateListener {
         
         mapPanel.autoSetZoomAndLocation();
         
-        SettingsManager.getInstance().addSettingsUpdateListener(this);
+        settingsManager.addSettingsUpdateListener(this);
 	}
 	
 	public void startEditingMode(GpxFile trackToEdit) {
@@ -240,7 +251,7 @@ public class MainWindow implements SettingsUpdateListener {
 	}
 
 	private void restoreWindowGeometry() {
-		MainWindowSettings settings = SettingsManager.getInstance().getSettings().getMainWindowSettings();
+		MainWindowSettings settings = settingsManager.getSettings().getMainWindowSettings();
 		
 		frame.setLocation(settings.getX(), settings.getY());
 		frame.setSize(1185, 646);
@@ -261,10 +272,10 @@ public class MainWindow implements SettingsUpdateListener {
 
 	public void setCrawlDirectory(File selectedFile) {
 		try {
-			LoadedFileManager.getInstance().clearAndLoadAllFromDirectory(selectedFile.toPath());
+			loadedFileManager.clearAndLoadAllFromDirectory(selectedFile.toPath());
 
 	        frame.setTitle(BASE_TITLE + Messages.getString("MainWindow.WindowTitleSpace") + selectedFile.getPath()); //$NON-NLS-1$
-	        SettingsManager.getInstance().getSettings().setLastUsedDirectory(selectedFile.getCanonicalPath());
+	        settingsManager.getSettings().setLastUsedDirectory(selectedFile.getCanonicalPath());
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(frame, Messages.getString("MainWindow.ErrorWhileLoadingGPXFiles") + selectedFile.getAbsolutePath()); //$NON-NLS-1$
 			LOG.error("Error while loading GPX files from folder " + selectedFile.getAbsolutePath(), e); //$NON-NLS-1$
@@ -278,7 +289,7 @@ public class MainWindow implements SettingsUpdateListener {
 	}
 	
 	private void writeWindowStateToSettings() {
-		MainWindowSettings settings = SettingsManager.getInstance().getSettings().getMainWindowSettings();
+		MainWindowSettings settings = settingsManager.getSettings().getMainWindowSettings();
 		settings.setWidth(frame.getWidth());
 		settings.setHeight(frame.getHeight());
 		settings.setX(frame.getX());
@@ -329,7 +340,7 @@ public class MainWindow implements SettingsUpdateListener {
 	
 	private void closeEventHandler(ActionEvent evt) {
 		writeWindowStateToSettings();
-		SettingsManager.getInstance().saveSettings();
+		settingsManager.saveSettings();
 		LOG.info("Closing application by user request."); //$NON-NLS-1$
 		System.exit(0);
 	}
@@ -353,7 +364,7 @@ public class MainWindow implements SettingsUpdateListener {
 		sidePanel.setEnabled(true);
 		frame.validate();
 		
-		LoadedFileManager.getInstance().fireChangeListeners();
+		loadedFileManager.fireChangeListeners();
 		
 		currentMode = MainWindowMode.BULK_DISPLAY;
 	}
