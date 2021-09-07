@@ -11,7 +11,9 @@ public class AvgSpeedNode extends DefaultMutableTreeNode implements GpxFileRelat
 		
 	private static final long serialVersionUID = -123087122558756515L;
 	
-	final GpxFileTreeNode parent;
+	private SpeedCalculator speedCalculator;
+	
+	protected final GpxFileTreeNode parent;
 	
 	public AvgSpeedNode(GpxFileTreeNode parent) {
 		this.parent = parent;

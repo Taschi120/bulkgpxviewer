@@ -3,8 +3,6 @@ package de.taschi.bulkgpxviewer.ui.sidepanel;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import de.taschi.bulkgpxviewer.files.GpxFile;
-import de.taschi.bulkgpxviewer.math.DurationCalculator;
-import de.taschi.bulkgpxviewer.math.DurationFormatter;
 import de.taschi.bulkgpxviewer.ui.Messages;
 
 public class DurationTreeNode extends DefaultMutableTreeNode implements GpxFileRelatedNode {
@@ -24,9 +22,10 @@ public class DurationTreeNode extends DefaultMutableTreeNode implements GpxFileR
 	}
 	
 	private String getLabel(GpxFile file) {
-		var formattedDuration = DurationCalculator.getInstance().getRecordedDurationForGpxFile(parent.getTrack().getGpx())
-				.map(DurationFormatter.getInstance()::format)
-				.orElse(Messages.getString("GpxFileTreeNode.unknown")); //$NON-NLS-1$
+		var formattedDuration = "blah"; // FIXME
+		//var formattedDuration = DurationCalculator.getInstance().getRecordedDurationForGpxFile(parent.getTrack().getGpx())
+		//		.map(DurationFormatter.getInstance()::format)
+		//		.orElse(Messages.getString("GpxFileTreeNode.unknown")); //$NON-NLS-1$
 				
 		return String.format(Messages.getString("GpxFileTreeNode.Duration"), formattedDuration);//$NON_NLS-1$ //$NON-NLS-1$
 	}

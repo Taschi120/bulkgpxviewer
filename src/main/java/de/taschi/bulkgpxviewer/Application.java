@@ -25,16 +25,15 @@ package de.taschi.bulkgpxviewer;
 
 import javax.swing.UIManager;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 import de.taschi.bulkgpxviewer.ui.windowbuilder.MainWindow;
+import lombok.extern.log4j.Log4j2;
 
-
+@Log4j2
 public class Application {
-	
-	private static final Logger LOG = LogManager.getLogger(Application.class);
-	
+		
 	private static MainWindow mainWindow;
 	
 	public static MainWindow getMainWindow() {
@@ -42,13 +41,18 @@ public class Application {
 	}
 	
 	public static void main(String[] args) {
-		LOG.info("Application startup"); //$NON-NLS-1$
+		log.info("Application startup"); //$NON-NLS-1$
+		
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
-			LOG.error("Error while setting system look and feel", e); //$NON-NLS-1$
+			log.error("Error while setting system look and feel", e); //$NON-NLS-1$
 		}
-		mainWindow = new MainWindow();
+		    
+		Injector injector = Guice.createInjector(new CoreGuiceModule());
+		log.info("Guice dependency injector created");    
+		
+		mainWindow = injector.getInstance(MainWindow.class);
 		mainWindow.setVisible(true);
 	}
 }

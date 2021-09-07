@@ -32,17 +32,9 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 public class DurationCalculator {
-	private static DurationCalculator INSTANCE;
 	
-	public static DurationCalculator getInstance() {
-		if (INSTANCE == null) {
-			INSTANCE = new DurationCalculator();
-		}
-		return INSTANCE;
-	}
-	
-	private DurationCalculator() {
-		// prevent instantiation
+	public DurationCalculator() {
+		
 	}
 	
 	/**

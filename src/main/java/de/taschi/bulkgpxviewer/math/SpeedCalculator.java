@@ -25,25 +25,16 @@ package de.taschi.bulkgpxviewer.math;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import com.google.inject.Inject;
+
 import de.taschi.bulkgpxviewer.settings.dto.UnitSystem;
 import de.taschi.bulkgpxviewer.ui.Messages;
 import io.jenetics.jpx.GPX;
 
 public class SpeedCalculator {
-
-	private static SpeedCalculator INSTANCE = null;
 	
-	public static SpeedCalculator getInstance() {
-		if (INSTANCE == null) {
-			INSTANCE = new SpeedCalculator();
-		}
-		
-		return INSTANCE;
-	}
-	
-	private SpeedCalculator() {
-		// prevent instantiation
-	}
+	@Inject
+	private DurationCalculator durationCalculator;
 	
 	public String getFormattedAverageSpeed(GPX gpx, UnitSystem unitSystem) {
 		var averageSpeed = getAverageSpeed(gpx, unitSystem);
@@ -67,7 +58,7 @@ public class SpeedCalculator {
 	
 	public double getAverageSpeed(GPX gpx, UnitSystem unitSystem) {
 		var distance = RouteLengthCalculator.getInstance().getTotalDistance(gpx, unitSystem);
-		var optionalTime = DurationCalculator.getInstance().getRecordedDurationForGpxFile(gpx);
+		var optionalTime = durationCalculator.getRecordedDurationForGpxFile(gpx);
 		
 		if(optionalTime.isPresent()) {
 			var time = optionalTime.get().getSeconds();

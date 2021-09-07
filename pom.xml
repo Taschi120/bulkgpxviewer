@@ -64,6 +64,12 @@
 			<version>1.5.3</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+			<version>4.1.0</version>
+		</dependency>
+
 		<!-- I'm not entirely sure why this is in "provided" scope but it's what 
 			the official website recommends -->
 		<dependency>
