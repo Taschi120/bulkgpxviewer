@@ -1,4 +1,163 @@
-package de.taschi.bulkgpxviewer.geo;
+package de.taschi.bulkgpxviewer.geo
+
+import javax.swing.JPanel
+import org.jxmapviewer.JXMapKit
+import de.taschi.bulkgpxviewer.ui.map.TracksPainter
+import de.taschi.bulkgpxviewer.ui.map.SelectionPainter
+import de.taschi.bulkgpxviewer.ui.map.CompositePainter
+import de.taschi.bulkgpxviewer.files.GpxFile
+import de.taschi.bulkgpxviewer.files.LoadedFileManager
+import de.taschi.bulkgpxviewer.ui.map.MapSelectionHandler
+import java.awt.BorderLayout
+import org.jxmapviewer.viewer.TileFactoryInfo
+import org.jxmapviewer.OSMTileFactoryInfo
+import org.jxmapviewer.viewer.DefaultTileFactory
+import de.taschi.bulkgpxviewer.files.LoadedFileChangeListener
+import de.taschi.bulkgpxviewer.ui.map.WaypointSelectionChangeListener
+import io.jenetics.jpx.WayPoint
+import org.jxmapviewer.viewer.GeoPosition
+import de.taschi.bulkgpxviewer.geo.GpsBoundingBox
+import io.jenetics.jpx.GPX
+import io.jenetics.jpx.TrackSegment
+import de.taschi.bulkgpxviewer.geo.GpxToJxMapper
+import de.taschi.bulkgpxviewer.ui.map.MapPanel
+import org.jxmapviewer.JXMapViewer
+import de.taschi.bulkgpxviewer.ui.TrackColorUtil
+import java.util.Arrays
+import java.awt.Graphics2D
+import java.awt.Rectangle
+import java.awt.RenderingHints
+import java.awt.Color
+import java.awt.BasicStroke
+import de.taschi.bulkgpxviewer.settings.ColorConverter
+import java.util.stream.Collectors
+import java.awt.geom.Point2D
+import java.awt.Image
+import javax.imageio.ImageIO
+import java.awt.event.MouseAdapter
+import java.util.HashSet
+import java.util.Collections
+import javax.swing.SwingUtilities
+import java.lang.Runnable
+import de.taschi.bulkgpxviewer.settings.SettingsUpdateListener
+import org.jfree.chart.plot.XYPlot
+import org.jfree.chart.JFreeChart
+import org.jfree.chart.ChartPanel
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
+import org.jfree.data.xy.XYDataset
+import org.jfree.chart.ChartFactory
+import org.jfree.chart.plot.PlotOrientation
+import org.jfree.chart.block.BlockBorder
+import de.taschi.bulkgpxviewer.ui.graphs.AbstractGraphPanel
+import de.taschi.bulkgpxviewer.math.TrackStatisticsManager
+import de.taschi.bulkgpxviewer.settings.dto.UnitSystem
+import de.taschi.bulkgpxviewer.ui.sidepanel.GpxFileTreeNode
+import javax.swing.tree.DefaultMutableTreeNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.GpxFileRelatedNode
+import de.taschi.bulkgpxviewer.files.TagManager
+import javax.swing.JTree
+import java.util.HashMap
+import java.nio.file.Path
+import de.taschi.bulkgpxviewer.ui.sidepanel.GpxFilePopupMenu
+import javax.swing.JScrollPane
+import javax.swing.ScrollPaneConstants
+import de.taschi.bulkgpxviewer.ui.sidepanel.SidePanel.SidePanelMouseListener
+import de.taschi.bulkgpxviewer.ui.sidepanel.SidePanel
+import javax.swing.tree.DefaultTreeModel
+import java.time.ZonedDateTime
+import java.time.ZoneId
+import javax.swing.tree.TreeSelectionModel
+import de.taschi.bulkgpxviewer.math.SpeedCalculator
+import de.taschi.bulkgpxviewer.math.RouteLengthCalculator
+import de.taschi.bulkgpxviewer.ui.sidepanel.StartDateTreeNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.DistanceNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.DurationTreeNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.AvgSpeedNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.TagNode
+import de.taschi.bulkgpxviewer.math.DurationCalculator
+import de.taschi.bulkgpxviewer.math.DurationFormatter
+import javax.swing.JPopupMenu
+import javax.swing.JMenuItem
+import de.taschi.bulkgpxviewer.ui.IconHandler
+import java.awt.event.ActionListener
+import java.awt.event.ActionEvent
+import javax.swing.JOptionPane
+import java.io.IOException
+import java.time.format.DateTimeFormatter
+import java.util.ResourceBundle
+import java.util.MissingResourceException
+import javax.swing.JDialog
+import javax.swing.JTextPane
+import javax.swing.border.EmptyBorder
+import javax.swing.JTabbedPane
+import javax.swing.JLabel
+import java.awt.FlowLayout
+import javax.swing.JButton
+import java.io.File
+import de.taschi.bulkgpxviewer.ui.windowbuilder.InfoDialog
+import kotlin.jvm.JvmStatic
+import javax.swing.JFrame
+import javax.swing.JSplitPane
+import de.taschi.bulkgpxviewer.ui.windowbuilder.MainWindowMode
+import de.taschi.bulkgpxviewer.ui.windowbuilder.EditingPanelWrapper
+import de.taschi.bulkgpxviewer.ui.graphs.SpeedOverTimePanel
+import de.taschi.bulkgpxviewer.ui.graphs.HeightProfilePanel
+import javax.swing.JMenuBar
+import javax.swing.JMenu
+import de.taschi.bulkgpxviewer.ui.windowbuilder.MainWindow.LocalWindowAdapter
+import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings
+import de.taschi.bulkgpxviewer.ui.windowbuilder.MainWindow
+import de.taschi.bulkgpxviewer.ui.windowbuilder.SettingsWindow
+import javax.swing.JFileChooser
+import java.awt.HeadlessException
+import java.lang.RuntimeException
+import java.awt.Desktop
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
+import javax.swing.border.SoftBevelBorder
+import java.awt.GridLayout
+import java.awt.GridBagLayout
+import java.awt.GridBagConstraints
+import java.awt.Insets
+import de.taschi.bulkgpxviewer.geo.WaypointIndex
+import javax.swing.JList
+import javax.swing.JComboBox
+import javax.swing.DefaultComboBoxModel
+import javax.swing.ListSelectionModel
+import de.taschi.bulkgpxviewer.settings.dto.Settings
+import de.taschi.bulkgpxviewer.ui.ColorListItemRenderer
+import javax.swing.JColorChooser
+import de.taschi.bulkgpxviewer.ui.windowbuilder.ColorChooserDialog.ReturnCode
+import de.taschi.bulkgpxviewer.ui.windowbuilder.EditingPanel
+import javax.swing.SwingConstants
+import javax.swing.ImageIcon
+import de.taschi.bulkgpxviewer.settings.dto.SettingsColor
+import javax.swing.ListCellRenderer
+import javax.swing.border.Border
+import javax.swing.BorderFactory
+import de.taschi.bulkgpxviewer.geo.WaypointIndex.WaypointIndexBuilder
+import de.taschi.bulkgpxviewer.math.UnitConverter
+import java.math.BigDecimal
+import java.math.RoundingMode
+import de.taschi.bulkgpxviewer.math.HaversineCalculator
+import java.util.function.BinaryOperator
+import java.util.function.ToDoubleFunction
+import de.taschi.bulkgpxviewer.math.TrackStatisticsManager.Calculator
+import org.jfree.data.xy.XYSeries
+import org.jfree.data.xy.XYSeriesCollection
+import java.lang.IllegalArgumentException
+import kotlin.Throws
+import org.w3c.dom.NodeList
+import java.util.LinkedList
+import java.nio.file.PathMatcher
+import java.nio.file.FileSystems
+import java.nio.charset.Charset
+import java.nio.file.Paths
+import com.google.inject.Injector
+import com.google.inject.Guice
+import de.taschi.bulkgpxviewer.CoreGuiceModule
+import javax.swing.UIManager
+import com.google.inject.AbstractModule
 
 /*-
  * #%L
@@ -20,150 +179,98 @@ package de.taschi.bulkgpxviewer.geo;
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
+ */ /**
+ * Identifier for the position of a [WayPoint] within a [GPX]
  */
+class WaypointIndex internal constructor(var gpx: GPX?, var trackId: Int, var segmentId: Int, var waypointId: Int) :
+    Comparable<WaypointIndex?> {
 
-import io.jenetics.jpx.GPX;
-import io.jenetics.jpx.WayPoint;
+    public override fun compareTo(o: WaypointIndex?): Int {
+        if (o!!.trackId != trackId) {
+            return o.trackId - trackId
+        }
+        if (o.segmentId != segmentId) {
+            return o.segmentId - segmentId
+        }
+        return o.waypointId - waypointId
+    }
 
-/**
- * Identifier for the position of a {@link WayPoint} within a {@link GPX}
- */
-public class WaypointIndex implements Comparable<WaypointIndex> {
-	private GPX gpx;
-	private int trackId;
-	private int segmentId;
-	private int waypointId;
+    fun isOnSameSegment(other: WaypointIndex): Boolean {
+        return (other.gpx === gpx
+                ) && (other.trackId == trackId
+                ) && (other.segmentId == segmentId)
+    }
 
-	WaypointIndex(GPX gpx, int trackId, int segmentId, int waypointId) {
-		this.gpx = gpx;
-		this.trackId = trackId;
-		this.segmentId = segmentId;
-		this.waypointId = waypointId;
-	}
+    public override fun equals(o: Any?): Boolean {
+        if (o === this) return true
+        if (!(o is WaypointIndex)) return false
+        val other: WaypointIndex = o
+        if (!other.canEqual(this as Any?)) return false
+        val `this$gpx`: Any? = gpx
+        val `other$gpx`: Any? = other.gpx
+        if (if (`this$gpx` == null) `other$gpx` != null else !(`this$gpx` == `other$gpx`)) return false
+        if (trackId != other.trackId) return false
+        if (segmentId != other.segmentId) return false
+        if (waypointId != other.waypointId) return false
+        return true
+    }
 
-	public static WaypointIndexBuilder builder() {
-		return new WaypointIndexBuilder();
-	}
+    protected fun canEqual(other: Any?): Boolean {
+        return other is WaypointIndex
+    }
 
-	@Override
-	public int compareTo(WaypointIndex o) {
-		if (o.getTrackId() != this.getTrackId()) {
-			return o.getTrackId() - this.getTrackId();
-		}
-		
-		if (o.getSegmentId() != this.getSegmentId()) {
-			return o.getSegmentId() - this.getSegmentId();
-		}
-		
-		return o.getWaypointId() - this.getWaypointId();
-	}
-	
-	public boolean isOnSameSegment(WaypointIndex other) {
-		return other.getGpx() == this.gpx
-				&& other.getTrackId() == this.trackId
-				&& other.getSegmentId() == this.segmentId;
-	}
+    public override fun hashCode(): Int {
+        val PRIME: Int = 59
+        var result: Int = 1
+        val `$gpx`: Any? = gpx
+        result = result * PRIME + (if (`$gpx` == null) 43 else `$gpx`.hashCode())
+        result = result * PRIME + trackId
+        result = result * PRIME + segmentId
+        result = result * PRIME + waypointId
+        return result
+    }
 
-	public GPX getGpx() {
-		return this.gpx;
-	}
+    public override fun toString(): String {
+        return "WaypointIndex(gpx=" + gpx + ", trackId=" + trackId + ", segmentId=" + segmentId + ", waypointId=" + waypointId + ")"
+    }
 
-	public int getTrackId() {
-		return this.trackId;
-	}
+    class WaypointIndexBuilder internal constructor() {
+        private var gpx: GPX? = null
+        private var trackId: Int = 0
+        private var segmentId: Int = 0
+        private var waypointId: Int = 0
+        fun gpx(gpx: GPX?): WaypointIndexBuilder {
+            this.gpx = gpx
+            return this
+        }
 
-	public int getSegmentId() {
-		return this.segmentId;
-	}
+        fun trackId(trackId: Int): WaypointIndexBuilder {
+            this.trackId = trackId
+            return this
+        }
 
-	public int getWaypointId() {
-		return this.waypointId;
-	}
+        fun segmentId(segmentId: Int): WaypointIndexBuilder {
+            this.segmentId = segmentId
+            return this
+        }
 
-	public void setGpx(GPX gpx) {
-		this.gpx = gpx;
-	}
+        fun waypointId(waypointId: Int): WaypointIndexBuilder {
+            this.waypointId = waypointId
+            return this
+        }
 
-	public void setTrackId(int trackId) {
-		this.trackId = trackId;
-	}
+        fun build(): WaypointIndex {
+            return WaypointIndex(gpx, trackId, segmentId, waypointId)
+        }
 
-	public void setSegmentId(int segmentId) {
-		this.segmentId = segmentId;
-	}
+        public override fun toString(): String {
+            return "WaypointIndex.WaypointIndexBuilder(gpx=" + gpx + ", trackId=" + trackId + ", segmentId=" + segmentId + ", waypointId=" + waypointId + ")"
+        }
+    }
 
-	public void setWaypointId(int waypointId) {
-		this.waypointId = waypointId;
-	}
-
-	public boolean equals(final Object o) {
-		if (o == this) return true;
-		if (!(o instanceof WaypointIndex)) return false;
-		final WaypointIndex other = (WaypointIndex) o;
-		if (!other.canEqual((Object) this)) return false;
-		final Object this$gpx = this.getGpx();
-		final Object other$gpx = other.getGpx();
-		if (this$gpx == null ? other$gpx != null : !this$gpx.equals(other$gpx)) return false;
-		if (this.getTrackId() != other.getTrackId()) return false;
-		if (this.getSegmentId() != other.getSegmentId()) return false;
-		if (this.getWaypointId() != other.getWaypointId()) return false;
-		return true;
-	}
-
-	protected boolean canEqual(final Object other) {
-		return other instanceof WaypointIndex;
-	}
-
-	public int hashCode() {
-		final int PRIME = 59;
-		int result = 1;
-		final Object $gpx = this.getGpx();
-		result = result * PRIME + ($gpx == null ? 43 : $gpx.hashCode());
-		result = result * PRIME + this.getTrackId();
-		result = result * PRIME + this.getSegmentId();
-		result = result * PRIME + this.getWaypointId();
-		return result;
-	}
-
-	public String toString() {
-		return "WaypointIndex(gpx=" + this.getGpx() + ", trackId=" + this.getTrackId() + ", segmentId=" + this.getSegmentId() + ", waypointId=" + this.getWaypointId() + ")";
-	}
-
-	public static class WaypointIndexBuilder {
-		private GPX gpx;
-		private int trackId;
-		private int segmentId;
-		private int waypointId;
-
-		WaypointIndexBuilder() {
-		}
-
-		public WaypointIndexBuilder gpx(GPX gpx) {
-			this.gpx = gpx;
-			return this;
-		}
-
-		public WaypointIndexBuilder trackId(int trackId) {
-			this.trackId = trackId;
-			return this;
-		}
-
-		public WaypointIndexBuilder segmentId(int segmentId) {
-			this.segmentId = segmentId;
-			return this;
-		}
-
-		public WaypointIndexBuilder waypointId(int waypointId) {
-			this.waypointId = waypointId;
-			return this;
-		}
-
-		public WaypointIndex build() {
-			return new WaypointIndex(gpx, trackId, segmentId, waypointId);
-		}
-
-		public String toString() {
-			return "WaypointIndex.WaypointIndexBuilder(gpx=" + this.gpx + ", trackId=" + this.trackId + ", segmentId=" + this.segmentId + ", waypointId=" + this.waypointId + ")";
-		}
-	}
+    companion object {
+        fun builder(): WaypointIndexBuilder {
+            return WaypointIndexBuilder()
+        }
+    }
 }

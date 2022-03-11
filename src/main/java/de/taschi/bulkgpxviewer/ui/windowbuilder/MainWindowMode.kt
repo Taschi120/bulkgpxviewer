@@ -1,4 +1,4 @@
-package de.taschi.bulkgpxviewer.ui.windowbuilder;
+package de.taschi.bulkgpxviewer.ui.windowbuilder
 
 /*-
  * #%L
@@ -20,19 +20,17 @@ package de.taschi.bulkgpxviewer.ui.windowbuilder;
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
- */
-
-/**
+ */ /**
  * Enum representing a number of states / modes the MainWindow can be in.
  */
-public enum MainWindowMode {
-	/**
-	 * Show all tracks from a single folder
-	 */
-	BULK_DISPLAY,
-	
-	/**
-	 * Edit one individual GPX track
-	 */
-	EDITING
+enum class MainWindowMode {
+    /**
+     * Show all tracks from a single folder
+     */
+    BULK_DISPLAY,
+
+    /**
+     * Edit one individual GPX track
+     */
+    EDITING
 }

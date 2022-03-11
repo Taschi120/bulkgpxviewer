@@ -1,5 +1,4 @@
-package de.taschi.bulkgpxviewer.ui.sidepanel;
-
+package de.taschi.bulkgpxviewer.ui.sidepanel
 /*-
  * #%L
  * bulkgpxviewer
@@ -20,227 +19,176 @@ package de.taschi.bulkgpxviewer.ui.sidepanel;
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
- */
+ */import com.google.inject.Inject
+import de.taschi.bulkgpxviewer.Application
+import de.taschi.bulkgpxviewer.ui.Messages
+import lombok.extern.log4j.Log4j2
+import org.apache.logging.log4j.LogManager
+import java.awt.event.MouseEvent
+import java.time.Instant
+import java.util.*
+import java.util.function.Function
+import javax.swing.tree.TreePath
+import kotlin.collections.HashMap
+import kotlin.collections.HashSet
 
-import java.awt.BorderLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.nio.file.Path;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+class SidePanel : JPanel() {
+    private val treeView: JTree?
+    private var rootNode: DefaultMutableTreeNode? = null
+    private val yearNodes: HashMap<Int, DefaultMutableTreeNode?> = HashMap<Int, DefaultMutableTreeNode?>()
+    private val trackNodes: HashMap<Path, GpxFileTreeNode> = HashMap<Path, GpxFileTreeNode>()
+    private var unknownYearNode: DefaultMutableTreeNode? = null
+    private val filePopupMenu: GpxFilePopupMenu
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTree;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
+    @Inject
+    private val loadedFileManager: LoadedFileManager? = null
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+    init {
+        Application.Companion.getInjector().injectMembers(this)
+        setLayout(BorderLayout())
+        createTreeModel()
+        treeView = JTree(rootNode)
+        val scrollPane = JScrollPane(
+            treeView, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
+        )
+        filePopupMenu = GpxFilePopupMenu()
+        treeView.addMouseListener(SidePanelMouseListener())
+        add(scrollPane, BorderLayout.CENTER)
+        loadedFileManager.addChangeListener(LoadedFileChangeListener { createTreeModel() })
+    }
 
-import com.google.inject.Inject;
+    @Synchronized
+    private fun createTreeModel() {
+        LOG.info("Recreating tree model") //$NON-NLS-1$
+        if (rootNode == null) {
+            rootNode = DefaultMutableTreeNode(Messages.getString("SidePanel.allFiles")) //$NON-NLS-1$
+        } else {
+            rootNode.removeAllChildren()
+        }
+        val tracks: List<GpxFile> = loadedFileManager.getLoadedTracks()
+        cullUnnecessaryTrackNodes(tracks)
+        for (track in tracks) {
+            val yearNode: DefaultMutableTreeNode? = makeOrUpdateYearNode(track, rootNode)
+            makeOrUpdateTrackNode(track, yearNode)
+        }
+        cullUnnecessaryYearTreeNodes()
+        if (treeView != null) {
+            (treeView.getModel() as DefaultTreeModel).reload()
+        }
+    }
 
-import de.taschi.bulkgpxviewer.Application;
-import de.taschi.bulkgpxviewer.files.GpxFile;
-import de.taschi.bulkgpxviewer.files.LoadedFileManager;
-import de.taschi.bulkgpxviewer.ui.Messages;
-import lombok.extern.log4j.Log4j2;
+    /**
+     * Removes all track nodes which do not correspond with currently loaded files
+     */
+    private fun cullUnnecessaryTrackNodes(loadedTracks: List<GpxFile>) {
+        val loadedTrackPaths: Set<Path> =
+            loadedTracks.stream().map<Path>(Function<GpxFile, Path> { obj: GpxFile -> obj.getFileName() })
+                .collect<Set<Path>, Any>(Collectors.toSet<Path>())
+        val pathsInTree: Set<Path> = HashSet<Path>(trackNodes.keys)
+        for (p in pathsInTree) {
+            if (!loadedTrackPaths.contains(p)) {
+                val node = trackNodes[p]
+                (node!!.parent as DefaultMutableTreeNode).remove(node)
+                trackNodes.remove(p)
+            }
+        }
+    }
 
-public class SidePanel extends JPanel {
-	
-	private static final Logger LOG = LogManager.getLogger(SidePanel.class);
-	
-	private static final long serialVersionUID = -4050409521285757121L;
-	private static final Logger log = LogManager.getLogger(SidePanel.class);
+    private fun makeOrUpdateYearNode(track: GpxFile, parent: DefaultMutableTreeNode?): DefaultMutableTreeNode? {
+        var yearNode: DefaultMutableTreeNode?
+        val startedAt: Optional<Instant> = track.getStartedAt()
+        if (startedAt.isPresent) {
+            val startDate: ZonedDateTime = startedAt.get().atZone(ZoneId.systemDefault())
+            val year: Int = startDate.getYear()
+            yearNode = yearNodes[year]
+            if (yearNode == null) {
+                LOG.info("Making node for year $year") //$NON-NLS-1$
+                yearNode = DefaultMutableTreeNode(year)
+                yearNodes[year] = yearNode
+                rootNode.add(yearNode)
+            }
+        } else {
+            if (unknownYearNode == null) {
+                unknownYearNode = DefaultMutableTreeNode(Messages.getString("SidePanel.unknownYear")) //$NON-NLS-1$
+                rootNode.add(unknownYearNode)
+            }
+            yearNode = unknownYearNode
+        }
+        rootNode.add(yearNode)
+        return yearNode
+    }
 
-	private JTree treeView;
-	private DefaultMutableTreeNode rootNode;
-	
-	private HashMap<Integer, DefaultMutableTreeNode> yearNodes = new HashMap<>();
-	private HashMap<Path, GpxFileTreeNode> trackNodes = new HashMap<>();
-	private DefaultMutableTreeNode unknownYearNode = null;
-	
-	private GpxFilePopupMenu filePopupMenu;
-	
-	@Inject
-	private LoadedFileManager loadedFileManager;
-	
-	public SidePanel() {
-		super();
-		
-		Application.getInjector().injectMembers(this);
-		
-		setLayout(new BorderLayout());
-		
-		
-		createTreeModel();
-		treeView = new JTree(rootNode);
-		
-		JScrollPane scrollPane = new JScrollPane(treeView, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-	            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
-		filePopupMenu = new GpxFilePopupMenu();
-		treeView.addMouseListener(new SidePanelMouseListener());
-		
-		add(scrollPane, BorderLayout.CENTER);
-		
-		loadedFileManager.addChangeListener(this::createTreeModel);
-	}
+    private fun makeOrUpdateTrackNode(track: GpxFile, parent: DefaultMutableTreeNode?) {
+        var result = trackNodes[track.getFileName()]
+        if (result == null) {
+            LOG.debug("Making new tree node for {}", track.getFileName().toString()) //$NON-NLS-1$
+            result = GpxFileTreeNode(track)
+            trackNodes[track.getFileName()] = result
+            parent.add(result)
+        } else {
+            LOG.debug("Updating tree node for {}", track.getFileName().toString()) //$NON-NLS-1$
+            result.update()
+        }
+    }
 
-	private synchronized void createTreeModel() {
-		
-		LOG.info("Recreating tree model"); //$NON-NLS-1$
-		
-		if (rootNode == null) {
-			rootNode = new DefaultMutableTreeNode(Messages.getString("SidePanel.allFiles")); //$NON-NLS-1$
-		} else {
-			rootNode.removeAllChildren();
-		}
-		
-		List<GpxFile> tracks = loadedFileManager.getLoadedTracks();
-		
-		cullUnnecessaryTrackNodes(tracks);
-		
-		for (GpxFile track : tracks) {
-			DefaultMutableTreeNode yearNode = makeOrUpdateYearNode(track, rootNode);
-			makeOrUpdateTrackNode(track, yearNode);
-		}
-		
-		cullUnnecessaryYearTreeNodes();
-		
-		if (treeView != null) {
-			((DefaultTreeModel) treeView.getModel()).reload();
-		}
-	}
-	
-	/**
-	 * Removes all track nodes which do not correspond with currently loaded files
-	 */
-	private void cullUnnecessaryTrackNodes(List<GpxFile> loadedTracks) {
-		Set<Path> loadedTrackPaths = loadedTracks.stream().map(GpxFile::getFileName).collect(Collectors.toSet());
-		Set<Path> pathsInTree = new HashSet<Path>(trackNodes.keySet());
-		
-		for(Path p : pathsInTree) {
-			if (!loadedTrackPaths.contains(p)) {
-				GpxFileTreeNode node = trackNodes.get(p);
-				((DefaultMutableTreeNode) node.getParent()).remove(node);
-				
-				trackNodes.remove(p);
-			}
-		}
-	}
+    private fun cullUnnecessaryYearTreeNodes() {
+        val years: List<Int> = ArrayList(yearNodes.keys)
+        for (year in years) {
+            val node: DefaultMutableTreeNode? = yearNodes[year]
+            if (node != null && rootNode.isNodeChild(node) && node.getChildCount() == 0) {
+                rootNode.remove(node)
+                yearNodes.remove(year)
+            }
+        }
+        if (unknownYearNode != null && unknownYearNode.getChildCount() == 0) {
+            if (rootNode.getIndex(unknownYearNode) != -1) {
+                rootNode.remove(unknownYearNode)
+            }
+            unknownYearNode = null
+        }
+    }
 
-	private DefaultMutableTreeNode makeOrUpdateYearNode(GpxFile track, DefaultMutableTreeNode parent) {
-		DefaultMutableTreeNode yearNode;
-		Optional<Instant> startedAt = track.getStartedAt();
-		
-		if (startedAt.isPresent()) {
-			ZonedDateTime startDate = startedAt.get().atZone(ZoneId.systemDefault());
-			int year = startDate.getYear();
-			yearNode = yearNodes.get(year);
-			
-			if (yearNode == null) {
-				LOG.info("Making node for year " + year); //$NON-NLS-1$
-				yearNode = new DefaultMutableTreeNode(year);
-				yearNodes.put(year, yearNode);
-				rootNode.add(yearNode);
-			}
-			
-		} else {
-			if (unknownYearNode == null) {
-				unknownYearNode = new DefaultMutableTreeNode(Messages.getString("SidePanel.unknownYear")); //$NON-NLS-1$
-				rootNode.add(unknownYearNode);
-			}
-			yearNode = unknownYearNode;
-		}
-		
-		rootNode.add(yearNode);
-		return yearNode;
-	}
+    fun updateModel() {
+        createTreeModel()
+    }
 
-	private void makeOrUpdateTrackNode(GpxFile track, DefaultMutableTreeNode parent) {
-		GpxFileTreeNode result = trackNodes.get(track.getFileName());
-		if (result == null) {
-			LOG.debug("Making new tree node for {}", track.getFileName().toString()); //$NON-NLS-1$
-			result = new GpxFileTreeNode(track);
-			trackNodes.put(track.getFileName(), result);
-			parent.add(result);
-		} else {
-			LOG.debug("Updating tree node for {}", track.getFileName().toString()); //$NON-NLS-1$
-			result.update();
-		}
-	}
-	
-	private void cullUnnecessaryYearTreeNodes() {
-		List<Integer> years = new ArrayList<>(yearNodes.keySet());
-		for (Integer year : years) {
-			DefaultMutableTreeNode node = yearNodes.get(year);
-			if (node != null && rootNode.isNodeChild(node) && node.getChildCount() == 0) {
-				rootNode.remove(node);
-				yearNodes.remove(year);
-			}
-		}
-		
-		if (unknownYearNode != null && unknownYearNode.getChildCount() == 0) {
-			if (rootNode.getIndex(unknownYearNode) != -1) {
-				rootNode.remove(unknownYearNode);
-			}
-			unknownYearNode = null;
-		}
-	}
+    private inner class SidePanelMouseListener : MouseAdapter() {
+        override fun mouseClicked(e: MouseEvent) {
+            if (SwingUtilities.isRightMouseButton(e)) {
+                // check if we need to open context menu
+                val row: Int = treeView.getRowForLocation(e.x, e.y)
+                treeView.setSelectionRow(row)
+                val selectionModel: TreeSelectionModel = treeView.getSelectionModel()
+                val selectionPath: TreePath = selectionModel.getLeadSelectionPath()
+                if (selectionPath != null) {
+                    val selected = selectionPath.lastPathComponent
+                    if (selected is GpxFileTreeNode) {
+                        filePopupMenu.openOnTreeItem(treeView, selected, e.x, e.y)
+                    }
+                }
+            } else if (SwingUtilities.isLeftMouseButton(e)) {
+                // if exactly one GPX file is now selected, update graph panels
+                val selectionModel: TreeSelectionModel = treeView.getSelectionModel()
+                if (selectionModel.getSelectionCount() == 1) {
+                    val selected: Any = selectionModel.getLeadSelectionPath().getLastPathComponent()
+                    if (selected is GpxFileRelatedNode) {
+                        val file: GpxFile? = selected.gpxFile
+                        log.info("Selected GPX file is now {}", file.getFileName())
+                        Application.Companion.getMainWindow().setSelectedGpxFile(Optional.of<GpxFile>(file))
+                    } else {
+                        Application.Companion.getMainWindow().setSelectedGpxFile(Optional.empty<GpxFile>())
+                    }
+                } else {
+                    Application.Companion.getMainWindow().setSelectedGpxFile(Optional.empty<GpxFile>())
+                }
+            }
+        }
+    }
 
-	public void updateModel() {
-		createTreeModel();
-	}
-	
-	private class SidePanelMouseListener extends MouseAdapter {
-		public void mouseClicked(MouseEvent e) {
-
-		    if (SwingUtilities.isRightMouseButton(e)) {
-		    	// check if we need to open context menu
-		        var row = treeView.getRowForLocation(e.getX(), e.getY());
-		        treeView.setSelectionRow(row);
-		        
-		        var selectionModel = treeView.getSelectionModel();
-		        var selectionPath = selectionModel.getLeadSelectionPath();
-		        
-		        if (selectionPath != null) {
-			        var selected = selectionPath.getLastPathComponent();
-			        
-			        if(selected instanceof GpxFileTreeNode) {
-				        filePopupMenu.openOnTreeItem(treeView, (GpxFileTreeNode) selected, e.getX(), e.getY());
-			        }
-			    }
-		    } else if (SwingUtilities.isLeftMouseButton(e)) {
-		    	// if exactly one GPX file is now selected, update graph panels
-		    	var selectionModel = treeView.getSelectionModel();
-		    	if(selectionModel.getSelectionCount() == 1) {
-		    		var selected = selectionModel.getLeadSelectionPath().getLastPathComponent();
-		    		if (selected instanceof GpxFileRelatedNode) {
-		    			var node = (GpxFileRelatedNode) selected;
-		    			var file = node.getGpxFile();
-		    			
-		    			log.info("Selected GPX file is now {}", file.getFileName());
-		    			
-		    			Application.getMainWindow().setSelectedGpxFile(Optional.of(file));
-		    		} else {
-		    			Application.getMainWindow().setSelectedGpxFile(Optional.empty());
-		    		}
-		    	} else {
-	    			Application.getMainWindow().setSelectedGpxFile(Optional.empty());
-		    	}
-		    }
-		}
-	}
-	
+    companion object {
+        private val LOG = LogManager.getLogger(SidePanel::class.java)
+        private const val serialVersionUID = -4050409521285757121L
+        private val log = LogManager.getLogger(SidePanel::class.java)
+    }
 }

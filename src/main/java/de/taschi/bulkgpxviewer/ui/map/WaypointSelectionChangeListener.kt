@@ -1,34 +1,30 @@
-package de.taschi.bulkgpxviewer.ui.map;
+package de.taschi.bulkgpxviewer.ui.map
+
+import io.jenetics.jpx.WayPoint
 
 /*-
- * #%L
- * bulkgpxviewer
- * %%
- * Copyright (C) 2021 S. Hillebrand
- * %%
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public
- * License along with this program.  If not, see
- * <http://www.gnu.org/licenses/gpl-3.0.html>.
- * #L%
+* #%L
+* bulkgpxviewer
+* %%
+* Copyright (C) 2021 S. Hillebrand
+* %%
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as
+* published by the Free Software Foundation, either version 3 of the
+* License, or (at your option) any later version.
+* 
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public
+* License along with this program.  If not, see
+* <http://www.gnu.org/licenses/gpl-3.0.html>.
+* #L%
+*/ /**
+ * Listener interface used by [MapSelectionHandler] to notify other components of selection changes
  */
-
-import java.util.Set;
-
-import io.jenetics.jpx.WayPoint;
-
-/**
- * Listener interface used by {@linkplain MapSelectionHandler} to notify other components of selection changes
- */
-public interface WaypointSelectionChangeListener {
-	public void selectionChanged(Set<WayPoint> selection);
+interface WaypointSelectionChangeListener {
+    fun selectionChanged(selection: Set<WayPoint>?)
 }
