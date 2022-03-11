@@ -104,10 +104,10 @@ class GpxFile constructor(val fileName: Path, var gpx: GPX) {
 
     @Throws(IOException::class)
     private fun doBackup() {
-        val `in`: File = fileName.toFile()
-        val out: File = File(`in`.getAbsolutePath() + ".bak") //$NON-NLS-1$
-        log.info("Creating backup of '{}' at '{}'", `in`, out) //$NON-NLS-1$
-        FileUtils.copyFile(`in`, out)
+        val input = fileName.toFile()
+        val out = File(input.absolutePath + ".bak") //$NON-NLS-1$
+        log.info("Creating backup of '{}' at '{}'", input, out) //$NON-NLS-1$
+        FileUtils.copyFile(input, out)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -130,18 +130,13 @@ class GpxFile constructor(val fileName: Path, var gpx: GPX) {
     fun indexOfWayPoint(wayPoint: WayPoint): Optional<WaypointIndex> {
         val tracks: List<Track> = gpx.tracks
         for (trackId in tracks.indices) {
-            val segments: List<TrackSegment> = tracks.get(trackId).getSegments()
+            val segments: List<TrackSegment> = tracks[trackId].segments
             for (segmentId in segments.indices) {
-                val points: List<WayPoint> = segments.get(segmentId).getPoints()
+                val points: List<WayPoint> = segments[segmentId].points
                 for (pointId in points.indices) {
-                    if ((points.get(pointId) == wayPoint)) {
+                    if ((points[pointId] == wayPoint)) {
                         return Optional.of(
-                            WaypointIndex.builder()
-                                .gpx(gpx)
-                                .trackId(trackId)
-                                .segmentId(segmentId)
-                                .waypointId(pointId)
-                                .build()
+                            WaypointIndex(gpx = gpx, trackId = trackId, segmentId = segmentId, waypointId = pointId)
                         )
                     }
                 }
