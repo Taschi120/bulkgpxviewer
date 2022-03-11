@@ -41,8 +41,8 @@ object GraphPanelTestWindow {
         frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
         try {
             val gpx = GPX.read(args[0])
-            val track = GpxFile(null, gpx)
-            val segment = track.getGpx().tracks[0].segments[0]
+            val track = GpxFile(Path("blah.gpx"), gpx)
+            val segment = track.gpx.tracks[0].segments[0]
             speedOverTimePanel.setGpxTrackSegment(segment)
             distanceOverTimePanel.setGpxTrackSegment(segment)
             heightProfilePanel.setGpxTrackSegment(segment)

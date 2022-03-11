@@ -19,22 +19,37 @@ package de.taschi.bulkgpxviewer.ui.windowbuilder
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
- */import de.taschi.bulkgpxviewer.Application
+ */
+import de.taschi.bulkgpxviewer.Application
+import de.taschi.bulkgpxviewer.files.GpxFile
+import de.taschi.bulkgpxviewer.geo.WaypointIndex
+import de.taschi.bulkgpxviewer.ui.IconHandler
 import de.taschi.bulkgpxviewer.ui.Messages
+import de.taschi.bulkgpxviewer.ui.map.MapSelectionHandler
+import io.jenetics.jpx.GPX
 import io.jenetics.jpx.Track
-import lombok.extern.log4j.Log4j2
-import java.awt.Container
-import java.lang.Exception
-import java.util.ArrayList
+import io.jenetics.jpx.TrackSegment
+import io.jenetics.jpx.WayPoint
+import org.apache.logging.log4j.LogManager
+import java.awt.*
+import java.awt.event.ActionEvent
+import java.awt.event.ActionListener
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.function.Function
 import java.util.function.Predicate
+import javax.swing.JButton
+import javax.swing.JLabel
+import javax.swing.JOptionPane
+import javax.swing.JPanel
 import javax.swing.border.BevelBorder
+import javax.swing.border.EmptyBorder
+import javax.swing.border.SoftBevelBorder
 
-@Log4j2
 class EditingPanel : JPanel() {
     private var track: GpxFile? = null
     private var selectionHandler: MapSelectionHandler? = null
-    private var selection: List<WayPoint> = emptyList<WayPoint>()
+    private var selection: MutableList<WayPoint> = mutableListOf()
     private val firstSelectedPointLabel: JLabel
     private val firstSelectionTransportBack: JButton
     private val firstSelectionTransportForward: JButton
@@ -98,9 +113,11 @@ class EditingPanel : JPanel() {
         gbc_firstSelectionTransportBack.gridx = 2
         gbc_firstSelectionTransportBack.gridy = 0
         firstSelectionTransportBack.addActionListener(ActionListener { e: ActionEvent? ->
-            onFirstSelectionTransportBack(
-                e
-            )
+            if (e != null) {
+                onFirstSelectionTransportBack(
+                    e
+                )
+            }
         })
         panel_3.add(firstSelectionTransportBack, gbc_firstSelectionTransportBack)
         firstSelectionDeselect = JButton(IconHandler.loadIcon("close-circle-line")) //$NON-NLS-1$
@@ -108,7 +125,11 @@ class EditingPanel : JPanel() {
         gbc_firstSelectionDeselect.insets = Insets(0, 0, 5, 5)
         gbc_firstSelectionDeselect.gridx = 3
         gbc_firstSelectionDeselect.gridy = 0
-        firstSelectionDeselect.addActionListener(ActionListener { e: ActionEvent? -> onFirstSelectionDeselect(e) })
+        firstSelectionDeselect.addActionListener(ActionListener { e: ActionEvent? ->
+            if (e != null) {
+                onFirstSelectionDeselect(e)
+            }
+        })
         panel_3.add(firstSelectionDeselect, gbc_firstSelectionDeselect)
         firstSelectionTransportForward = JButton(IconHandler.loadIcon("arrow-right-s-line")) //$NON-NLS-1$
         val gbc_firstSelectionTransportForward = GridBagConstraints()
@@ -116,9 +137,11 @@ class EditingPanel : JPanel() {
         gbc_firstSelectionTransportForward.gridx = 4
         gbc_firstSelectionTransportForward.gridy = 0
         firstSelectionTransportForward.addActionListener(ActionListener { e: ActionEvent? ->
-            onFirstSelectionTransportForward(
-                e
-            )
+            if (e != null) {
+                onFirstSelectionTransportForward(
+                    e
+                )
+            }
         })
         panel_3.add(firstSelectionTransportForward, gbc_firstSelectionTransportForward)
         cropBefore = JButton(Messages.getString("EditingPanel.CropBefore")) //$NON-NLS-1$
@@ -128,7 +151,11 @@ class EditingPanel : JPanel() {
         gbc_cropBefore.insets = Insets(0, 0, 5, 5)
         gbc_cropBefore.gridx = 5
         gbc_cropBefore.gridy = 0
-        cropBefore.addActionListener(ActionListener { e: ActionEvent? -> onCropBefore(e) })
+        cropBefore.addActionListener({ e: ActionEvent? ->
+            if (e != null) {
+                onCropBefore(e)
+            }
+        })
         panel_3.add(cropBefore, gbc_cropBefore)
         cropBetween = JButton(Messages.getString("EditingPanel.CropBetween")) //$NON-NLS-1$
         cropBetween.setIcon(IconHandler.loadIcon("scissors-cut-line"))
@@ -137,7 +164,11 @@ class EditingPanel : JPanel() {
         gbc_cropBetween.insets = Insets(0, 0, 5, 5)
         gbc_cropBetween.gridx = 5
         gbc_cropBetween.gridy = 1
-        cropBetween.addActionListener(ActionListener { e: ActionEvent? -> onCropBetween(e) })
+        cropBetween.addActionListener({ e: ActionEvent? ->
+            if (e != null) {
+                onCropBetween(e)
+            }
+        })
         panel_3.add(cropBetween, gbc_cropBetween)
         val label2 = JLabel(Messages.getString("EditingPanel.PointB")) //$NON-NLS-1$
         val gbc_label2 = GridBagConstraints()
@@ -161,9 +192,11 @@ class EditingPanel : JPanel() {
         gbc_secondSelectionTransportBack.gridx = 2
         gbc_secondSelectionTransportBack.gridy = 2
         secondSelectionTransportBack.addActionListener(ActionListener { actionevent1: ActionEvent? ->
-            onSecondSelectionTransportBack(
-                actionevent1
-            )
+            if (actionevent1 != null) {
+                onSecondSelectionTransportBack(
+                    actionevent1
+                )
+            }
         })
         panel_3.add(secondSelectionTransportBack, gbc_secondSelectionTransportBack)
         secondSelectionDeselect = JButton(IconHandler.loadIcon("close-circle-line")) //$NON-NLS-1$
@@ -171,7 +204,11 @@ class EditingPanel : JPanel() {
         gbc_secondSelectionDeselect.insets = Insets(0, 0, 5, 5)
         gbc_secondSelectionDeselect.gridx = 3
         gbc_secondSelectionDeselect.gridy = 2
-        secondSelectionDeselect.addActionListener(ActionListener { e: ActionEvent? -> onSecondSelectionDeselect(e) })
+        secondSelectionDeselect.addActionListener { e: ActionEvent? ->
+            if (e != null) {
+                onSecondSelectionDeselect(e)
+            }
+        }
         panel_3.add(secondSelectionDeselect, gbc_secondSelectionDeselect)
         secondSelectionTransportForward = JButton(IconHandler.loadIcon("arrow-right-s-line")) //$NON-NLS-1$
         val gbc_secondSelectionTransportForward = GridBagConstraints()
@@ -179,9 +216,11 @@ class EditingPanel : JPanel() {
         gbc_secondSelectionTransportForward.gridx = 4
         gbc_secondSelectionTransportForward.gridy = 2
         secondSelectionTransportForward.addActionListener(ActionListener { e: ActionEvent? ->
-            onSecondSelectionTransportForward(
-                e
-            )
+            if (e != null) {
+                onSecondSelectionTransportForward(
+                    e
+                )
+            }
         })
         panel_3.add(secondSelectionTransportForward, gbc_secondSelectionTransportForward)
         cropAfter = JButton(Messages.getString("EditingPanel.CropAfter")) //$NON-NLS-1$
@@ -191,12 +230,16 @@ class EditingPanel : JPanel() {
         gbc_cropAfter.insets = Insets(0, 0, 5, 5)
         gbc_cropAfter.gridx = 5
         gbc_cropAfter.gridy = 2
-        cropAfter.addActionListener(ActionListener { e: ActionEvent? -> onCropAfter(e) })
+        cropAfter.addActionListener(ActionListener { e: ActionEvent? ->
+            if (e != null) {
+                onCropAfter(e)
+            }
+        })
         panel_3.add(cropAfter, gbc_cropAfter)
     }
 
     fun setSelection(selection: Set<WayPoint?>?) {
-        this.selection = ArrayList<WayPoint>(selection)
+        this.selection = selection?.filterNotNull().orEmpty().toMutableList()
         disableAndEnableButtons()
         updateLabels()
     }
@@ -221,8 +264,8 @@ class EditingPanel : JPanel() {
             firstSelectedPointLabel.setText(makeDescriptorString(selection[0]))
             secondSelectedPointLabel.setText(Messages.getString("EditingPanel.Empty")) //$NON-NLS-1$
         } else if (size == 2) {
-            selection.sort(java.util.Comparator<WayPoint> { o1: WayPoint?, o2: WayPoint? ->
-                track.indexOfWayPoint(o2).orElseThrow().compareTo(track.indexOfWayPoint(o1).orElseThrow())
+            selection.sortWith(java.util.Comparator<WayPoint> { o1: WayPoint?, o2: WayPoint? ->
+                track!!.indexOfWayPoint(o2!!).orElseThrow().compareTo(track!!.indexOfWayPoint(o1!!).orElseThrow())
             })
             firstSelectedPointLabel.setText(makeDescriptorString(selection[0]))
             secondSelectedPointLabel.setText(makeDescriptorString(selection[1]))
@@ -281,15 +324,15 @@ class EditingPanel : JPanel() {
 
     private fun onSave(evt: ActionEvent) {
         try {
-            track.save()
+            track!!.save()
             JOptionPane.showMessageDialog(
-                Application.Companion.getMainWindow().getFrame(),
+                Application.Companion.getMainWindow()!!.frame,
                 Messages.getString("EditingPanel.SaveSuccessful")
             ) //$NON-NLS-1$
         } catch (e: Exception) {
-            Container.log.error("Error while saving GPX file", e) //$NON-NLS-1$
+            log.error("Error while saving GPX file", e) //$NON-NLS-1$
             JOptionPane.showMessageDialog(
-                Application.Companion.getMainWindow().getFrame(),
+                Application.Companion.getMainWindow()!!.frame,
                 String.format(Messages.getString("EditingPanel.ErrorWhileSaving"), e.localizedMessage)
             ) //$NON-NLS-1$
         }
@@ -297,9 +340,9 @@ class EditingPanel : JPanel() {
 
     private fun onCancel(evt: ActionEvent) {
         var reallyCancel = false
-        reallyCancel = if (track.isChanged()) {
+        reallyCancel = if (track!!.isChanged) {
             val result: Int = JOptionPane.showConfirmDialog(
-                Application.Companion.getMainWindow().getFrame(),
+                Application.Companion.getMainWindow()!!.frame,
                 Messages.getString("EditingPanel.ConfirmCancelWithoutSaving"),
                 Messages.getString("EditingPanel.ReallyQuit"),
                 JOptionPane.YES_NO_OPTION
@@ -316,52 +359,52 @@ class EditingPanel : JPanel() {
     private fun onFirstSelectionTransportBack(e: ActionEvent) {
         if (!selection.isEmpty()) {
             val item: WayPoint = selection[0]
-            val index: WaypointIndex = track.indexOfWayPoint(item).get()
-            if (index.getWaypointId() > 0) {
-                val newSelection: WayPoint = track.getGpx()
-                    .getTracks().get(index.getTrackId())
-                    .getSegments().get(index.getSegmentId())
-                    .getPoints().get(index.getWaypointId() - 1)
-                selection.set(0, newSelection)
-                selectionHandler.setSelection(selection)
+            val index: WaypointIndex = track!!.indexOfWayPoint(item).get()
+            if (index.waypointId > 0) {
+                val newSelection: WayPoint = track!!.gpx
+                    .tracks[index.trackId]
+                    .segments[index.segmentId]
+                    .points[index.waypointId - 1]
+                selection[0] = newSelection
+                selectionHandler!!.setSelection(selection)
             }
         }
     }
 
     private fun onFirstSelectionTransportForward(e: ActionEvent) {
-        if (!selection.isEmpty()) {
+        if (selection.isNotEmpty()) {
             val item: WayPoint = selection[0]
-            val index: WaypointIndex = track.indexOfWayPoint(item).get()
-            val segment: TrackSegment = track.getGpx()
-                .getTracks().get(index.getTrackId())
-                .getSegments().get(index.getSegmentId())
-            val points: List<WayPoint> = segment.getPoints()
-            if (index.getWaypointId() < points.size - 1) {
-                val newSelection: WayPoint = points[index.getWaypointId() + 1]
-                selection.set(0, newSelection)
-                selectionHandler.setSelection(selection)
+            val index: WaypointIndex = track!!.indexOfWayPoint(item).get()
+            val segment: TrackSegment = track!!.gpx
+                .tracks[index.trackId]
+                .segments[index.segmentId]
+            val points: List<WayPoint> = segment.points
+            if (index.waypointId < points.size - 1) {
+                val newSelection: WayPoint = points[index.waypointId + 1]
+                selection[0] = newSelection
+                selectionHandler!!.setSelection(selection)
             }
         }
     }
 
     private fun onFirstSelectionDeselect(e: ActionEvent) {
-        if (!selection.isEmpty()) {
+        if (selection.isNotEmpty()) {
             selection.removeAt(0)
-            selectionHandler.setSelection(selection)
+            selectionHandler!!.setSelection(selection)
         }
     }
 
     private fun onSecondSelectionTransportBack(actionevent1: ActionEvent) {
         if (selection.size >= 2) {
             val item: WayPoint = selection[1]
-            val index: WaypointIndex = track.indexOfWayPoint(item).get()
-            if (index.getWaypointId() > 0) {
-                val newSelection: WayPoint = track.getGpx()
-                    .getTracks().get(index.getTrackId())
-                    .getSegments().get(index.getSegmentId())
-                    .getPoints().get(index.getWaypointId() - 1)
-                selection.set(1, newSelection)
-                selectionHandler.setSelection(selection)
+            val index: WaypointIndex = track!!.indexOfWayPoint(item).get()
+            if (index.waypointId > 0) {
+                val newSelection: WayPoint = track!!.gpx
+                    .tracks[index.trackId]
+                    .segments[index.segmentId]
+                    .points[index.waypointId - 1]
+                selection[1] = newSelection
+                selectionHandler!!.setSelection(selection)
             }
         }
     }
@@ -369,22 +412,22 @@ class EditingPanel : JPanel() {
     private fun onSecondSelectionDeselect(e: ActionEvent) {
         if (selection.size >= 2) {
             selection.removeAt(1)
-            selectionHandler.setSelection(selection)
+            selectionHandler!!.setSelection(selection)
         }
     }
 
     private fun onSecondSelectionTransportForward(e: ActionEvent) {
         if (selection.size >= 2) {
             val item: WayPoint = selection[1]
-            val index: WaypointIndex = track.indexOfWayPoint(item).get()
-            val segment: TrackSegment = track.getGpx()
-                .getTracks().get(index.getTrackId())
-                .getSegments().get(index.getSegmentId())
-            val points: List<WayPoint> = segment.getPoints()
-            if (index.getWaypointId() < points.size - 1) {
-                val newSelection: WayPoint = points[index.getWaypointId() + 1]
-                selection.set(1, newSelection)
-                selectionHandler.setSelection(selection)
+            val index: WaypointIndex = track!!.indexOfWayPoint(item).get()
+            val segment: TrackSegment = track!!.gpx
+                .tracks[index.trackId]
+                .segments[index.segmentId]
+            val points: List<WayPoint> = segment.points
+            if (index.waypointId < points.size - 1) {
+                val newSelection: WayPoint = points[index.waypointId + 1]
+                selection[1] = newSelection
+                selectionHandler!!.setSelection(selection)
             }
         }
     }
@@ -392,10 +435,10 @@ class EditingPanel : JPanel() {
     private fun onCropBefore(e: ActionEvent) {
         if (!selection.isEmpty()) {
             val endpoint: WayPoint = selection[0]
-            val index: WaypointIndex = track.indexOfWayPoint(endpoint).get()
-            val toBeDeleted: List<WayPoint> = track.getGpx().getTracks().get(index.getTrackId())
-                .getSegments().get(index.getSegmentId()).getPoints().subList(0, index.getWaypointId())
-            val gpx1: GPX = track.getGpx().toBuilder()
+            val index: WaypointIndex = track!!.indexOfWayPoint(endpoint).get()
+            val toBeDeleted: List<WayPoint> = track!!.gpx.getTracks().get(index.trackId)
+                .getSegments().get(index.segmentId).getPoints().subList(0, index.waypointId)
+            val gpx1 = track!!.gpx.toBuilder()
                 .trackFilter()
                 .map(Function { track: Track ->
                     track.toBuilder()
@@ -408,18 +451,18 @@ class EditingPanel : JPanel() {
                 })
                 .build()
                 .build()
-            track.setGpx(gpx1)
+            track!!.gpx = gpx1
         }
     }
 
     private fun onCropAfter(e: ActionEvent) {
         if (!selection.isEmpty()) {
             val endPoint: WayPoint = selection[selection.size - 1]
-            val index: WaypointIndex = track.indexOfWayPoint(endPoint).get()
-            val points: List<WayPoint> = track.getGpx().getTracks().get(index.getTrackId())
-                .getSegments().get(index.getSegmentId()).getPoints()
-            val toBeDeleted: List<WayPoint> = points.subList(index.getWaypointId() + 1, points.size)
-            val gpx1: GPX = track.getGpx().toBuilder()
+            val index: WaypointIndex = track!!.indexOfWayPoint(endPoint).get()
+            val points: List<WayPoint> = track!!.gpx.getTracks().get(index.trackId)
+                .getSegments().get(index.segmentId).getPoints()
+            val toBeDeleted: List<WayPoint> = points.subList(index.waypointId + 1, points.size)
+            val gpx1: GPX = track!!.gpx.toBuilder()
                 .trackFilter()
                 .map(Function { track: Track ->
                     track.toBuilder()
@@ -432,7 +475,7 @@ class EditingPanel : JPanel() {
                 })
                 .build()
                 .build()
-            track.setGpx(gpx1)
+            track!!.gpx = gpx1
         }
     }
 
@@ -440,20 +483,20 @@ class EditingPanel : JPanel() {
         if (selection.size == 2) {
             val point1: WayPoint = selection[0]
             val point2: WayPoint = selection[1]
-            val idx1: WaypointIndex = track.indexOfWayPoint(point1).get()
-            val idx2: WaypointIndex = track.indexOfWayPoint(point2).get()
+            val idx1: WaypointIndex = track!!.indexOfWayPoint(point1).get()
+            val idx2: WaypointIndex = track!!.indexOfWayPoint(point2).get()
             if (idx1.isOnSameSegment(idx2)) {
-                var i1: Int = idx1.getWaypointId()
-                var i2: Int = idx2.getWaypointId()
+                var i1: Int = idx1.waypointId
+                var i2: Int = idx2.waypointId
                 if (i1 > i2) {
                     val o = i2
                     i2 = i1
                     i1 = o
                 }
-                val points: List<WayPoint> = track.getGpx().getTracks().get(idx1.getTrackId())
-                    .getSegments().get(idx1.getSegmentId()).getPoints()
+                val points: List<WayPoint> = track!!.gpx.getTracks().get(idx1.trackId)
+                    .getSegments().get(idx1.segmentId).getPoints()
                 val toBeDeleted: List<WayPoint> = points.subList(i1 + 1, i2)
-                val gpx1: GPX = track.getGpx().toBuilder()
+                val gpx1: GPX = track!!.gpx.toBuilder()
                     .trackFilter()
                     .map(Function { track: Track ->
                         track.toBuilder()
@@ -466,14 +509,15 @@ class EditingPanel : JPanel() {
                     })
                     .build()
                     .build()
-                track.setGpx(gpx1)
+                track!!.gpx = gpx1
             } else {
-                Container.log.error("Selections not on same track: {} and {}", idx1, idx2) //$NON-NLS-1$
+                log.error("Selections not on same track: {} and {}", idx1, idx2) //$NON-NLS-1$
             }
         }
     }
 
     companion object {
+        private val log = LogManager.getLogger(EditingPanel::class.java)
         private const val serialVersionUID = 6937011900054488316L
     }
 }

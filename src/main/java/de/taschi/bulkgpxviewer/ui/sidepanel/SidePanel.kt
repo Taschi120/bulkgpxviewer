@@ -19,20 +19,39 @@ package de.taschi.bulkgpxviewer.ui.sidepanel
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
- */import com.google.inject.Inject
+ */
+import com.google.inject.Inject
 import de.taschi.bulkgpxviewer.Application
+import de.taschi.bulkgpxviewer.files.GpxFile
+import de.taschi.bulkgpxviewer.files.LoadedFileChangeListener
+import de.taschi.bulkgpxviewer.files.LoadedFileManager
 import de.taschi.bulkgpxviewer.ui.Messages
-import lombok.extern.log4j.Log4j2
 import org.apache.logging.log4j.LogManager
+import java.awt.BorderLayout
+import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
+import java.nio.file.Path
 import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.*
 import java.util.function.Function
+import java.util.stream.Collectors
+import javax.swing.JPanel
+import javax.swing.JScrollPane
+import javax.swing.JTree
+import javax.swing.ScrollPaneConstants
+import javax.swing.SwingUtilities
+import javax.swing.tree.DefaultMutableTreeNode
+import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.TreePath
-import kotlin.collections.HashMap
-import kotlin.collections.HashSet
+import javax.swing.tree.TreeSelectionModel
 
 class SidePanel : JPanel() {
+
+    @Inject
+    private lateinit var loadedFileManager: LoadedFileManager
+
     private val treeView: JTree?
     private var rootNode: DefaultMutableTreeNode? = null
     private val yearNodes: HashMap<Int, DefaultMutableTreeNode?> = HashMap<Int, DefaultMutableTreeNode?>()
@@ -40,12 +59,9 @@ class SidePanel : JPanel() {
     private var unknownYearNode: DefaultMutableTreeNode? = null
     private val filePopupMenu: GpxFilePopupMenu
 
-    @Inject
-    private val loadedFileManager: LoadedFileManager? = null
-
     init {
-        Application.Companion.getInjector().injectMembers(this)
-        setLayout(BorderLayout())
+        Application.getInjector().injectMembers(this)
+        layout = BorderLayout()
         createTreeModel()
         treeView = JTree(rootNode)
         val scrollPane = JScrollPane(
@@ -55,7 +71,11 @@ class SidePanel : JPanel() {
         filePopupMenu = GpxFilePopupMenu()
         treeView.addMouseListener(SidePanelMouseListener())
         add(scrollPane, BorderLayout.CENTER)
-        loadedFileManager.addChangeListener(LoadedFileChangeListener { createTreeModel() })
+        loadedFileManager.addChangeListener(object : LoadedFileChangeListener {
+            override fun onLoadedFileChange() {
+                createTreeModel()
+            }
+        })
     }
 
     @Synchronized
@@ -64,7 +84,7 @@ class SidePanel : JPanel() {
         if (rootNode == null) {
             rootNode = DefaultMutableTreeNode(Messages.getString("SidePanel.allFiles")) //$NON-NLS-1$
         } else {
-            rootNode.removeAllChildren()
+            rootNode!!.removeAllChildren()
         }
         val tracks: List<GpxFile> = loadedFileManager.getLoadedTracks()
         cullUnnecessaryTrackNodes(tracks)
@@ -74,7 +94,7 @@ class SidePanel : JPanel() {
         }
         cullUnnecessaryYearTreeNodes()
         if (treeView != null) {
-            (treeView.getModel() as DefaultTreeModel).reload()
+            (treeView.model as DefaultTreeModel).reload()
         }
     }
 
@@ -82,9 +102,7 @@ class SidePanel : JPanel() {
      * Removes all track nodes which do not correspond with currently loaded files
      */
     private fun cullUnnecessaryTrackNodes(loadedTracks: List<GpxFile>) {
-        val loadedTrackPaths: Set<Path> =
-            loadedTracks.stream().map<Path>(Function<GpxFile, Path> { obj: GpxFile -> obj.getFileName() })
-                .collect<Set<Path>, Any>(Collectors.toSet<Path>())
+        val loadedTrackPaths: Set<Path> = loadedTracks.map { it.fileName }.toSet()
         val pathsInTree: Set<Path> = HashSet<Path>(trackNodes.keys)
         for (p in pathsInTree) {
             if (!loadedTrackPaths.contains(p)) {
@@ -97,7 +115,7 @@ class SidePanel : JPanel() {
 
     private fun makeOrUpdateYearNode(track: GpxFile, parent: DefaultMutableTreeNode?): DefaultMutableTreeNode? {
         var yearNode: DefaultMutableTreeNode?
-        val startedAt: Optional<Instant> = track.getStartedAt()
+        val startedAt: Optional<Instant> = track.startedAt
         if (startedAt.isPresent) {
             val startDate: ZonedDateTime = startedAt.get().atZone(ZoneId.systemDefault())
             val year: Int = startDate.getYear()
@@ -106,28 +124,28 @@ class SidePanel : JPanel() {
                 LOG.info("Making node for year $year") //$NON-NLS-1$
                 yearNode = DefaultMutableTreeNode(year)
                 yearNodes[year] = yearNode
-                rootNode.add(yearNode)
+                rootNode!!.add(yearNode)
             }
         } else {
             if (unknownYearNode == null) {
                 unknownYearNode = DefaultMutableTreeNode(Messages.getString("SidePanel.unknownYear")) //$NON-NLS-1$
-                rootNode.add(unknownYearNode)
+                rootNode!!.add(unknownYearNode)
             }
             yearNode = unknownYearNode
         }
-        rootNode.add(yearNode)
+        rootNode!!.add(yearNode)
         return yearNode
     }
 
     private fun makeOrUpdateTrackNode(track: GpxFile, parent: DefaultMutableTreeNode?) {
-        var result = trackNodes[track.getFileName()]
+        var result = trackNodes[track.fileName]
         if (result == null) {
-            LOG.debug("Making new tree node for {}", track.getFileName().toString()) //$NON-NLS-1$
+            LOG.debug("Making new tree node for {}", track.fileName.toString()) //$NON-NLS-1$
             result = GpxFileTreeNode(track)
-            trackNodes[track.getFileName()] = result
-            parent.add(result)
+            trackNodes[track.fileName] = result
+            parent!!.add(result)
         } else {
-            LOG.debug("Updating tree node for {}", track.getFileName().toString()) //$NON-NLS-1$
+            LOG.debug("Updating tree node for {}", track.fileName.toString()) //$NON-NLS-1$
             result.update()
         }
     }
@@ -136,14 +154,14 @@ class SidePanel : JPanel() {
         val years: List<Int> = ArrayList(yearNodes.keys)
         for (year in years) {
             val node: DefaultMutableTreeNode? = yearNodes[year]
-            if (node != null && rootNode.isNodeChild(node) && node.getChildCount() == 0) {
-                rootNode.remove(node)
+            if (node != null && rootNode!!.isNodeChild(node) && node.childCount == 0) {
+                rootNode!!.remove(node)
                 yearNodes.remove(year)
             }
         }
-        if (unknownYearNode != null && unknownYearNode.getChildCount() == 0) {
-            if (rootNode.getIndex(unknownYearNode) != -1) {
-                rootNode.remove(unknownYearNode)
+        if (unknownYearNode != null && unknownYearNode!!.childCount == 0) {
+            if (rootNode!!.getIndex(unknownYearNode) != -1) {
+                rootNode!!.remove(unknownYearNode)
             }
             unknownYearNode = null
         }
@@ -157,10 +175,10 @@ class SidePanel : JPanel() {
         override fun mouseClicked(e: MouseEvent) {
             if (SwingUtilities.isRightMouseButton(e)) {
                 // check if we need to open context menu
-                val row: Int = treeView.getRowForLocation(e.x, e.y)
+                val row: Int = treeView!!.getRowForLocation(e.x, e.y)
                 treeView.setSelectionRow(row)
-                val selectionModel: TreeSelectionModel = treeView.getSelectionModel()
-                val selectionPath: TreePath = selectionModel.getLeadSelectionPath()
+                val selectionModel: TreeSelectionModel = treeView.selectionModel
+                val selectionPath: TreePath = selectionModel.leadSelectionPath
                 if (selectionPath != null) {
                     val selected = selectionPath.lastPathComponent
                     if (selected is GpxFileTreeNode) {
@@ -169,18 +187,18 @@ class SidePanel : JPanel() {
                 }
             } else if (SwingUtilities.isLeftMouseButton(e)) {
                 // if exactly one GPX file is now selected, update graph panels
-                val selectionModel: TreeSelectionModel = treeView.getSelectionModel()
-                if (selectionModel.getSelectionCount() == 1) {
-                    val selected: Any = selectionModel.getLeadSelectionPath().getLastPathComponent()
+                val selectionModel: TreeSelectionModel = treeView!!.selectionModel
+                if (selectionModel.selectionCount == 1) {
+                    val selected: Any = selectionModel.leadSelectionPath.lastPathComponent
                     if (selected is GpxFileRelatedNode) {
                         val file: GpxFile? = selected.gpxFile
-                        log.info("Selected GPX file is now {}", file.getFileName())
-                        Application.Companion.getMainWindow().setSelectedGpxFile(Optional.of<GpxFile>(file))
+                        log.info("Selected GPX file is now {}", file!!.fileName)
+                        Application.getMainWindow()!!.setSelectedGpxFile(Optional.ofNullable<GpxFile>(file))
                     } else {
-                        Application.Companion.getMainWindow().setSelectedGpxFile(Optional.empty<GpxFile>())
+                        Application.getMainWindow()!!.setSelectedGpxFile(Optional.empty<GpxFile>())
                     }
                 } else {
-                    Application.Companion.getMainWindow().setSelectedGpxFile(Optional.empty<GpxFile>())
+                    Application.getMainWindow()!!.setSelectedGpxFile(Optional.empty<GpxFile>())
                 }
             }
         }

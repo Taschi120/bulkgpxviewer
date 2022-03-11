@@ -2,15 +2,13 @@ package de.taschi.bulkgpxviewer.files
 
 import com.fasterxml.jackson.jr.ob.JSON
 import com.google.inject.Singleton
-import lombok.Cleanup
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
-import java.io.InputStream
+import java.io.IOException
 import java.util.*
-import java.util.function.Function
 
 @Singleton
 class TagManager constructor() {
@@ -26,9 +24,11 @@ class TagManager constructor() {
     private val knownUserTags: MutableList<Tag> = ArrayList()
 
     init {
+
         try {
-            @Cleanup val inputStream: InputStream = javaClass.getClassLoader().getResourceAsStream("tags.json")
-            builtInTags = JSON.std.listOfFrom(Tag::class.java, inputStream)
+            javaClass.classLoader.getResourceAsStream("tags.json").use { inputStream ->
+                builtInTags = JSON.std.listOfFrom(Tag::class.java, inputStream)
+            }
         } catch (e: IOException) {
             log.error("Error while loading built-in tags", e)
         }
@@ -40,7 +40,7 @@ class TagManager constructor() {
      */
     val knownTags: List<Tag>
         get() {
-            return Collections.unmodifiableList<Tag>(builtInTags)
+            return Collections.unmodifiableList(builtInTags)
         }
 
     /**
@@ -50,7 +50,7 @@ class TagManager constructor() {
     @Synchronized
     fun notifyForNewTag(tag: Tag) {
         if (!builtInTags.contains(tag) && !knownUserTags.contains(tag)) {
-            log.info("Remembering user tag: " + tag)
+            log.info("Remembering user tag: $tag")
             knownUserTags.add(tag)
         }
     }
@@ -58,41 +58,44 @@ class TagManager constructor() {
     @Synchronized
     fun fromString(name: String): Tag {
         for (t: Tag in builtInTags) {
-            if ((t.getName() == name)) {
+            if ((t.name == name)) {
                 return t
             }
         }
         for (t2: Tag in knownUserTags) {
-            if ((t2.getName() == name)) {
+            if ((t2.name == name)) {
                 return t2
             }
         }
         val t3: Tag = Tag()
-        t3.setName(name)
-        t3.setUserDefined(true)
+        t3.name = name
+        t3.isUserDefined = true
         notifyForNewTag(t3)
         return t3
     }
 
-    fun getLocalizedName(tag: Tag?): String? {
+    fun getLocalizedName(tag: Tag): String? {
         // TODO implement me!
-        return tag.getName()
+        return tag.name
     }
 
-    private fun getMyExtensionNode(gpxFile: GpxFile): Optional<Element?> {
-        return gpxFile.getGpx().getExtensions()
-            .map(Function({ it: Document -> findFirstChildTagWithName(it, "extensions") }))
-            .map(Function({ it: Element? -> findFirstChildTagWithName(it, "bulkgpxviewer") }))
+    private fun getMyExtensionNode(gpxFile: GpxFile): Optional<Element> {
+        return gpxFile.gpx.extensions
+            .map { findFirstChildTagWithName(it, "extensions") }
+                // the null assertion should be fine here - if the value is "null", Optional#map won't be called
+            .map { findFirstChildTagWithName(it!!, "bulkgpxviewer") }
+
+
     }
 
     private fun findFirstChildTagWithName(doc: Document, name: String): Element? {
         log.debug("Searching for node named {}", name)
-        for (i in 0 until doc.getChildNodes().getLength()) {
-            val node: Node = doc.getChildNodes().item(i)
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
+        for (i in 0 until doc.childNodes.length) {
+            val node: Node = doc.childNodes.item(i)
+            if (node.nodeType == Node.ELEMENT_NODE) {
                 val element: Element = node as Element
-                log.debug("Element is named {}", element.getTagName())
-                if ((element.getTagName() == name)) {
+                log.debug("Element is named {}", element.tagName)
+                if ((element.tagName == name)) {
                     return element
                 }
             }
@@ -100,14 +103,14 @@ class TagManager constructor() {
         return null
     }
 
-    private fun findFirstChildTagWithName(rnode: Node?, name: String): Element? {
+    private fun findFirstChildTagWithName(searchRootNode: Node, name: String): Element? {
         log.debug("Searching for node named {}", name)
-        for (i in 0 until rnode!!.getChildNodes().getLength()) {
-            val node: Node = rnode.getChildNodes().item(i)
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
+        for (i in 0 until searchRootNode.childNodes.length) {
+            val node: Node = searchRootNode.childNodes.item(i)
+            if (node.nodeType == Node.ELEMENT_NODE) {
                 val element: Element = node as Element
                 log.debug("Element is named {}", element.getTagName())
-                if ((element.getTagName() == name)) {
+                if ((element.tagName == name)) {
                     return element
                 }
             }
@@ -116,16 +119,16 @@ class TagManager constructor() {
     }
 
     fun getTagsForGpxFile(gpxFile: GpxFile): List<Tag> {
-        val extNode: Optional<Element?> = getMyExtensionNode(gpxFile)
-        if (extNode.isPresent()) {
-            val children: NodeList = extNode.get().getChildNodes()
+        val extNode = getMyExtensionNode(gpxFile)
+        if (extNode.isPresent) {
+            val children = extNode.get().childNodes
             val result: ArrayList<Tag> = ArrayList()
-            for (i in 0 until children.getLength()) {
+            for (i in 0 until children.length) {
                 val node: Node = children.item(i)
                 if (node is Element) {
                     val element: Element = node
-                    if ((element.getTagName() == "tag")) {
-                        val tag: Tag = fromString(element.getTextContent())
+                    if ((element.tagName == "tag")) {
+                        val tag: Tag = fromString(element.textContent)
                         result.add(tag)
                         log.info("Found tag {}", tag)
                     }
@@ -134,7 +137,7 @@ class TagManager constructor() {
             log.info("Found {} tags", result.size)
             return result
         } else {
-            return Collections.unmodifiableList<Tag>(emptyList<Tag>())
+            return Collections.unmodifiableList(emptyList<Tag>())
         }
     }
 

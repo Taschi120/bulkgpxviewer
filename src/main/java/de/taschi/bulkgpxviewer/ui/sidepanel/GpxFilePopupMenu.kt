@@ -19,13 +19,24 @@ package de.taschi.bulkgpxviewer.ui.sidepanel
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
- */import com.google.inject.Inject
+ */
+import com.google.inject.Inject
 import de.taschi.bulkgpxviewer.Application
+import de.taschi.bulkgpxviewer.files.GpxFile
+import de.taschi.bulkgpxviewer.files.LoadedFileManager
+import de.taschi.bulkgpxviewer.ui.IconHandler
 import de.taschi.bulkgpxviewer.ui.Messages
-import lombok.extern.log4j.Log4j2
 import org.apache.commons.lang3.StringUtils
 import org.apache.logging.log4j.LogManager
+import java.awt.event.ActionEvent
+import java.awt.event.ActionListener
+import java.io.IOException
 import java.nio.file.Files
+import java.nio.file.Path
+import javax.swing.JMenuItem
+import javax.swing.JOptionPane
+import javax.swing.JPopupMenu
+import javax.swing.JTree
 
 class GpxFilePopupMenu : JPopupMenu() {
     private var track: GpxFile? = null
@@ -59,9 +70,9 @@ class GpxFilePopupMenu : JPopupMenu() {
     }
 
     private fun onRename(evt: ActionEvent) {
-        val path: Path = track.getFileName()
+        val path: Path = track!!.fileName
         log.info("Starting debug for {}", path) //$NON-NLS-1$
-        var oldFileName: String = path.getFileName().toString()
+        var oldFileName: String = path.fileName.toString()
         if (oldFileName.endsWith(".gpx")) { //$NON-NLS-1$
             oldFileName = oldFileName.substring(0, oldFileName.length - 4)
         }
@@ -98,24 +109,24 @@ class GpxFilePopupMenu : JPopupMenu() {
             log.error("Could not rename file", e) //$NON-NLS-1$
             JOptionPane.showMessageDialog(
                 null,
-                String.format(Messages.getString("GpxFilePopupMenu.ErrorWhileRenaming"), e.getLocalizedMessage())
+                String.format(Messages.getString("GpxFilePopupMenu.ErrorWhileRenaming"), e.localizedMessage)
             ) //$NON-NLS-1$
             return
         }
         try {
-            loadedFileManager.refresh()
+            loadedFileManager?.refresh()
         } catch (e: IOException) {
             JOptionPane.showMessageDialog(
                 null, String.format(
                     Messages.getString("GpxFilePopupMenu.ErrorWhileReloading") //$NON-NLS-1$
-                    , e.getLocalizedMessage()
+                    , e.localizedMessage
                 )
             )
         }
     }
 
     private fun onEdit(e: ActionEvent) {
-        Application.Companion.getMainWindow()!!.startEditingMode(track)
+        Application.getMainWindow()!!.startEditingMode(track)
     }
 
     companion object {
