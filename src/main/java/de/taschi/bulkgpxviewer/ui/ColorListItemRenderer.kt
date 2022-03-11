@@ -1,4 +1,151 @@
-package de.taschi.bulkgpxviewer.ui;
+package de.taschi.bulkgpxviewer.ui
+
+import javax.swing.JPanel
+import org.jxmapviewer.JXMapKit
+import de.taschi.bulkgpxviewer.ui.map.TracksPainter
+import de.taschi.bulkgpxviewer.ui.map.SelectionPainter
+import de.taschi.bulkgpxviewer.ui.map.CompositePainter
+import de.taschi.bulkgpxviewer.files.GpxFile
+import de.taschi.bulkgpxviewer.files.LoadedFileManager
+import de.taschi.bulkgpxviewer.ui.map.MapSelectionHandler
+import org.jxmapviewer.viewer.TileFactoryInfo
+import org.jxmapviewer.OSMTileFactoryInfo
+import org.jxmapviewer.viewer.DefaultTileFactory
+import de.taschi.bulkgpxviewer.files.LoadedFileChangeListener
+import de.taschi.bulkgpxviewer.ui.map.WaypointSelectionChangeListener
+import io.jenetics.jpx.WayPoint
+import org.jxmapviewer.viewer.GeoPosition
+import de.taschi.bulkgpxviewer.geo.GpsBoundingBox
+import io.jenetics.jpx.GPX
+import io.jenetics.jpx.TrackSegment
+import de.taschi.bulkgpxviewer.geo.GpxToJxMapper
+import de.taschi.bulkgpxviewer.ui.map.MapPanel
+import org.jxmapviewer.JXMapViewer
+import de.taschi.bulkgpxviewer.ui.TrackColorUtil
+import java.util.Arrays
+import de.taschi.bulkgpxviewer.settings.ColorConverter
+import java.util.stream.Collectors
+import java.awt.geom.Point2D
+import lombok.extern.log4j.Log4j2
+import javax.imageio.ImageIO
+import java.awt.event.MouseAdapter
+import java.util.HashSet
+import java.util.Collections
+import javax.swing.SwingUtilities
+import java.lang.Runnable
+import de.taschi.bulkgpxviewer.settings.SettingsUpdateListener
+import org.jfree.chart.plot.XYPlot
+import org.jfree.chart.JFreeChart
+import org.jfree.chart.ChartPanel
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
+import org.jfree.data.xy.XYDataset
+import org.jfree.chart.ChartFactory
+import org.jfree.chart.plot.PlotOrientation
+import org.jfree.chart.block.BlockBorder
+import de.taschi.bulkgpxviewer.ui.graphs.AbstractGraphPanel
+import de.taschi.bulkgpxviewer.math.TrackStatisticsManager
+import de.taschi.bulkgpxviewer.settings.dto.UnitSystem
+import de.taschi.bulkgpxviewer.ui.sidepanel.GpxFileTreeNode
+import javax.swing.tree.DefaultMutableTreeNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.GpxFileRelatedNode
+import de.taschi.bulkgpxviewer.files.TagManager
+import javax.swing.JTree
+import java.util.HashMap
+import java.nio.file.Path
+import de.taschi.bulkgpxviewer.ui.sidepanel.GpxFilePopupMenu
+import javax.swing.JScrollPane
+import javax.swing.ScrollPaneConstants
+import de.taschi.bulkgpxviewer.ui.sidepanel.SidePanel.SidePanelMouseListener
+import de.taschi.bulkgpxviewer.ui.sidepanel.SidePanel
+import javax.swing.tree.DefaultTreeModel
+import java.time.ZonedDateTime
+import java.time.ZoneId
+import javax.swing.tree.TreeSelectionModel
+import de.taschi.bulkgpxviewer.math.SpeedCalculator
+import de.taschi.bulkgpxviewer.math.RouteLengthCalculator
+import de.taschi.bulkgpxviewer.ui.sidepanel.StartDateTreeNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.DistanceNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.DurationTreeNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.AvgSpeedNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.TagNode
+import de.taschi.bulkgpxviewer.math.DurationCalculator
+import de.taschi.bulkgpxviewer.math.DurationFormatter
+import javax.swing.JPopupMenu
+import javax.swing.JMenuItem
+import de.taschi.bulkgpxviewer.ui.IconHandler
+import java.awt.event.ActionListener
+import java.awt.event.ActionEvent
+import javax.swing.JOptionPane
+import java.io.IOException
+import java.time.format.DateTimeFormatter
+import java.util.ResourceBundle
+import java.util.MissingResourceException
+import javax.swing.JDialog
+import javax.swing.JTextPane
+import javax.swing.border.EmptyBorder
+import javax.swing.JTabbedPane
+import javax.swing.JLabel
+import javax.swing.JButton
+import java.io.File
+import de.taschi.bulkgpxviewer.ui.windowbuilder.InfoDialog
+import kotlin.jvm.JvmStatic
+import javax.swing.JFrame
+import javax.swing.JSplitPane
+import de.taschi.bulkgpxviewer.ui.windowbuilder.MainWindowMode
+import de.taschi.bulkgpxviewer.ui.windowbuilder.EditingPanelWrapper
+import de.taschi.bulkgpxviewer.ui.graphs.SpeedOverTimePanel
+import de.taschi.bulkgpxviewer.ui.graphs.HeightProfilePanel
+import javax.swing.JMenuBar
+import javax.swing.JMenu
+import de.taschi.bulkgpxviewer.ui.windowbuilder.MainWindow.LocalWindowAdapter
+import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings
+import de.taschi.bulkgpxviewer.ui.windowbuilder.MainWindow
+import de.taschi.bulkgpxviewer.ui.windowbuilder.SettingsWindow
+import javax.swing.JFileChooser
+import java.lang.RuntimeException
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
+import javax.swing.border.SoftBevelBorder
+import de.taschi.bulkgpxviewer.ui.windowbuilder.EditingPanel
+import de.taschi.bulkgpxviewer.geo.WaypointIndex
+import javax.swing.JList
+import javax.swing.JComboBox
+import javax.swing.DefaultComboBoxModel
+import javax.swing.ListSelectionModel
+import de.taschi.bulkgpxviewer.settings.dto.Settings
+import de.taschi.bulkgpxviewer.ui.ColorListItemRenderer
+import javax.swing.JColorChooser
+import de.taschi.bulkgpxviewer.ui.windowbuilder.ColorChooserDialog.ReturnCode
+import javax.swing.SwingConstants
+import javax.swing.ImageIcon
+import de.taschi.bulkgpxviewer.settings.dto.SettingsColor
+import javax.swing.ListCellRenderer
+import javax.swing.border.Border
+import javax.swing.BorderFactory
+import de.taschi.bulkgpxviewer.math.UnitConverter
+import java.math.BigDecimal
+import java.math.RoundingMode
+import de.taschi.bulkgpxviewer.math.HaversineCalculator
+import java.util.function.BinaryOperator
+import java.util.function.ToDoubleFunction
+import de.taschi.bulkgpxviewer.math.TrackStatisticsManager.Calculator
+import org.jfree.data.xy.XYSeries
+import org.jfree.data.xy.XYSeriesCollection
+import java.lang.IllegalArgumentException
+import kotlin.Throws
+import lombok.Cleanup
+import org.w3c.dom.NodeList
+import java.util.LinkedList
+import java.nio.file.PathMatcher
+import java.nio.file.FileSystems
+import java.nio.charset.Charset
+import java.nio.file.Paths
+import com.google.inject.Injector
+import com.google.inject.Guice
+import de.taschi.bulkgpxviewer.CoreGuiceModule
+import javax.swing.UIManager
+import com.google.inject.AbstractModule
+import java.awt.*
 
 /*-
  * #%L
@@ -20,40 +167,32 @@ package de.taschi.bulkgpxviewer.ui;
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
+ */ /**
+ * Renderer to display a [JList] of [Color]s
  */
+class ColorListItemRenderer constructor() : JLabel(), ListCellRenderer<Color> {
+    public override fun getListCellRendererComponent(
+        list: JList<out Color>, value: Color, index: Int,
+        isSelected: Boolean, cellHasFocus: Boolean
+    ): Component {
+        setText(
+            value.getRed()
+                .toString() + Messages.getString("ColorListItemRenderer.Comma") + value.getGreen() + Messages.getString(
+                "ColorListItemRenderer.Comma"
+            ) + value.getBlue()
+        ) //$NON-NLS-1$ //$NON-NLS-2$
+        setForeground(value)
+        if (cellHasFocus) {
+            setBorder(active)
+        } else {
+            setBorder(inactive)
+        }
+        return this
+    }
 
-import java.awt.Color;
-import java.awt.Component;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
-import javax.swing.border.Border;
-
-/**
- * Renderer to display a {@link JList} of {@link Color}s
- */
-public class ColorListItemRenderer extends JLabel implements ListCellRenderer<Color> {
-
-	private static final long serialVersionUID = -5909430684119887421L;
-
-	private static Border active = BorderFactory.createEtchedBorder();
-	private static Border inactive = BorderFactory.createEmptyBorder();
-	
-	@Override
-	public Component getListCellRendererComponent(JList<? extends Color> list, Color value, int index,
-			boolean isSelected, boolean cellHasFocus) {
-		
-		setText(value.getRed() + Messages.getString("ColorListItemRenderer.Comma") + value.getGreen() +  Messages.getString("ColorListItemRenderer.Comma") + value.getBlue()); //$NON-NLS-1$ //$NON-NLS-2$
-		setForeground(value);
-		
-		if (cellHasFocus) {
-			setBorder(active);
-		} else {
-			setBorder(inactive);
-		}
-		
-		return this;
-	}
+    companion object {
+        private val serialVersionUID: Long = -5909430684119887421L
+        private val active: Border = BorderFactory.createEtchedBorder()
+        private val inactive: Border = BorderFactory.createEmptyBorder()
+    }
 }

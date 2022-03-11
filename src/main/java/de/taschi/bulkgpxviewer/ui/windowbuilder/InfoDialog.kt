@@ -1,4 +1,168 @@
-package de.taschi.bulkgpxviewer.ui.windowbuilder;
+package de.taschi.bulkgpxviewer.ui.windowbuilder
+
+import javax.swing.JPanel
+import org.jxmapviewer.JXMapKit
+import de.taschi.bulkgpxviewer.ui.map.TracksPainter
+import de.taschi.bulkgpxviewer.ui.map.SelectionPainter
+import de.taschi.bulkgpxviewer.ui.map.CompositePainter
+import de.taschi.bulkgpxviewer.files.GpxFile
+import de.taschi.bulkgpxviewer.files.LoadedFileManager
+import de.taschi.bulkgpxviewer.ui.map.MapSelectionHandler
+import java.awt.BorderLayout
+import org.jxmapviewer.viewer.TileFactoryInfo
+import org.jxmapviewer.OSMTileFactoryInfo
+import org.jxmapviewer.viewer.DefaultTileFactory
+import de.taschi.bulkgpxviewer.files.LoadedFileChangeListener
+import de.taschi.bulkgpxviewer.ui.map.WaypointSelectionChangeListener
+import io.jenetics.jpx.WayPoint
+import org.jxmapviewer.viewer.GeoPosition
+import de.taschi.bulkgpxviewer.geo.GpsBoundingBox
+import io.jenetics.jpx.GPX
+import io.jenetics.jpx.TrackSegment
+import de.taschi.bulkgpxviewer.geo.GpxToJxMapper
+import de.taschi.bulkgpxviewer.ui.map.MapPanel
+import org.jxmapviewer.JXMapViewer
+import de.taschi.bulkgpxviewer.ui.TrackColorUtil
+import java.util.Arrays
+import java.awt.Graphics2D
+import java.awt.Rectangle
+import java.awt.RenderingHints
+import java.awt.Color
+import java.awt.BasicStroke
+import de.taschi.bulkgpxviewer.settings.ColorConverter
+import java.util.stream.Collectors
+import java.awt.geom.Point2D
+import lombok.extern.log4j.Log4j2
+import java.awt.Image
+import javax.imageio.ImageIO
+import java.awt.event.MouseAdapter
+import java.util.HashSet
+import java.util.Collections
+import javax.swing.SwingUtilities
+import java.lang.Runnable
+import de.taschi.bulkgpxviewer.settings.SettingsUpdateListener
+import org.jfree.chart.plot.XYPlot
+import org.jfree.chart.JFreeChart
+import org.jfree.chart.ChartPanel
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
+import org.jfree.data.xy.XYDataset
+import org.jfree.chart.ChartFactory
+import org.jfree.chart.plot.PlotOrientation
+import org.jfree.chart.block.BlockBorder
+import de.taschi.bulkgpxviewer.ui.graphs.AbstractGraphPanel
+import de.taschi.bulkgpxviewer.math.TrackStatisticsManager
+import de.taschi.bulkgpxviewer.settings.dto.UnitSystem
+import de.taschi.bulkgpxviewer.ui.sidepanel.GpxFileTreeNode
+import javax.swing.tree.DefaultMutableTreeNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.GpxFileRelatedNode
+import de.taschi.bulkgpxviewer.files.TagManager
+import javax.swing.JTree
+import java.util.HashMap
+import java.nio.file.Path
+import de.taschi.bulkgpxviewer.ui.sidepanel.GpxFilePopupMenu
+import javax.swing.JScrollPane
+import javax.swing.ScrollPaneConstants
+import de.taschi.bulkgpxviewer.ui.sidepanel.SidePanel.SidePanelMouseListener
+import de.taschi.bulkgpxviewer.ui.sidepanel.SidePanel
+import javax.swing.tree.DefaultTreeModel
+import java.time.ZonedDateTime
+import java.time.ZoneId
+import javax.swing.tree.TreeSelectionModel
+import de.taschi.bulkgpxviewer.math.SpeedCalculator
+import de.taschi.bulkgpxviewer.math.RouteLengthCalculator
+import de.taschi.bulkgpxviewer.ui.sidepanel.StartDateTreeNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.DistanceNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.DurationTreeNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.AvgSpeedNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.TagNode
+import de.taschi.bulkgpxviewer.math.DurationCalculator
+import de.taschi.bulkgpxviewer.math.DurationFormatter
+import javax.swing.JPopupMenu
+import javax.swing.JMenuItem
+import de.taschi.bulkgpxviewer.ui.IconHandler
+import java.awt.event.ActionListener
+import java.awt.event.ActionEvent
+import javax.swing.JOptionPane
+import java.io.IOException
+import java.time.format.DateTimeFormatter
+import java.util.ResourceBundle
+import java.util.MissingResourceException
+import javax.swing.JDialog
+import javax.swing.JTextPane
+import javax.swing.border.EmptyBorder
+import javax.swing.JTabbedPane
+import javax.swing.JLabel
+import java.awt.FlowLayout
+import javax.swing.JButton
+import java.io.File
+import de.taschi.bulkgpxviewer.ui.windowbuilder.InfoDialog
+import kotlin.jvm.JvmStatic
+import javax.swing.JFrame
+import javax.swing.JSplitPane
+import de.taschi.bulkgpxviewer.ui.windowbuilder.MainWindowMode
+import de.taschi.bulkgpxviewer.ui.windowbuilder.EditingPanelWrapper
+import de.taschi.bulkgpxviewer.ui.graphs.SpeedOverTimePanel
+import de.taschi.bulkgpxviewer.ui.graphs.HeightProfilePanel
+import javax.swing.JMenuBar
+import javax.swing.JMenu
+import de.taschi.bulkgpxviewer.ui.windowbuilder.MainWindow.LocalWindowAdapter
+import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings
+import de.taschi.bulkgpxviewer.ui.windowbuilder.MainWindow
+import de.taschi.bulkgpxviewer.ui.windowbuilder.SettingsWindow
+import javax.swing.JFileChooser
+import java.awt.HeadlessException
+import java.lang.RuntimeException
+import java.awt.Desktop
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
+import javax.swing.border.SoftBevelBorder
+import java.awt.GridLayout
+import java.awt.GridBagLayout
+import java.awt.GridBagConstraints
+import java.awt.Insets
+import de.taschi.bulkgpxviewer.ui.windowbuilder.EditingPanel
+import de.taschi.bulkgpxviewer.geo.WaypointIndex
+import javax.swing.JList
+import javax.swing.JComboBox
+import javax.swing.DefaultComboBoxModel
+import javax.swing.ListSelectionModel
+import de.taschi.bulkgpxviewer.settings.dto.Settings
+import de.taschi.bulkgpxviewer.ui.ColorListItemRenderer
+import javax.swing.JColorChooser
+import de.taschi.bulkgpxviewer.ui.windowbuilder.ColorChooserDialog.ReturnCode
+import javax.swing.SwingConstants
+import javax.swing.ImageIcon
+import de.taschi.bulkgpxviewer.settings.dto.SettingsColor
+import javax.swing.ListCellRenderer
+import javax.swing.border.Border
+import javax.swing.BorderFactory
+import de.taschi.bulkgpxviewer.math.UnitConverter
+import java.math.BigDecimal
+import java.math.RoundingMode
+import de.taschi.bulkgpxviewer.math.HaversineCalculator
+import java.util.function.BinaryOperator
+import java.util.function.ToDoubleFunction
+import de.taschi.bulkgpxviewer.math.TrackStatisticsManager.Calculator
+import org.jfree.data.xy.XYSeries
+import org.jfree.data.xy.XYSeriesCollection
+import java.lang.IllegalArgumentException
+import kotlin.Throws
+import lombok.Cleanup
+import org.w3c.dom.NodeList
+import java.util.LinkedList
+import java.nio.file.PathMatcher
+import java.nio.file.FileSystems
+import java.nio.charset.Charset
+import java.nio.file.Paths
+import com.google.inject.Injector
+import com.google.inject.Guice
+import de.taschi.bulkgpxviewer.CoreGuiceModule
+import javax.swing.UIManager
+import com.google.inject.AbstractModule
+import de.taschi.bulkgpxviewer.ui.Messages
+import org.apache.commons.io.FileUtils
+import org.apache.logging.log4j.LogManager
+import java.lang.Exception
 
 /*-
  * #%L
@@ -20,142 +184,113 @@ package de.taschi.bulkgpxviewer.ui.windowbuilder;
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
- */
+ */   class InfoDialog : JDialog() {
+    private val contentPanel = JPanel()
+    private var licenseTextPane: JTextPane? = null
+    private var thirdPartyTextPane: JTextPane? = null
+    private var licenseScrollPane: JScrollPane? = null
+    private var thirdPartyScrollPane: JScrollPane? = null
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.IOException;
+    /**
+     * Create the dialog.
+     */
+    init {
+        title = Messages.getString("InfoDialog.Info") //$NON-NLS-1$
+        setBounds(100, 100, 450, 300)
+        contentPane.layout = BorderLayout()
+        contentPanel.border = EmptyBorder(5, 5, 5, 5)
+        contentPane.add(contentPanel, BorderLayout.CENTER)
+        contentPanel.layout = BorderLayout(0, 0)
+        run {
+            val tabbedPane = JTabbedPane(JTabbedPane.TOP)
+            contentPanel.add(tabbedPane)
+            run {
+                val panel = JPanel()
+                tabbedPane.addTab(Messages.getString("InfoDialog.AboutTab"), null, panel, null) //$NON-NLS-1$
+                run {
+                    val lblNewLabel = JLabel(Messages.getString("InfoDialog.2")) //$NON-NLS-1$
+                    panel.add(lblNewLabel)
+                }
+            }
+            run {
+                val panel = JPanel()
+                tabbedPane.addTab(Messages.getString("InfoDialog.LicenseTab"), null, panel, null) //$NON-NLS-1$
+                panel.layout = BorderLayout(0, 0)
+                run {
+                    licenseScrollPane = JScrollPane()
+                    panel.add(licenseScrollPane, BorderLayout.CENTER)
+                    run {
+                        licenseTextPane = JTextPane()
+                        licenseScrollPane!!.setViewportView(licenseTextPane)
+                    }
+                }
+            }
+            run {
+                val panel = JPanel()
+                tabbedPane.addTab(Messages.getString("InfoDialog.ThirdPartyTab"), null, panel, null) //$NON-NLS-1$
+                panel.layout = BorderLayout(0, 0)
+                run {
+                    val lblBulkGpxViewer = JLabel(Messages.getString("InfoDialog.ThirdPartyLabel")) //$NON-NLS-1$
+                    panel.add(lblBulkGpxViewer, BorderLayout.NORTH)
+                }
+                run {
+                    thirdPartyScrollPane = JScrollPane()
+                    panel.add(thirdPartyScrollPane, BorderLayout.CENTER)
+                    run {
+                        thirdPartyTextPane = JTextPane()
+                        thirdPartyScrollPane!!.setViewportView(thirdPartyTextPane)
+                    }
+                }
+            }
+        }
+        run {
+            val buttonPane = JPanel()
+            buttonPane.layout = FlowLayout(FlowLayout.RIGHT)
+            contentPane.add(buttonPane, BorderLayout.SOUTH)
+            run {
+                val okButton = JButton(Messages.getString("InfoDialog.OK")) //$NON-NLS-1$
+                okButton.actionCommand = Messages.getString("InfoDialog.OK") //$NON-NLS-1$
+                buttonPane.add(okButton)
+                getRootPane().defaultButton = okButton
+                okButton.addActionListener { evt: ActionEvent -> this.okEventHandler(evt) }
+            }
+        }
+        loadTexts()
+    }
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextPane;
-import javax.swing.border.EmptyBorder;
+    private fun loadTexts() {
+        try {
+            val license = FileUtils.readFileToString(File("COPYING"), "UTF-8") //$NON-NLS-1$ //$NON-NLS-2$
+            val thirdParty = FileUtils.readFileToString(File("THIRD-PARTY.txt"), "UTF-8") //$NON-NLS-1$ //$NON-NLS-2$
+            licenseTextPane!!.text = license
+            thirdPartyTextPane!!.text = thirdParty
+            licenseScrollPane!!.verticalScrollBar.value = 0
+            thirdPartyScrollPane!!.verticalScrollBar.value = 0
+        } catch (e: IOException) {
+            LOG.error("Couldn't load license or third-party licenses", e) //$NON-NLS-1$
+        }
+    }
 
-import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+    private fun okEventHandler(evt: ActionEvent) {
+        isVisible = false
+    }
 
-import de.taschi.bulkgpxviewer.ui.Messages;
+    companion object {
+        private val LOG = LogManager.getLogger(InfoDialog::class.java)
+        private const val serialVersionUID = -8478805153020789079L
 
-import javax.swing.JScrollPane;
-
-public class InfoDialog extends JDialog {
-	
-	private static final Logger LOG = LogManager.getLogger(InfoDialog.class);
-
-	private static final long serialVersionUID = -8478805153020789079L;
-	
-	private final JPanel contentPanel = new JPanel();
-	private JTextPane licenseTextPane;
-	private JTextPane thirdPartyTextPane;
-	private JScrollPane licenseScrollPane;
-	private JScrollPane thirdPartyScrollPane;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			InfoDialog dialog = new InfoDialog();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			LOG.error(e);
-		}
-	}
-
-	/**
-	 * Create the dialog.
-	 */
-	public InfoDialog() {
-		setTitle(Messages.getString("InfoDialog.Info")); //$NON-NLS-1$
-		setBounds(100, 100, 450, 300);
-		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		contentPanel.setLayout(new BorderLayout(0, 0));
-		{
-			JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-			contentPanel.add(tabbedPane);
-			{
-				JPanel panel = new JPanel();
-				tabbedPane.addTab(Messages.getString("InfoDialog.AboutTab"), null, panel, null); //$NON-NLS-1$
-				{
-					JLabel lblNewLabel = new JLabel(Messages.getString("InfoDialog.2")); //$NON-NLS-1$
-					panel.add(lblNewLabel);
-				}
-			}
-			{
-				JPanel panel = new JPanel();
-				tabbedPane.addTab(Messages.getString("InfoDialog.LicenseTab"), null, panel, null); //$NON-NLS-1$
-				panel.setLayout(new BorderLayout(0, 0));
-				{
-					licenseScrollPane = new JScrollPane();
-					panel.add(licenseScrollPane, BorderLayout.CENTER);
-					{
-						licenseTextPane = new JTextPane();
-						licenseScrollPane.setViewportView(licenseTextPane);
-					}
-				}
-			}
-			{
-				JPanel panel = new JPanel();
-				tabbedPane.addTab(Messages.getString("InfoDialog.ThirdPartyTab"), null, panel, null); //$NON-NLS-1$
-				panel.setLayout(new BorderLayout(0, 0));
-				{
-					JLabel lblBulkGpxViewer = new JLabel(Messages.getString("InfoDialog.ThirdPartyLabel")); //$NON-NLS-1$
-					panel.add(lblBulkGpxViewer, BorderLayout.NORTH);
-				}
-				{
-					thirdPartyScrollPane = new JScrollPane();
-					panel.add(thirdPartyScrollPane, BorderLayout.CENTER);
-					{
-						thirdPartyTextPane = new JTextPane();
-						thirdPartyScrollPane.setViewportView(thirdPartyTextPane);
-					}
-				}
-			}
-		}
-		{
-			JPanel buttonPane = new JPanel();
-			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-			getContentPane().add(buttonPane, BorderLayout.SOUTH);
-			{
-				JButton okButton = new JButton(Messages.getString("InfoDialog.OK")); //$NON-NLS-1$
-				okButton.setActionCommand(Messages.getString("InfoDialog.OK")); //$NON-NLS-1$
-				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
-				
-				okButton.addActionListener(this::okEventHandler);
-			}
-		}
-		
-		loadTexts();
-	}
-	
-	private void loadTexts() {
-		try {
-			String license = FileUtils.readFileToString(new File("COPYING"), "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
-			String thirdParty = FileUtils.readFileToString(new File("THIRD-PARTY.txt"), "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
-			
-			
-			licenseTextPane.setText(license);
-			thirdPartyTextPane.setText(thirdParty);
-			
-			licenseScrollPane.getVerticalScrollBar().setValue(0);
-			thirdPartyScrollPane.getVerticalScrollBar().setValue(0);
-		} catch (IOException e) {
-			LOG.error("Couldn't load license or third-party licenses", e); //$NON-NLS-1$
-		}
-	}
-	
-	private void okEventHandler(ActionEvent evt) {
-		setVisible(false);
-	}
-
+        /**
+         * Launch the application.
+         */
+        @JvmStatic
+        fun main(args: Array<String>) {
+            try {
+                val dialog = InfoDialog()
+                dialog.defaultCloseOperation = DISPOSE_ON_CLOSE
+                dialog.isVisible = true
+            } catch (e: Exception) {
+                LOG.error(e)
+            }
+        }
+    }
 }

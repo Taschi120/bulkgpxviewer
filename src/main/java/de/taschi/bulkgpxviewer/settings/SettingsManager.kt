@@ -1,4 +1,167 @@
-package de.taschi.bulkgpxviewer.settings;
+package de.taschi.bulkgpxviewer.settings
+
+import com.fasterxml.jackson.jr.ob.JSON
+import javax.swing.JPanel
+import org.jxmapviewer.JXMapKit
+import de.taschi.bulkgpxviewer.ui.map.TracksPainter
+import de.taschi.bulkgpxviewer.ui.map.SelectionPainter
+import de.taschi.bulkgpxviewer.ui.map.CompositePainter
+import de.taschi.bulkgpxviewer.files.GpxFile
+import de.taschi.bulkgpxviewer.files.LoadedFileManager
+import de.taschi.bulkgpxviewer.ui.map.MapSelectionHandler
+import java.awt.BorderLayout
+import org.jxmapviewer.viewer.TileFactoryInfo
+import org.jxmapviewer.OSMTileFactoryInfo
+import org.jxmapviewer.viewer.DefaultTileFactory
+import de.taschi.bulkgpxviewer.files.LoadedFileChangeListener
+import de.taschi.bulkgpxviewer.ui.map.WaypointSelectionChangeListener
+import io.jenetics.jpx.WayPoint
+import org.jxmapviewer.viewer.GeoPosition
+import de.taschi.bulkgpxviewer.geo.GpsBoundingBox
+import io.jenetics.jpx.GPX
+import io.jenetics.jpx.TrackSegment
+import de.taschi.bulkgpxviewer.geo.GpxToJxMapper
+import de.taschi.bulkgpxviewer.ui.map.MapPanel
+import org.jxmapviewer.JXMapViewer
+import de.taschi.bulkgpxviewer.ui.TrackColorUtil
+import java.util.Arrays
+import java.awt.Graphics2D
+import java.awt.Rectangle
+import java.awt.RenderingHints
+import java.awt.Color
+import java.awt.BasicStroke
+import de.taschi.bulkgpxviewer.settings.ColorConverter
+import java.util.stream.Collectors
+import java.awt.geom.Point2D
+import lombok.extern.log4j.Log4j2
+import java.awt.Image
+import javax.imageio.ImageIO
+import java.awt.event.MouseAdapter
+import java.util.HashSet
+import java.util.Collections
+import javax.swing.SwingUtilities
+import java.lang.Runnable
+import de.taschi.bulkgpxviewer.settings.SettingsUpdateListener
+import org.jfree.chart.plot.XYPlot
+import org.jfree.chart.JFreeChart
+import org.jfree.chart.ChartPanel
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
+import org.jfree.data.xy.XYDataset
+import org.jfree.chart.ChartFactory
+import org.jfree.chart.plot.PlotOrientation
+import org.jfree.chart.block.BlockBorder
+import de.taschi.bulkgpxviewer.ui.graphs.AbstractGraphPanel
+import de.taschi.bulkgpxviewer.math.TrackStatisticsManager
+import de.taschi.bulkgpxviewer.settings.dto.UnitSystem
+import de.taschi.bulkgpxviewer.ui.sidepanel.GpxFileTreeNode
+import javax.swing.tree.DefaultMutableTreeNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.GpxFileRelatedNode
+import de.taschi.bulkgpxviewer.files.TagManager
+import javax.swing.JTree
+import java.util.HashMap
+import de.taschi.bulkgpxviewer.ui.sidepanel.GpxFilePopupMenu
+import javax.swing.JScrollPane
+import javax.swing.ScrollPaneConstants
+import de.taschi.bulkgpxviewer.ui.sidepanel.SidePanel.SidePanelMouseListener
+import de.taschi.bulkgpxviewer.ui.sidepanel.SidePanel
+import javax.swing.tree.DefaultTreeModel
+import java.time.ZonedDateTime
+import java.time.ZoneId
+import javax.swing.tree.TreeSelectionModel
+import de.taschi.bulkgpxviewer.math.SpeedCalculator
+import de.taschi.bulkgpxviewer.math.RouteLengthCalculator
+import de.taschi.bulkgpxviewer.ui.sidepanel.StartDateTreeNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.DistanceNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.DurationTreeNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.AvgSpeedNode
+import de.taschi.bulkgpxviewer.ui.sidepanel.TagNode
+import de.taschi.bulkgpxviewer.math.DurationCalculator
+import de.taschi.bulkgpxviewer.math.DurationFormatter
+import javax.swing.JPopupMenu
+import javax.swing.JMenuItem
+import de.taschi.bulkgpxviewer.ui.IconHandler
+import java.awt.event.ActionListener
+import java.awt.event.ActionEvent
+import javax.swing.JOptionPane
+import java.io.IOException
+import java.time.format.DateTimeFormatter
+import java.util.ResourceBundle
+import java.util.MissingResourceException
+import javax.swing.JDialog
+import javax.swing.JTextPane
+import javax.swing.border.EmptyBorder
+import javax.swing.JTabbedPane
+import javax.swing.JLabel
+import java.awt.FlowLayout
+import javax.swing.JButton
+import java.io.File
+import de.taschi.bulkgpxviewer.ui.windowbuilder.InfoDialog
+import kotlin.jvm.JvmStatic
+import javax.swing.JFrame
+import javax.swing.JSplitPane
+import de.taschi.bulkgpxviewer.ui.windowbuilder.MainWindowMode
+import de.taschi.bulkgpxviewer.ui.windowbuilder.EditingPanelWrapper
+import de.taschi.bulkgpxviewer.ui.graphs.SpeedOverTimePanel
+import de.taschi.bulkgpxviewer.ui.graphs.HeightProfilePanel
+import javax.swing.JMenuBar
+import javax.swing.JMenu
+import de.taschi.bulkgpxviewer.ui.windowbuilder.MainWindow.LocalWindowAdapter
+import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings
+import de.taschi.bulkgpxviewer.ui.windowbuilder.MainWindow
+import de.taschi.bulkgpxviewer.ui.windowbuilder.SettingsWindow
+import javax.swing.JFileChooser
+import java.awt.HeadlessException
+import java.lang.RuntimeException
+import java.awt.Desktop
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
+import javax.swing.border.SoftBevelBorder
+import java.awt.GridLayout
+import java.awt.GridBagLayout
+import java.awt.GridBagConstraints
+import java.awt.Insets
+import de.taschi.bulkgpxviewer.ui.windowbuilder.EditingPanel
+import de.taschi.bulkgpxviewer.geo.WaypointIndex
+import javax.swing.JList
+import javax.swing.JComboBox
+import javax.swing.DefaultComboBoxModel
+import javax.swing.ListSelectionModel
+import de.taschi.bulkgpxviewer.settings.dto.Settings
+import de.taschi.bulkgpxviewer.ui.ColorListItemRenderer
+import javax.swing.JColorChooser
+import de.taschi.bulkgpxviewer.ui.windowbuilder.ColorChooserDialog.ReturnCode
+import javax.swing.SwingConstants
+import javax.swing.ImageIcon
+import de.taschi.bulkgpxviewer.settings.dto.SettingsColor
+import javax.swing.ListCellRenderer
+import javax.swing.border.Border
+import javax.swing.BorderFactory
+import de.taschi.bulkgpxviewer.math.UnitConverter
+import java.math.BigDecimal
+import java.math.RoundingMode
+import de.taschi.bulkgpxviewer.math.HaversineCalculator
+import java.util.function.BinaryOperator
+import java.util.function.ToDoubleFunction
+import de.taschi.bulkgpxviewer.math.TrackStatisticsManager.Calculator
+import org.jfree.data.xy.XYSeries
+import org.jfree.data.xy.XYSeriesCollection
+import java.lang.IllegalArgumentException
+import kotlin.Throws
+import lombok.Cleanup
+import org.w3c.dom.NodeList
+import java.util.LinkedList
+import java.nio.charset.Charset
+import com.google.inject.Injector
+import com.google.inject.Guice
+import de.taschi.bulkgpxviewer.CoreGuiceModule
+import javax.swing.UIManager
+import com.google.inject.AbstractModule
+import com.google.inject.Singleton
+import org.apache.commons.io.FileUtils
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
+import java.nio.file.*
+import java.util.ArrayList
 
 /*-
  * #%L
@@ -20,145 +183,117 @@ package de.taschi.bulkgpxviewer.settings;
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
- */
+ */@Singleton
+class SettingsManager constructor() {
+    var settings: Settings? = null
+        private set
 
-import java.awt.Color;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+    /** Objects which want to be notified about settings changes  */
+    private val updateListeners: MutableList<SettingsUpdateListener> = ArrayList()
 
-import javax.swing.SwingUtilities;
+    init {
+        LOG.info("Loading settings") //$NON-NLS-1$
+        loadOrInitSettings(settingsFile)
+    }
 
-import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+    fun addSettingsUpdateListener(r: SettingsUpdateListener) {
+        if (!updateListeners.contains(r)) {
+            updateListeners.add(r)
+        }
+    }
 
-import com.fasterxml.jackson.jr.ob.JSON;
-import com.fasterxml.jackson.jr.ob.JSON.Feature;
-import com.google.inject.Singleton;
+    fun removeSettingsUpdateListener(r: SettingsUpdateListener): Boolean {
+        return updateListeners.remove(r)
+    }
 
-import de.taschi.bulkgpxviewer.settings.dto.MainWindowSettings;
-import de.taschi.bulkgpxviewer.settings.dto.Settings;
-import de.taschi.bulkgpxviewer.settings.dto.SettingsColor;
-import de.taschi.bulkgpxviewer.settings.dto.UnitSystem;
+    fun fireNotifications() {
+        SwingUtilities.invokeLater(Runnable({
+            for (r: SettingsUpdateListener in updateListeners) {
+                r.onSettingsUpdated()
+            }
+        }))
+    }
 
-@Singleton
-public class SettingsManager {
+    fun saveSettings() {
+        try {
+            FileUtils.forceMkdirParent(settingsFile.toFile())
+            JSON.std.write(settings, settingsFile.toFile())
+        } catch (e: IOException) {
+            handleException(e)
+        }
+    }
 
-	private static Logger LOG = LogManager.getLogger(SettingsManager.class);
+    private fun loadOrInitSettings(settingsFile: Path) {
+        if (Files.exists(settingsFile)) {
+            loadSettings(settingsFile)
+            migrateIfNecessary()
+            saveSettings()
+        } else {
+            makeNewSettings()
+            saveSettings()
+        }
+    }
 
-	private static final List<Color> DEFAULT_TRACK_COLORS = Arrays.asList(
-			Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.GRAY, 
-			Color.WHITE, Color.PINK);
+    private fun migrateIfNecessary() {
+        migrateToV0_2_0()
+        migrateToV0_3_0()
+    }
 
-	private Settings settings;
+    private fun migrateToV0_2_0() {
+        if (settings.getMainWindowSettings() == null) {
+            LOG.info("Updating settings to v0.2.0") //$NON-NLS-1$
+            val s: MainWindowSettings = MainWindowSettings()
+            settings.setMainWindowSettings(s)
+        }
+    }
 
-	/** Objects which want to be notified about settings changes */
-	private List<SettingsUpdateListener> updateListeners = new ArrayList<>();
+    private fun migrateToV0_3_0() {
+        if (settings.getUnitSystem() == null) {
+            LOG.info("Updating settings to v0.3.0") //$NON-NLS-1$
+            settings.setUnitSystem(UnitSystem.METRIC)
+        }
+        if (settings.getSelectedRouteColor() == null) {
+            settings.setSelectedRouteColor(SettingsColor(255, 0, 0))
+        }
+        if (settings.getUnselectedRouteColor() == null) {
+            settings.setUnselectedRouteColor(SettingsColor(128, 128, 128))
+        }
+    }
 
-	public SettingsManager() {
-		LOG.info("Loading settings"); //$NON-NLS-1$
-		loadOrInitSettings(getSettingsFile());
-	}
+    private fun makeNewSettings() {
+        settings = Settings()
+        val colors: List<SettingsColor?>? = ColorConverter.convertToSettings(DEFAULT_TRACK_COLORS)
+        settings.setRouteColors(colors)
+        migrateIfNecessary()
+    }
 
-	public Settings getSettings() {
-		return settings;
-	}
+    private fun loadSettings(settingsFile: Path) {
+        try {
+            val jsonDoc: String =
+                FileUtils.readFileToString(settingsFile.toFile(), Charset.forName("UTF-8")) //$NON-NLS-1$
+            settings = JSON.std
+                .with(JSON.Feature.PRETTY_PRINT_OUTPUT).beanFrom(Settings::class.java, jsonDoc)
+        } catch (e: IOException) {
+            handleException(e)
+        }
+    }
 
-	public void addSettingsUpdateListener(SettingsUpdateListener r) {
-		if (!updateListeners.contains(r)) {
-			updateListeners.add(r);
-		}
-	}
+    private fun handleException(e: IOException) {
+        LOG.error("Error while trying to load settings:", e) //$NON-NLS-1$
+    }
 
-	public boolean removeSettingsUpdateListener(SettingsUpdateListener r) {
-		return updateListeners.remove(r);
-	}
+    //$NON-NLS-1$ //$NON-NLS-2$
+    private val settingsFile: Path
+        private get() {
+            val userDir: String = FileUtils.getUserDirectoryPath()
+            return Paths.get(userDir, ".bulkgpxviewer", "settings.json") //$NON-NLS-1$ //$NON-NLS-2$
+        }
 
-	public void fireNotifications() {
-		SwingUtilities.invokeLater(() -> {
-			for (SettingsUpdateListener r: updateListeners) {
-				r.onSettingsUpdated();
-			}
-		});
-	}
-
-	public void saveSettings() {
-		try {
-			FileUtils.forceMkdirParent(getSettingsFile().toFile());
-			JSON.std.write(settings, getSettingsFile().toFile());
-		} catch (IOException e) {
-			handleException(e);
-		}
-	}
-
-	private void loadOrInitSettings(Path settingsFile) {
-		if(Files.exists(settingsFile)) {
-			loadSettings(settingsFile);
-			migrateIfNecessary();
-			saveSettings();
-		} else {
-			makeNewSettings();
-			saveSettings();
-		}
-	}
-
-	private void migrateIfNecessary() {
-		migrateToV0_2_0();
-		migrateToV0_3_0();
-	}
-
-	private void migrateToV0_2_0() {
-		if (getSettings().getMainWindowSettings() == null) {
-			LOG.info("Updating settings to v0.2.0"); //$NON-NLS-1$
-			MainWindowSettings s = new MainWindowSettings();
-			getSettings().setMainWindowSettings(s);
-		}
-	}
-
-	private void migrateToV0_3_0() {
-		if (getSettings().getUnitSystem() == null) {
-			LOG.info("Updating settings to v0.3.0"); //$NON-NLS-1$
-			getSettings().setUnitSystem(UnitSystem.METRIC);
-		}
-		if (getSettings().getSelectedRouteColor() == null) {
-			getSettings().setSelectedRouteColor(new SettingsColor(255, 0, 0));
-		}
-		if (getSettings().getUnselectedRouteColor() == null) {
-			getSettings().setUnselectedRouteColor(new SettingsColor(128, 128, 128));
-		}
-	}
-
-	private void makeNewSettings() {
-		settings = new Settings();
-
-		List<SettingsColor> colors = ColorConverter.convertToSettings(DEFAULT_TRACK_COLORS);
-		settings.setRouteColors(colors);
-		migrateIfNecessary();
-	}
-
-	private void loadSettings(Path settingsFile) {
-		try {
-			String jsonDoc = FileUtils.readFileToString(settingsFile.toFile(), Charset.forName("UTF-8")); //$NON-NLS-1$
-			settings = JSON.std
-					.with(Feature.PRETTY_PRINT_OUTPUT).
-					beanFrom(Settings.class, jsonDoc);
-		} catch (IOException e) {
-			handleException(e);
-		}
-	}
-
-	private void handleException(IOException e) {
-		LOG.error("Error while trying to load settings:", e); //$NON-NLS-1$
-	}
-
-	private Path getSettingsFile() {
-		String userDir = FileUtils.getUserDirectoryPath();
-		return Paths.get(userDir, ".bulkgpxviewer", "settings.json"); //$NON-NLS-1$ //$NON-NLS-2$
-	}
+    companion object {
+        private val LOG: Logger = LogManager.getLogger(SettingsManager::class.java)
+        private val DEFAULT_TRACK_COLORS: List<Color?> = Arrays.asList(
+            Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.GRAY,
+            Color.WHITE, Color.PINK
+        )
+    }
 }
