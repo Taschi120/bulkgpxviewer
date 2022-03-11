@@ -2,7 +2,7 @@
 
 ![Screenshot](https://github.com/Taschi120/bulkgpxviewer/blob/master/github-resources/screenshot_01.png?raw=true)
 
-This is a small Java program for displaying multiple GPX tracks recorded by a GPS receiver and / or smartphone app. It can be used, for example, to display an archive of your bike trips, roadtrips, hiking trips or other sports activities. Uses map data from OpenStreetMap.
+This is a small program for displaying multiple GPX tracks recorded by a GPS receiver and / or smartphone app. It can be used, for example, to display an archive of your bike trips, roadtrips, hiking trips or other sports activities. Uses map data from OpenStreetMap.
 
 Available languages are English and German.
 
@@ -28,4 +28,4 @@ If `makensis` is not on your `PATH` environment variable, use the `-Dnsis.makens
 
 # Developing
 
-For development, I recommend using Eclipse. This project uses Lombok, which will need to be installed in your IDE or you will get compiler errors. Instructions are available here: https://projectlombok.org/
+For development, I recommend using IntelliJ IDEA.
