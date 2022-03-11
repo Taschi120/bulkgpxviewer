@@ -11,15 +11,16 @@ import javax.swing.tree.DefaultMutableTreeNode
 
 class DistanceNode(parent: GpxFileTreeNode) : DefaultMutableTreeNode(), GpxFileRelatedNode {
     @Inject
-    private val routeLengthCalculator: RouteLengthCalculator? = null
+    private lateinit var routeLengthCalculator: RouteLengthCalculator
 
     @Inject
-    private val settingsManager: SettingsManager? = null
+    private lateinit var settingsManager: SettingsManager
+
     val parentNode: GpxFileTreeNode
 
     init {
         this.parentNode = parent
-        Application.Companion.getInjector().injectMembers(this)
+        Application.getInjector().injectMembers(this)
         update()
     }
 
@@ -27,8 +28,8 @@ class DistanceNode(parent: GpxFileTreeNode) : DefaultMutableTreeNode(), GpxFileR
         get() = parentNode
 
     private fun getLabel(file: GpxFile): String {
-        val unitSystem = settingsManager?.settings?.unitSystem ?: UnitSystem.METRIC
-        val distance = routeLengthCalculator!!.getFormattedTotalDistance(parentNode.track.gpx, unitSystem)
+        val unitSystem = settingsManager.settings?.unitSystem ?: UnitSystem.METRIC
+        val distance = routeLengthCalculator.getFormattedTotalDistance(parentNode.track.gpx, unitSystem)
         return String.format(Messages.getString("GpxFileTreeNode.TrackLength"), distance) //$NON-NLS-1$	
     }
 

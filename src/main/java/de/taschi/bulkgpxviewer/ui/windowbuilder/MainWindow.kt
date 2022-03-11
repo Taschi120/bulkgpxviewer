@@ -46,7 +46,9 @@ import javax.swing.*
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
- */   class MainWindow : SettingsUpdateListener {
+ */
+
+class MainWindow : SettingsUpdateListener {
     var frame: JFrame? = null
         private set
     private var splitPane: JSplitPane? = null
@@ -77,7 +79,7 @@ import javax.swing.*
      * Create the application.
      */
     init {
-        Application.Companion.getInjector().injectMembers(this)
+        Application.getInjector().injectMembers(this)
         initialize()
     }
 
@@ -322,7 +324,7 @@ import javax.swing.*
             EventQueue.invokeLater {
                 try {
                     val window = MainWindow()
-                    Application.Companion.getInjector().injectMembers(window)
+                    Application.getInjector().injectMembers(window)
                     window.frame!!.isVisible = true
                 } catch (e: Exception) {
                     e.printStackTrace()

@@ -15,10 +15,10 @@ import javax.swing.tree.DefaultMutableTreeNode
  */
 class AvgSpeedNode(parent: GpxFileTreeNode) : DefaultMutableTreeNode(), GpxFileRelatedNode {
     @Inject
-    private val speedCalculator: SpeedCalculator? = null
+    private lateinit var speedCalculator: SpeedCalculator
 
     @Inject
-    private val settingsManager: SettingsManager? = null
+    private lateinit var settingsManager: SettingsManager
 
     protected val parentNode: GpxFileTreeNode
 
@@ -32,8 +32,8 @@ class AvgSpeedNode(parent: GpxFileTreeNode) : DefaultMutableTreeNode(), GpxFileR
         get() = parentNode
 
     private fun getLabel(file: GpxFile): String {
-        val unitSystem = settingsManager?.settings?.unitSystem ?: UnitSystem.METRIC
-        val formattedSpeed = speedCalculator!!.getFormattedAverageSpeed(parentNode.track.gpx, unitSystem)
+        val unitSystem = settingsManager.settings?.unitSystem ?: UnitSystem.METRIC
+        val formattedSpeed = speedCalculator.getFormattedAverageSpeed(parentNode.track.gpx, unitSystem)
         return String.format(
             Messages.getString("GpxFileTreeNode.AverageSpeedLabelFormat"),
             formattedSpeed

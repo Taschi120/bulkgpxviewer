@@ -29,6 +29,7 @@ import de.taschi.bulkgpxviewer.files.LoadedFileManager
 import de.taschi.bulkgpxviewer.geo.GpsBoundingBox
 import de.taschi.bulkgpxviewer.geo.GpxToJxMapper
 import io.jenetics.jpx.WayPoint
+import org.apache.logging.log4j.LogManager
 import org.jxmapviewer.JXMapKit
 import org.jxmapviewer.OSMTileFactoryInfo
 import org.jxmapviewer.viewer.DefaultTileFactory
@@ -115,7 +116,8 @@ class MapPanel : JPanel() {
                 .flatMap { segment -> segment.points() }
                 .map { wp -> GpxToJxMapper.waypointToGeoPosition(wp) }
                 .forEach { pos -> boundingBox.expandToFit(pos) }
-            mapKit.addressLocation = GeoPosition(boundingBox.centerLat, boundingBox.centerLat)
+            mapKit.addressLocation = GeoPosition(boundingBox.centerLat, boundingBox.centerLong)
+            log.info("Setting automatic location to ${boundingBox.centerLat} | ${boundingBox.centerLong}")
             mapKit.setZoom(8)
         }
     }
@@ -129,6 +131,7 @@ class MapPanel : JPanel() {
     }
 
     companion object {
+        private val log = LogManager.getLogger(MapPanel::class.java)
         private const val serialVersionUID = -1865773680018087837L
     }
 }

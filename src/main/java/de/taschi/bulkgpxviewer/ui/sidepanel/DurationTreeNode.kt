@@ -9,12 +9,13 @@ import java.time.Duration
 import javax.inject.Inject
 import javax.swing.tree.DefaultMutableTreeNode
 
-class DurationTreeNode(parent: GpxFileTreeNode) : DefaultMutableTreeNode(), GpxFileRelatedNode {
+open class DurationTreeNode(parent: GpxFileTreeNode) : DefaultMutableTreeNode(), GpxFileRelatedNode {
     @Inject
-    private val durationCalculator: DurationCalculator? = null
+    open lateinit var durationCalculator: DurationCalculator
 
     @Inject
-    private val durationFormatter: DurationFormatter? = null
+    open lateinit var durationFormatter: DurationFormatter
+
     protected val parentNode: GpxFileTreeNode
 
     init {
