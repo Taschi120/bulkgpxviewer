@@ -29,7 +29,7 @@ import javax.swing.UIManager
  */
 
 class Application private constructor() {
-    private var mainWindowIntl: MainWindow? = null
+    private lateinit var mainWindowIntl: MainWindow
     private val injectorIntl: Injector
 
     init {
@@ -45,31 +45,31 @@ class Application private constructor() {
             log.error("Error while setting system look and feel", e) //$NON-NLS-1$
         }
         mainWindowIntl = MainWindow()
-        mainWindowIntl!!.setVisible(true)
+        mainWindowIntl.setVisible(true)
     }
 
     companion object {
         private val log = LoggerFactory.getLogger(Application::class.java)
         private var INSTANCE: Application? = null
-        private val instance: Application?
+        private val instance: Application
             private get() {
                 if (INSTANCE == null) {
                     INSTANCE = Application()
                 }
-                return INSTANCE
+                return INSTANCE!!
             }
 
         fun getMainWindow(): MainWindow? {
-            return instance!!.mainWindowIntl
+            return instance.mainWindowIntl
         }
 
         fun getInjector(): Injector {
-            return instance!!.injectorIntl
+            return instance.injectorIntl
         }
 
         @JvmStatic
         fun main(args: Array<String>) {
-            instance!!.start()
+            instance.start()
         }
     }
 }
