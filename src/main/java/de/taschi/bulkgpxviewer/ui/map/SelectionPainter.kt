@@ -4,16 +4,15 @@ import de.taschi.bulkgpxviewer.files.GpxFile
 import de.taschi.bulkgpxviewer.geo.GpxToJxMapper
 import de.taschi.bulkgpxviewer.geo.WaypointIndex
 import io.jenetics.jpx.WayPoint
-import org.apache.logging.log4j.LogManager
 import org.jxmapviewer.JXMapViewer
 import org.jxmapviewer.painter.Painter
 import org.jxmapviewer.viewer.GeoPosition
-import org.jxmapviewer.viewer.Waypoint
+import org.slf4j.LoggerFactory
 import java.awt.Graphics2D
 import java.awt.Image
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
-import java.util.Optional
+import java.util.*
 import java.util.stream.Collectors
 import javax.imageio.ImageIO
 import kotlin.math.roundToInt
@@ -138,8 +137,6 @@ class SelectionPainter : Painter<JXMapViewer> {
     }
 
     companion object {
-        private val log = LogManager.getLogger(
-            SelectionPainter::class.java
-        )
+        private val log = LoggerFactory.getLogger(SelectionPainter::class.java)
     }
 }

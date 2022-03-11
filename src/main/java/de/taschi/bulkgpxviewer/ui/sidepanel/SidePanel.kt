@@ -26,7 +26,7 @@ import de.taschi.bulkgpxviewer.files.GpxFile
 import de.taschi.bulkgpxviewer.files.LoadedFileChangeListener
 import de.taschi.bulkgpxviewer.files.LoadedFileManager
 import de.taschi.bulkgpxviewer.ui.Messages
-import org.apache.logging.log4j.LogManager
+import org.slf4j.LoggerFactory
 import java.awt.BorderLayout
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -35,13 +35,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
-import java.util.function.Function
-import java.util.stream.Collectors
-import javax.swing.JPanel
-import javax.swing.JScrollPane
-import javax.swing.JTree
-import javax.swing.ScrollPaneConstants
-import javax.swing.SwingUtilities
+import javax.swing.*
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.TreePath
@@ -80,7 +74,7 @@ class SidePanel : JPanel() {
 
     @Synchronized
     private fun createTreeModel() {
-        LOG.info("Recreating tree model") //$NON-NLS-1$
+        log.info("Recreating tree model") //$NON-NLS-1$
         if (rootNode == null) {
             rootNode = DefaultMutableTreeNode(Messages.getString("SidePanel.allFiles")) //$NON-NLS-1$
         } else {
@@ -121,7 +115,7 @@ class SidePanel : JPanel() {
             val year: Int = startDate.getYear()
             yearNode = yearNodes[year]
             if (yearNode == null) {
-                LOG.info("Making node for year $year") //$NON-NLS-1$
+                log.info("Making node for year $year") //$NON-NLS-1$
                 yearNode = DefaultMutableTreeNode(year)
                 yearNodes[year] = yearNode
                 rootNode!!.add(yearNode)
@@ -140,12 +134,12 @@ class SidePanel : JPanel() {
     private fun makeOrUpdateTrackNode(track: GpxFile, parent: DefaultMutableTreeNode?) {
         var result = trackNodes[track.fileName]
         if (result == null) {
-            LOG.debug("Making new tree node for {}", track.fileName.toString()) //$NON-NLS-1$
+            log.debug("Making new tree node for {}", track.fileName.toString()) //$NON-NLS-1$
             result = GpxFileTreeNode(track)
             trackNodes[track.fileName] = result
             parent!!.add(result)
         } else {
-            LOG.debug("Updating tree node for {}", track.fileName.toString()) //$NON-NLS-1$
+            log.debug("Updating tree node for {}", track.fileName.toString()) //$NON-NLS-1$
             result.update()
         }
     }
@@ -205,8 +199,7 @@ class SidePanel : JPanel() {
     }
 
     companion object {
-        private val LOG = LogManager.getLogger(SidePanel::class.java)
+        private val log = LoggerFactory.getLogger(SidePanel::class.java)
         private const val serialVersionUID = -4050409521285757121L
-        private val log = LogManager.getLogger(SidePanel::class.java)
     }
 }

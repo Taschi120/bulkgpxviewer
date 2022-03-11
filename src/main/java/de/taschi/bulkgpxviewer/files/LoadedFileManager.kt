@@ -3,8 +3,7 @@ package de.taschi.bulkgpxviewer.files
 import com.google.inject.Singleton
 import de.taschi.bulkgpxviewer.files.LoadedFileManager
 import io.jenetics.jpx.GPX
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.nio.file.FileSystems
 import java.nio.file.Files
@@ -53,12 +52,12 @@ class LoadedFileManager constructor() {
      * @param file
      */
     private fun loadFile(file: Path) {
-        LOG.info("Loading GPX file " + file.toString()) //$NON-NLS-1$
+        log.info("Loading GPX file $file") //$NON-NLS-1$
         try {
-            val gpx: GPX = GPX.read(file)
-            val track: GpxFile = GpxFile(file, gpx)
+            val gpx = GPX.read(file)
+            val track = GpxFile(file, gpx)
             loadedTracks.add(track)
-            LOG.info("GPX file " + file.toString() + " has been successfully loaded.") //$NON-NLS-1$ //$NON-NLS-2$
+            log.info("GPX file $file has been successfully loaded.") //$NON-NLS-1$ //$NON-NLS-2$
             fireChangeListeners()
         } catch (e: IOException) {
             throw RuntimeException(e)
@@ -131,8 +130,6 @@ class LoadedFileManager constructor() {
     }
 
     companion object {
-        private val LOG: Logger = LogManager.getLogger(
-            LoadedFileManager::class.java
-        )
+        private val log = LoggerFactory.getLogger(LoadedFileManager::class.java)
     }
 }

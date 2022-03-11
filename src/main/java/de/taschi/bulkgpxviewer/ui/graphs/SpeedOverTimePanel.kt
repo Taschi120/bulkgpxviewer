@@ -3,7 +3,6 @@ package de.taschi.bulkgpxviewer.ui.graphs
 import com.google.inject.Inject
 import de.taschi.bulkgpxviewer.Application
 import de.taschi.bulkgpxviewer.math.TrackStatisticsManager
-import de.taschi.bulkgpxviewer.settings.SettingsManager
 import de.taschi.bulkgpxviewer.settings.dto.UnitSystem
 import io.jenetics.jpx.TrackSegment
 import org.jfree.data.xy.XYDataset

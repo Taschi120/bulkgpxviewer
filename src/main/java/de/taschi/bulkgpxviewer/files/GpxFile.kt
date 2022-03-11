@@ -8,9 +8,8 @@ import io.jenetics.jpx.Track
 import io.jenetics.jpx.TrackSegment
 import io.jenetics.jpx.WayPoint
 import org.apache.commons.io.FileUtils
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 import org.jxmapviewer.viewer.GeoPosition
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.IOException
 import java.nio.file.Path
@@ -165,6 +164,6 @@ class GpxFile constructor(val fileName: Path, var gpx: GPX) {
         }
 
     companion object {
-        private val log: Logger = LogManager.getLogger(GpxFile::class.java)
+        private val log = LoggerFactory.getLogger(GpxFile::class.java)
     }
 }

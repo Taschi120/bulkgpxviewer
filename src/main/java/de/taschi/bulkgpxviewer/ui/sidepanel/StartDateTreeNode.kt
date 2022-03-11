@@ -2,7 +2,6 @@ package de.taschi.bulkgpxviewer.ui.sidepanel
 
 import de.taschi.bulkgpxviewer.files.GpxFile
 import de.taschi.bulkgpxviewer.ui.Messages
-import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import javax.swing.tree.DefaultMutableTreeNode

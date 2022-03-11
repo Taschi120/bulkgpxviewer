@@ -3,7 +3,7 @@ package de.taschi.bulkgpxviewer.ui.windowbuilder
 import de.taschi.bulkgpxviewer.ui.Messages
 import de.taschi.bulkgpxviewer.ui.windowbuilder.InfoDialog
 import org.apache.commons.io.FileUtils
-import org.apache.logging.log4j.LogManager
+import org.slf4j.LoggerFactory
 import java.awt.BorderLayout
 import java.awt.FlowLayout
 import java.awt.event.ActionEvent
@@ -115,7 +115,7 @@ import javax.swing.border.EmptyBorder
             licenseScrollPane!!.verticalScrollBar.value = 0
             thirdPartyScrollPane!!.verticalScrollBar.value = 0
         } catch (e: IOException) {
-            LOG.error("Couldn't load license or third-party licenses", e) //$NON-NLS-1$
+            log.error("Couldn't load license or third-party licenses", e) //$NON-NLS-1$
         }
     }
 
@@ -124,7 +124,7 @@ import javax.swing.border.EmptyBorder
     }
 
     companion object {
-        private val LOG = LogManager.getLogger(InfoDialog::class.java)
+        private val log = LoggerFactory.getLogger(InfoDialog::class.java)
         private const val serialVersionUID = -8478805153020789079L
 
         /**
@@ -137,7 +137,7 @@ import javax.swing.border.EmptyBorder
                 dialog.defaultCloseOperation = DISPOSE_ON_CLOSE
                 dialog.isVisible = true
             } catch (e: Exception) {
-                LOG.error(e)
+                log.error("Exception in Eclipse WindowBuilder launch", e)
             }
         }
     }

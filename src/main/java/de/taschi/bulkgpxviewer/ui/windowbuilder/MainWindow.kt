@@ -14,7 +14,7 @@ import de.taschi.bulkgpxviewer.ui.map.MapPanel
 import de.taschi.bulkgpxviewer.ui.sidepanel.SidePanel
 import io.jenetics.jpx.WayPoint
 import org.apache.commons.lang3.StringUtils
-import org.apache.logging.log4j.LogManager
+import org.slf4j.LoggerFactory
 import java.awt.*
 import java.awt.event.ActionEvent
 import java.awt.event.WindowAdapter
@@ -222,7 +222,7 @@ class MainWindow : SettingsUpdateListener {
                 frame,
                 Messages.getString("MainWindow.ErrorWhileLoadingGPXFiles") + selectedFile.absolutePath
             ) //$NON-NLS-1$
-            LOG.error("Error while loading GPX files from folder " + selectedFile.absolutePath, e) //$NON-NLS-1$
+            log.error("Error while loading GPX files from folder " + selectedFile.absolutePath, e) //$NON-NLS-1$
         }
     }
 
@@ -271,7 +271,7 @@ class MainWindow : SettingsUpdateListener {
         try {
             Desktop.getDesktop().browse(URI.create("https://github.com/Taschi120/bulkgpxviewer")) //$NON-NLS-1$
         } catch (e: IOException) {
-            LOG.error("Error while trying to open GitHub site in system browser", e) //$NON-NLS-1$
+            log.error("Error while trying to open GitHub site in system browser", e) //$NON-NLS-1$
             JOptionPane.showMessageDialog(
                 frame,
                 Messages.getString("MainWindow.CouldNotOpenBrowser"),
@@ -284,7 +284,7 @@ class MainWindow : SettingsUpdateListener {
     private fun closeEventHandler(evt: ActionEvent?) {
         writeWindowStateToSettings()
         settingsManager!!.saveSettings()
-        LOG.info("Closing application by user request.") //$NON-NLS-1$
+        log.info("Closing application by user request.") //$NON-NLS-1$
         System.exit(0)
     }
 
@@ -314,7 +314,7 @@ class MainWindow : SettingsUpdateListener {
     }
 
     companion object {
-        private val LOG = LogManager.getLogger(MainWindow::class.java)
+        private val log = LoggerFactory.getLogger(MainWindow::class.java)
 
         /**
          * Launch the application.

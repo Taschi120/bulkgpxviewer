@@ -2,8 +2,7 @@ package de.taschi.bulkgpxviewer.ui.sidepanel
 
 import com.google.inject.Inject
 import de.taschi.bulkgpxviewer.Application
-import de.taschi.bulkgpxviewer.files.*
-import java.util.stream.Collectors
+import de.taschi.bulkgpxviewer.files.TagManager
 import javax.swing.tree.DefaultMutableTreeNode
 
 class TagNode(override val gpxFileTreeNode: GpxFileTreeNode) : DefaultMutableTreeNode(), GpxFileRelatedNode {

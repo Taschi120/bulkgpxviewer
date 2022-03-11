@@ -6,8 +6,7 @@ import io.jenetics.jpx.GPX
 import io.jenetics.jpx.Track
 import io.jenetics.jpx.TrackSegment
 import io.jenetics.jpx.WayPoint
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.Instant
 import java.util.*
@@ -105,8 +104,6 @@ class DurationCalculator constructor() {
     }
 
     companion object {
-        private val log: Logger = LogManager.getLogger(
-            DurationCalculator::class.java
-        )
+        private val log = LoggerFactory.getLogger(DurationCalculator::class.java)
     }
 }

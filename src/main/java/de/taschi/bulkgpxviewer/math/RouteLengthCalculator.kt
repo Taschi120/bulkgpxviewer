@@ -9,8 +9,6 @@ import io.jenetics.jpx.TrackSegment
 import io.jenetics.jpx.WayPoint
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.util.function.BinaryOperator
-import java.util.function.Function
 
 /*-
  * #%L

@@ -1,7 +1,6 @@
 package de.taschi.bulkgpxviewer.ui
 
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import org.slf4j.LoggerFactory
 import javax.imageio.ImageIO
 import javax.swing.ImageIcon
 
@@ -25,8 +24,12 @@ import javax.swing.ImageIcon
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
- */   object IconHandler {
-    private val log: Logger = LogManager.getLogger(IconHandler::class.java)
+ */
+
+object IconHandler {
+    private val log = LoggerFactory.getLogger(IconHandler::class.java)
+
+
     fun loadIcon(name: String): ImageIcon? {
         try {
             val result: ImageIcon =

@@ -3,8 +3,7 @@ package de.taschi.bulkgpxviewer
 import com.google.inject.Guice
 import com.google.inject.Injector
 import de.taschi.bulkgpxviewer.ui.windowbuilder.MainWindow
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import org.slf4j.LoggerFactory
 import javax.swing.UIManager
 
 /*-
@@ -50,7 +49,7 @@ class Application private constructor() {
     }
 
     companion object {
-        private val log: Logger = LogManager.getLogger(Application::class.java)
+        private val log = LoggerFactory.getLogger(Application::class.java)
         private var INSTANCE: Application? = null
         private val instance: Application?
             private get() {

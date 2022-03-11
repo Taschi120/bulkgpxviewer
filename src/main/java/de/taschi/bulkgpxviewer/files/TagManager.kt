@@ -2,8 +2,7 @@ package de.taschi.bulkgpxviewer.files
 
 import com.fasterxml.jackson.jr.ob.JSON
 import com.google.inject.Singleton
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import org.slf4j.LoggerFactory
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -142,6 +141,6 @@ class TagManager constructor() {
     }
 
     companion object {
-        private val log: Logger = LogManager.getLogger(TagManager::class.java)
+        private val log = LoggerFactory.getLogger(TagManager::class.java)
     }
 }

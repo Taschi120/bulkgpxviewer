@@ -30,7 +30,7 @@ import io.jenetics.jpx.GPX
 import io.jenetics.jpx.Track
 import io.jenetics.jpx.TrackSegment
 import io.jenetics.jpx.WayPoint
-import org.apache.logging.log4j.LogManager
+import org.slf4j.LoggerFactory
 import java.awt.*
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
@@ -517,7 +517,7 @@ class EditingPanel : JPanel() {
     }
 
     companion object {
-        private val log = LogManager.getLogger(EditingPanel::class.java)
+        private val log = LoggerFactory.getLogger(EditingPanel::class.java)
         private const val serialVersionUID = 6937011900054488316L
     }
 }

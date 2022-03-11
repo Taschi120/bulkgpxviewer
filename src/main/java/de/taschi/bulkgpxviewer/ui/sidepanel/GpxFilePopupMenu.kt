@@ -27,7 +27,7 @@ import de.taschi.bulkgpxviewer.files.LoadedFileManager
 import de.taschi.bulkgpxviewer.ui.IconHandler
 import de.taschi.bulkgpxviewer.ui.Messages
 import org.apache.commons.lang3.StringUtils
-import org.apache.logging.log4j.LogManager
+import org.slf4j.LoggerFactory
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import java.io.IOException
@@ -131,8 +131,6 @@ class GpxFilePopupMenu : JPopupMenu() {
 
     companion object {
         private const val serialVersionUID = -3214637893458879098L
-        private val log = LogManager.getLogger(
-            GpxFilePopupMenu::class.java
-        )
+        private val log = LoggerFactory.getLogger(GpxFilePopupMenu::class.java)
     }
 }

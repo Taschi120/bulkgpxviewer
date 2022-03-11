@@ -5,11 +5,10 @@ import de.taschi.bulkgpxviewer.ui.Messages
 import io.jenetics.jpx.Length
 import io.jenetics.jpx.TrackSegment
 import io.jenetics.jpx.WayPoint
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 import org.jfree.data.xy.XYDataset
 import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection
+import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.*
@@ -453,6 +452,8 @@ class TrackStatisticsManager constructor() {
     }
 
     companion object {
+        private val log = LoggerFactory.getLogger(TrackStatisticsManager::class.java        )
+
         /**
          * If speed between two points is below this threshold, it will be rounded down to 0.
          * This compensates for GPS imprecisions creating the impression of movement while
@@ -460,9 +461,6 @@ class TrackStatisticsManager constructor() {
          */
         private val STANDING_SPEED_THRESHOLD: Double = 2.0
         private val ZERO_LENGTH: Length = Length.of(0.0, Length.Unit.METER)
-        private val log: Logger = LogManager.getLogger(
-            TrackStatisticsManager::class.java
-        )
 
         private fun buildXYDataset(name: String?, xAxis: List<Double>, yAxis: List<Double>): XYDataset {
             val result: XYSeries = XYSeries(name)

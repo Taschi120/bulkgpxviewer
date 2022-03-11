@@ -7,13 +7,13 @@ import de.taschi.bulkgpxviewer.settings.dto.Settings
 import de.taschi.bulkgpxviewer.settings.dto.SettingsColor
 import de.taschi.bulkgpxviewer.settings.dto.UnitSystem
 import org.apache.commons.io.FileUtils
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import org.slf4j.LoggerFactory
 import java.awt.Color
 import java.io.IOException
 import java.nio.charset.Charset
-import java.nio.file.*
-import java.util.*
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import javax.swing.SwingUtilities
 
 /*-
@@ -45,7 +45,7 @@ class SettingsManager constructor() {
     private val updateListeners: MutableList<SettingsUpdateListener> = ArrayList()
 
     init {
-        LOG.info("Loading settings") //$NON-NLS-1$
+        log.info("Loading settings") //$NON-NLS-1$
         loadOrInitSettings(settingsFile)
     }
 
@@ -94,14 +94,14 @@ class SettingsManager constructor() {
 
     private fun migrateToV0_2_0() {
         if (settings?.mainWindowSettings == null) {
-            LOG.info("Updating settings to v0.2.0") //$NON-NLS-1$
+            log.info("Updating settings to v0.2.0") //$NON-NLS-1$
             settings?.mainWindowSettings = MainWindowSettings()
         }
     }
 
     private fun migrateToV0_3_0() {
         if (settings?.unitSystem == null) {
-            LOG.info("Updating settings to v0.3.0") //$NON-NLS-1$
+            log.info("Updating settings to v0.3.0") //$NON-NLS-1$
             settings?.unitSystem = UnitSystem.METRIC
         }
         if (settings?.selectedRouteColor == null) {
@@ -131,7 +131,7 @@ class SettingsManager constructor() {
     }
 
     private fun handleException(e: IOException) {
-        LOG.error("Error while trying to load settings:", e) //$NON-NLS-1$
+        log.error("Error while trying to load settings:", e) //$NON-NLS-1$
     }
 
     //$NON-NLS-1$ //$NON-NLS-2$
@@ -142,7 +142,7 @@ class SettingsManager constructor() {
         }
 
     companion object {
-        private val LOG: Logger = LogManager.getLogger(SettingsManager::class.java)
+        private val log = LoggerFactory.getLogger(SettingsManager::class.java)
         private val DEFAULT_TRACK_COLORS = listOf(
             Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.GRAY,
             Color.WHITE, Color.PINK

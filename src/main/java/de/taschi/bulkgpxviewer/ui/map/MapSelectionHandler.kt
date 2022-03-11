@@ -3,9 +3,10 @@ package de.taschi.bulkgpxviewer.ui.map
 import de.taschi.bulkgpxviewer.files.GpxFile
 import de.taschi.bulkgpxviewer.ui.map.MapSelectionHandler
 import io.jenetics.jpx.WayPoint
-import org.apache.logging.log4j.LogManager
 import org.jxmapviewer.JXMapViewer
-import java.awt.event.*
+import org.slf4j.LoggerFactory
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import java.awt.geom.Point2D
 import java.util.*
 import java.util.stream.Collectors
@@ -155,8 +156,6 @@ class MapSelectionHandler(private val target: JXMapViewer) : MouseAdapter() {
          * How far away from the waypoint the cursor can be when selecting a waypoint, in pixels
          */
         const val SELECTION_THRESHOLD = 20
-        private val log = LogManager.getLogger(
-            MapSelectionHandler::class.java
-        )
+        private val log = LoggerFactory.getLogger(MapSelectionHandler::class.java)
     }
 }

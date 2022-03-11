@@ -29,12 +29,12 @@ import de.taschi.bulkgpxviewer.files.LoadedFileManager
 import de.taschi.bulkgpxviewer.geo.GpsBoundingBox
 import de.taschi.bulkgpxviewer.geo.GpxToJxMapper
 import io.jenetics.jpx.WayPoint
-import org.apache.logging.log4j.LogManager
 import org.jxmapviewer.JXMapKit
 import org.jxmapviewer.OSMTileFactoryInfo
 import org.jxmapviewer.viewer.DefaultTileFactory
 import org.jxmapviewer.viewer.GeoPosition
 import org.jxmapviewer.viewer.TileFactoryInfo
+import org.slf4j.LoggerFactory
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
@@ -107,7 +107,7 @@ class MapPanel : JPanel() {
         if (tracks.isEmpty()) {
             // default location
             mapKit.setZoom(8)
-            mapKit.setAddressLocation(GeoPosition(50.11, 8.68))
+            mapKit.addressLocation = GeoPosition(50.11, 8.68)
         } else {
             val boundingBox = GpsBoundingBox()
             tracks.stream().map { file -> file.gpx }
@@ -131,7 +131,7 @@ class MapPanel : JPanel() {
     }
 
     companion object {
-        private val log = LogManager.getLogger(MapPanel::class.java)
+        private val log = LoggerFactory.getLogger(MapPanel::class.java)
         private const val serialVersionUID = -1865773680018087837L
     }
 }

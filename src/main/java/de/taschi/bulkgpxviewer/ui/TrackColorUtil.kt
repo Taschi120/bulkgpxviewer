@@ -1,15 +1,14 @@
 package de.taschi.bulkgpxviewer.ui
 
-import com.google.inject.*
+import com.google.inject.Inject
+import com.google.inject.Singleton
 import de.taschi.bulkgpxviewer.files.GpxFile
 import de.taschi.bulkgpxviewer.settings.ColorConverter
 import de.taschi.bulkgpxviewer.settings.SettingsManager
 import de.taschi.bulkgpxviewer.settings.dto.SettingsColor
 import de.taschi.bulkgpxviewer.ui.TrackColorUtil
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import org.slf4j.LoggerFactory
 import java.awt.Color
-import java.util.*
 
 /*-
 * #%L
@@ -62,8 +61,6 @@ class TrackColorUtil constructor() {
     }
 
     companion object {
-        private val log: Logger = LogManager.getLogger(
-            TrackColorUtil::class.java
-        )
+        private val log = LoggerFactory.getLogger(TrackColorUtil::class.java)
     }
 }

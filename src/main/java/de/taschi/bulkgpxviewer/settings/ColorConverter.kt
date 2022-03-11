@@ -2,8 +2,6 @@ package de.taschi.bulkgpxviewer.settings
 
 import de.taschi.bulkgpxviewer.settings.dto.SettingsColor
 import java.awt.Color
-import java.util.function.Function
-import java.util.stream.Collectors
 
 /*-
  * #%L

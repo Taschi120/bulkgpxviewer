@@ -6,8 +6,6 @@ import de.taschi.bulkgpxviewer.ui.Messages
 import io.jenetics.jpx.GPX
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.time.Duration
-import java.util.*
 
 /*-
  * #%L
