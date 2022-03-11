@@ -22,36 +22,30 @@ package de.taschi.bulkgpxviewer.ui.map;
  * #L%
  */
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.swing.SwingUtilities;
-
+import de.taschi.bulkgpxviewer.files.GpxFile;
+import io.jenetics.jpx.WayPoint;
+import org.apache.logging.log4j.Logger;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.GeoPosition;
 
-import de.taschi.bulkgpxviewer.files.GpxFile;
-import io.jenetics.jpx.WayPoint;
-import lombok.extern.log4j.Log4j2;
+import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This listener handles the selection of wapypoints on the map during editing mode.
  */
-@Log4j2
 public class MapSelectionHandler extends MouseAdapter {
 	
 	/**
 	 * How far away from the waypoint the cursor can be when selecting a waypoint, in pixels
 	 */
 	public static final int SELECTION_THRESHOLD = 20;
-	
+	private static final Logger log = org.apache.logging.log4j.LogManager.getLogger(MapSelectionHandler.class);
+
 	private final JXMapViewer target;
 	
 	private boolean active = false;

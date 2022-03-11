@@ -158,5 +158,8 @@ public class MapPanel extends JPanel {
 		this.selectedFile = selectedFile;
 		repaint();
 	}
-	
+
+	public GpxFile getSelectedFile() {
+		return this.selectedFile;
+	}
 }

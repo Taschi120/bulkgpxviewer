@@ -56,13 +56,13 @@ import de.taschi.bulkgpxviewer.files.LoadedFileManager;
 import de.taschi.bulkgpxviewer.ui.Messages;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 public class SidePanel extends JPanel {
 	
 	private static final Logger LOG = LogManager.getLogger(SidePanel.class);
 	
 	private static final long serialVersionUID = -4050409521285757121L;
-	
+	private static final Logger log = LogManager.getLogger(SidePanel.class);
+
 	private JTree treeView;
 	private DefaultMutableTreeNode rootNode;
 	

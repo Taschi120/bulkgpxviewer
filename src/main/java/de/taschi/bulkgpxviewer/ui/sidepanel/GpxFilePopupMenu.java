@@ -41,12 +41,13 @@ import de.taschi.bulkgpxviewer.files.LoadedFileManager;
 import de.taschi.bulkgpxviewer.ui.IconHandler;
 import de.taschi.bulkgpxviewer.ui.Messages;
 import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Logger;
 
-@Log4j2
 public class GpxFilePopupMenu extends JPopupMenu {
 	
 	private static final long serialVersionUID = -3214637893458879098L;
-	
+	private static final Logger log = org.apache.logging.log4j.LogManager.getLogger(GpxFilePopupMenu.class);
+
 	private GpxFile track;
 	private GpxFileTreeNode node;
 	

@@ -1,5 +1,16 @@
 package de.taschi.bulkgpxviewer.math;
 
+import de.taschi.bulkgpxviewer.settings.dto.UnitSystem;
+import de.taschi.bulkgpxviewer.ui.Messages;
+import io.jenetics.jpx.Length;
+import io.jenetics.jpx.Length.Unit;
+import io.jenetics.jpx.TrackSegment;
+import org.apache.logging.log4j.Logger;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+
+import javax.inject.Inject;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,24 +18,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
-import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
-
-import de.taschi.bulkgpxviewer.settings.dto.UnitSystem;
-import de.taschi.bulkgpxviewer.ui.Messages;
-import io.jenetics.jpx.Length;
-import io.jenetics.jpx.TrackSegment;
-import io.jenetics.jpx.Length.Unit;
-import lombok.extern.log4j.Log4j2;
-
 /**
  * Helper class for calculating and caching detailed statistics
  * for GPX tracks, like distance, speed, altitude etc as data rows (arrays of data per GPX node)
  */
-@Log4j2
 public class TrackStatisticsManager {
 	
 	/**
@@ -35,7 +32,8 @@ public class TrackStatisticsManager {
 	private static final double STANDING_SPEED_THRESHOLD = 2;
 	
 	private static final Length ZERO_LENGTH = Length.of(0, Unit.METER);
-	
+	private static final Logger log = org.apache.logging.log4j.LogManager.getLogger(TrackStatisticsManager.class);
+
 	/** Caches */
 	private HashMap<TrackSegment, List<Double>> distanceDiffs = new HashMap<>();
 	private HashMap<TrackSegment, List<Double>> totalDistances = new HashMap<>();

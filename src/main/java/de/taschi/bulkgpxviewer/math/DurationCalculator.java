@@ -22,20 +22,20 @@ package de.taschi.bulkgpxviewer.math;
  * #L%
  */
 
-import java.time.Duration;
-import java.util.Optional;
-
 import com.google.inject.Singleton;
-
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
-import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Logger;
 
-@Log4j2
+import java.time.Duration;
+import java.util.Optional;
+
 @Singleton
 public class DurationCalculator {
-	
+
+	private static final Logger log = org.apache.logging.log4j.LogManager.getLogger(DurationCalculator.class);
+
 	/**
 	 * Get the recorded duration of all tracks of a {@link GPX} file, disregarding any gaps between 
 	 * segments or tracks.
@@ -43,7 +43,7 @@ public class DurationCalculator {
 	 * I. e. if the file contains two segment of 30 minutes duration each, and there is a 30 minute gap
 	 * between the two segments, the result of this function will be 60 minutes.
 	 * 
-	 * @param track The track
+	 * @param gpx The Gpx file
 	 * @return An optional containing the duration if all track segments had timestamp info, or an
 	 * 	empty optional if at least one segment had no time stamp info.
 	 */

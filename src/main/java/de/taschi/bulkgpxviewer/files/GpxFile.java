@@ -22,6 +22,17 @@ package de.taschi.bulkgpxviewer.files;
  * #L%
  */
 
+import com.google.inject.Inject;
+import de.taschi.bulkgpxviewer.geo.GpxToJxMapper;
+import de.taschi.bulkgpxviewer.geo.WaypointIndex;
+import io.jenetics.jpx.GPX;
+import io.jenetics.jpx.Track;
+import io.jenetics.jpx.TrackSegment;
+import io.jenetics.jpx.WayPoint;
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.Logger;
+import org.jxmapviewer.viewer.GeoPosition;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -31,23 +42,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.FileUtils;
-import org.jxmapviewer.viewer.GeoPosition;
-
-import com.google.inject.Inject;
-
-import de.taschi.bulkgpxviewer.geo.GpxToJxMapper;
-import de.taschi.bulkgpxviewer.geo.WaypointIndex;
-import io.jenetics.jpx.GPX;
-import io.jenetics.jpx.Track;
-import io.jenetics.jpx.TrackSegment;
-import io.jenetics.jpx.WayPoint;
-import lombok.Getter;
-import lombok.extern.log4j.Log4j2;
-
-@Log4j2
 public class GpxFile {
-	
+
+	private static final Logger log = org.apache.logging.log4j.LogManager.getLogger(GpxFile.class);
 	private GPX gpx;
 	
 	private Path fileName;
@@ -58,7 +55,6 @@ public class GpxFile {
 	@Inject
 	private LoadedFileManager loadedFileManager;
 	
-	@Getter
 	private boolean changed = false;
 		
 	public GpxFile(Path fileName, GPX gpx) {
@@ -207,4 +203,7 @@ public class GpxFile {
 		return Optional.of(segments.get(0));
 	}
 
+	public boolean isChanged() {
+		return this.changed;
+	}
 }

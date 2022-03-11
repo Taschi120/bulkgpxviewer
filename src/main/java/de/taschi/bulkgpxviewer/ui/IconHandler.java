@@ -22,13 +22,14 @@ package de.taschi.bulkgpxviewer.ui;
  * #L%
  */
 
+import org.apache.logging.log4j.Logger;
+
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
-import lombok.extern.log4j.Log4j2;
-
-@Log4j2
 public class IconHandler {
+	private static final Logger log = org.apache.logging.log4j.LogManager.getLogger(IconHandler.class);
+
 	public static ImageIcon loadIcon(String name) {
 		try {
 			ImageIcon result = new ImageIcon(ImageIO.read(ClassLoader.getSystemResource("icons/" + name + ".png"))); //$NON-NLS-1$ //$NON-NLS-2$

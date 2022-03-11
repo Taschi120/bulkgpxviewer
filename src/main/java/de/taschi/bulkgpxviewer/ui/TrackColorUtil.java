@@ -22,26 +22,25 @@ package de.taschi.bulkgpxviewer.ui;
  * #L%
  */
 
-import java.awt.Color;
-import java.util.Collections;
-import java.util.List;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import de.taschi.bulkgpxviewer.files.GpxFile;
 import de.taschi.bulkgpxviewer.settings.ColorConverter;
 import de.taschi.bulkgpxviewer.settings.SettingsManager;
 import de.taschi.bulkgpxviewer.settings.dto.SettingsColor;
-import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Logger;
+
+import java.awt.*;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Utility class for assigning colors to tracks
  */
-@Log4j2
 @Singleton
 public class TrackColorUtil {
-	
+
+	private static final Logger log = org.apache.logging.log4j.LogManager.getLogger(TrackColorUtil.class);
 	@Inject
 	private SettingsManager settingsManager;
 	

@@ -23,17 +23,16 @@ package de.taschi.bulkgpxviewer;
  * #L%
  */
 
-import javax.swing.UIManager;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-
 import de.taschi.bulkgpxviewer.ui.windowbuilder.MainWindow;
-import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Logger;
 
-@Log4j2
+import javax.swing.*;
+
 public class Application {
-		
+
+	private static final Logger log = org.apache.logging.log4j.LogManager.getLogger(Application.class);
 	private static Application INSTANCE;
 	
 	private MainWindow mainWindow;

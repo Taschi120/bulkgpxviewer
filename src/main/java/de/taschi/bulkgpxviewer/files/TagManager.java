@@ -1,25 +1,23 @@
 package de.taschi.bulkgpxviewer.files;
 
+import com.fasterxml.jackson.jr.ob.JSON;
+import com.google.inject.Singleton;
+import lombok.Cleanup;
+import lombok.Synchronized;
+import org.apache.logging.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
-import com.fasterxml.jackson.jr.ob.JSON;
-import com.google.inject.Singleton;
-
-import lombok.Cleanup;
-import lombok.Synchronized;
-import lombok.extern.log4j.Log4j2;
-
-@Log4j2
 @Singleton
 public class TagManager {
+	private static final Logger log = org.apache.logging.log4j.LogManager.getLogger(TagManager.class);
 	/**
 	 * A list of "canonical" tags built into the software
 	 */

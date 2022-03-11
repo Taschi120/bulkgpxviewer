@@ -22,33 +22,28 @@ package de.taschi.bulkgpxviewer.ui.map;
  * #L%
  */
 
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
+import de.taschi.bulkgpxviewer.files.GpxFile;
+import de.taschi.bulkgpxviewer.geo.GpxToJxMapper;
+import io.jenetics.jpx.WayPoint;
+import org.apache.logging.log4j.Logger;
+import org.jxmapviewer.JXMapViewer;
+import org.jxmapviewer.painter.Painter;
+import org.jxmapviewer.viewer.GeoPosition;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.imageio.ImageIO;
-
-import org.jxmapviewer.JXMapViewer;
-import org.jxmapviewer.painter.Painter;
-import org.jxmapviewer.viewer.GeoPosition;
-
-import de.taschi.bulkgpxviewer.files.GpxFile;
-import de.taschi.bulkgpxviewer.geo.GpxToJxMapper;
-import io.jenetics.jpx.WayPoint;
-import lombok.extern.log4j.Log4j2;
-
 /**
  * Highlights a set of points on the map
  */
-@Log4j2
 public class SelectionPainter implements Painter<JXMapViewer>
-{	
+{
+	private static final Logger log = org.apache.logging.log4j.LogManager.getLogger(SelectionPainter.class);
 	private Image markerA;
 	private Image markerB;
 	private Image markerNeutral;
