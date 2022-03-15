@@ -26,7 +26,7 @@ class SpeedOverTimePanel : AbstractGraphPanel() {
 
     override fun getDataset(segment: TrackSegment?): XYDataset {
         return trackStatisticsManager!!.getSpeedOverTimeAsXY(
-            segment,
+            segment!!,
             settingsManager?.settings?.unitSystem ?: UnitSystem.METRIC
         )
     }

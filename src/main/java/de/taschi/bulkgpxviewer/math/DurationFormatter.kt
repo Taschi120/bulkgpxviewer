@@ -23,9 +23,11 @@ import java.time.Duration
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
- */   class DurationFormatter constructor() {
+ */
+
+class DurationFormatter {
     fun format(duration: Duration?): String {
-        val seconds: Long = duration!!.getSeconds()
+        val seconds: Long = duration!!.seconds
         return String.format(
             Messages.getString("DurationFormatter.HrMinSecFormat"),
             seconds / 3600,

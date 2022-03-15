@@ -20,7 +20,7 @@ class DistanceOverTimePanel : AbstractGraphPanel() {
         get() = "Distance (km)"
 
     override fun getDataset(segment: TrackSegment?): XYDataset? {
-        return trackStatisticsManager!!.getDistanceOverTimeAsXY(segment)
+        return trackStatisticsManager!!.getDistanceOverTimeAsXY(segment!!)
     }
 
     companion object {

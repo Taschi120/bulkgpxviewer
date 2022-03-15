@@ -32,7 +32,7 @@ import java.math.RoundingMode
  * #L%
  */
 
-class RouteLengthCalculator constructor() {
+class RouteLengthCalculator {
     @Inject
     private lateinit var haversineCalculator: HaversineCalculator
 
@@ -45,7 +45,6 @@ class RouteLengthCalculator constructor() {
         val unit = when (system) {
             UnitSystem.IMPERIAL -> Messages.getString("RouteLengthCalculator.UnitMiles")
             UnitSystem.METRIC -> Messages.getString("RouteLengthCalculator.UnitKilometers")
-            else -> Messages.getString("RouteLengthCalculator.UnitKilometers")
         }
         return String.format(
             Messages.getString("RouteLengthCalculator.RouteLengthFormat"),
@@ -56,28 +55,28 @@ class RouteLengthCalculator constructor() {
 
     fun getTotalDistance(gpx: GPX, system: UnitSystem): Double {
         val distanceInKm: Double = getTotalDistance(gpx)
-        if (system == UnitSystem.METRIC) {
-            return distanceInKm
+        return if (system == UnitSystem.METRIC) {
+            distanceInKm
         } else {
-            return unitConverter.kilometersToMiles(distanceInKm)
+            unitConverter.kilometersToMiles(distanceInKm)
         }
     }
 
     fun getTotalDistance(track: Track, system: UnitSystem): Double {
         val distanceInKm: Double = getTotalDistance(track)
-        if (system == UnitSystem.METRIC) {
-            return distanceInKm
+        return if (system == UnitSystem.METRIC) {
+            distanceInKm
         } else {
-            return unitConverter.kilometersToMiles(distanceInKm)
+            unitConverter.kilometersToMiles(distanceInKm)
         }
     }
 
     fun getTotalDistance(segment: TrackSegment, system: UnitSystem): Double {
         val distanceInKm: Double = getTotalDistance(segment)
-        if (system == UnitSystem.METRIC) {
-            return distanceInKm
+        return if (system == UnitSystem.METRIC) {
+            distanceInKm
         } else {
-            return unitConverter.kilometersToMiles(distanceInKm)
+            unitConverter.kilometersToMiles(distanceInKm)
         }
     }
 

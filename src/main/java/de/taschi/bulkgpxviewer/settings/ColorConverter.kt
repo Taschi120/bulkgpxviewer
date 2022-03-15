@@ -23,7 +23,9 @@ import java.awt.Color
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
- */   object ColorConverter {
+ */
+
+object ColorConverter {
     fun convert(input: SettingsColor): Color {
         return Color(input.r, input.g, input.b)
     }

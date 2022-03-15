@@ -11,9 +11,6 @@ import org.jfree.data.xy.XYSeriesCollection
 import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.ZonedDateTime
-import java.util.*
-import java.util.function.Function
-import java.util.function.ToDoubleFunction
 import java.util.stream.Collectors
 import javax.inject.Inject
 
@@ -24,7 +21,8 @@ import javax.inject.Inject
  * FIXME Most of the lambdas in this class are utterly broken after Kotlin conversion, and need some thorough
  * refactoring.
  */
-class TrackStatisticsManager constructor() {
+class TrackStatisticsManager {
+
     /** Caches  */
     private val distanceDiffs: HashMap<TrackSegment, List<Double>> = HashMap()
     private val totalDistances: HashMap<TrackSegment, List<Double>> = HashMap()
@@ -40,25 +38,14 @@ class TrackStatisticsManager constructor() {
     @Inject
     private lateinit var unitConverter: UnitConverter
 
-    fun getTotalDistance(segment: TrackSegment?): Double {
-        return getDistanceDifferences(segment).stream().collect(
-            Collectors.summingDouble(
-                ToDoubleFunction({ it: Double? -> (it)!! })
-            )
-        )
-    }
+    fun getTotalDistance(segment: TrackSegment) = getDistanceDifferences(segment).sum()
 
     // TODO: This could definitely be made more elegant
     fun getDistanceDifferences(segment: TrackSegment?): List<Double> {
         return resolveCache(
             distanceDiffs,
-            segment,
-            object : Calculator<Double> {
-                override fun calculate(t: TrackSegment?): List<Double> {
-                    return calculateDistanceDifferences(segment).map { it!! }
-                }
-            }
-        )
+            segment
+        ) { calculateDistanceDifferences(segment).map { it!! } }
     }
 
     private fun calculateDistanceDifferences(segment: TrackSegment?): List<Double?> {
@@ -84,17 +71,8 @@ class TrackStatisticsManager constructor() {
      * @param segment
      * @return
      */
-    fun getTotalDistances(segment: TrackSegment?): List<Double> {
-        return resolveCache(
-            totalDistances,
-            segment,
-            object : Calculator<Double> {
-                override fun calculate(t: TrackSegment?): List<Double> {
-                    return calculateTotalDistances(segment)
-                }
-            }
-        )
-    }
+    fun getTotalDistances(segment: TrackSegment?): List<Double> =
+        resolveCache(totalDistances, segment ) { calculateTotalDistances(segment) }
 
     private fun calculateTotalDistances(segment: TrackSegment?): List<Double> {
 
@@ -124,40 +102,29 @@ class TrackStatisticsManager constructor() {
      * @return
      */
     fun getTotalTimes(segment: TrackSegment?): List<Duration> {
-        return resolveCache(
-            totalTimes,
-            segment,
-            object : Calculator<Duration> {
-                override fun calculate(t: TrackSegment?): List<Duration> {
-                    return calculateTotalTimes(segment)
-                }
-            }
-        )
+        return resolveCache(totalTimes, segment) { calculateTotalTimes(segment) }
     }
 
     private fun calculateTotalTimes(segment: TrackSegment?): List<Duration> {
         if (segment == null) {
-            return emptyList<Duration>()
+            return emptyList()
         }
         val waypoints: List<WayPoint> = segment.getPoints()
         if (waypoints.isEmpty()) {
-            return emptyList<Duration>()
+            return emptyList()
         }
-        val times: List<ZonedDateTime?> = waypoints.stream()
-            .map(Function({ it: WayPoint -> it.getTime() }))
-            .map(Function({ it: Optional<ZonedDateTime?> -> it.orElse(null) }))
-            .collect(Collectors.toList())
+        val times: List<ZonedDateTime?> = waypoints
+            .map { it.time }
+            .map { it.orElse(null) }
 
-        // We need to check if all waypoints actually have a timestamp, since timestamps are an optiona
+        // We need to check if all waypoints actually have a timestamp, since timestamps are an optional
         // feature of GPX and not all GPX file contain them.
         if (times.contains(null)) {
             // TODO better error handling
-            return waypoints.stream().map(Function({ it: WayPoint? -> Duration.ZERO })).collect(Collectors.toList())
+            return waypoints.map { Duration.ZERO }
         }
-        val firstTime: ZonedDateTime? = times.get(0)
-        return times.stream()
-            .map(Function({ it: ZonedDateTime? -> Duration.between(firstTime, it) }))
-            .collect(Collectors.toList())
+        val firstTime: ZonedDateTime? = times[0]
+        return times.map { Duration.between(firstTime, it) }
     }
 
     /**
@@ -168,31 +135,26 @@ class TrackStatisticsManager constructor() {
      * @param segment
      * @return
      */
-    fun getSpeeds(segment: TrackSegment?): List<Double> {
-        return resolveCache(speeds, segment, object : Calculator<Double> {
-            override fun calculate(t: TrackSegment?): List<Double> {
-                return calculateSpeeds(segment)
-            }
-        })
-    }
+    fun getSpeeds(segment: TrackSegment?): List<Double> = resolveCache(speeds, segment) { calculateSpeeds(segment) }
 
     private fun calculateSpeeds(segment: TrackSegment?): List<Double> {
         if (segment == null) {
-            return emptyList<Double>()
+            return emptyList()
         }
-        val distances: List<Double> = getDistanceDifferences(segment)
-        val times: List<Duration> = getTimeDifferences(segment)
+        val distances = getDistanceDifferences(segment)
+        val times = getTimeDifferences(segment)
         if (distances.size != times.size) {
             log.error(
                 "Speed calculation impossible: data rows have incompatible sizes ({} and {}])",  //$NON-NLS-1$
                 distances.size, times.size
             )
-            return emptyList<Double>()
+            return emptyList()
         }
         val result: MutableList<Double> = ArrayList(distances.size)
+
         for (i in distances.indices) {
-            val distance: Double = distances.get(i)
-            val time: Duration = times.get(i)
+            val distance: Double = distances[i]
+            val time: Duration = times[i]
             val millis: Long = time.toMillis()
             if (millis == 0L) {
                 result.add(0.0)
@@ -200,7 +162,7 @@ class TrackStatisticsManager constructor() {
                 val speed: Double = distance / millis * 3600000
                 if (speed < STANDING_SPEED_THRESHOLD) {
                     if (i > 0) {
-                        result.set(i - 1, 0.0)
+                        result[i - 1] = 0.0
                     }
                     result.add(0.0)
                 } else {
@@ -211,27 +173,17 @@ class TrackStatisticsManager constructor() {
         return result
     }
 
-    fun getTimeDifferences(segment: TrackSegment?): List<Duration> {
-        return resolveCache(
-            timeDiffs,
-            segment,
-            object : Calculator<Duration> {
-                override fun calculate(t: TrackSegment?): List<Duration> {
-                    return calculateTimeDifferences(segment)
-                }
-            }
-        )
-    }
+    fun getTimeDifferences(segment: TrackSegment?): List<Duration> =
+        resolveCache(timeDiffs, segment) { calculateTimeDifferences(segment) }
 
     private fun calculateTimeDifferences(segment: TrackSegment?): List<Duration> {
         if (segment == null) {
-            return emptyList<Duration>()
+            return emptyList()
         }
-        val waypoints: List<WayPoint> = segment.getPoints()
-        val times: List<ZonedDateTime?> = waypoints.stream()
-            .map(Function({ it: WayPoint -> it.getTime() }))
-            .map(Function({ it: Optional<ZonedDateTime?> -> it.orElse(null) }))
-            .collect(Collectors.toList())
+
+        val waypoints: List<WayPoint> = segment.points
+        val times: List<ZonedDateTime?> = waypoints.map { it.time.orElse(null) }
+
         if (times.contains(null)) {
             // TODO better error handling
             log.error("gpx point without timestamp!") //$NON-NLS-1$
@@ -241,33 +193,19 @@ class TrackStatisticsManager constructor() {
             if (i == 0) {
                 result.add(Duration.ZERO)
             } else {
-                val prev: ZonedDateTime? = times.get(i - 1)
-                val now: ZonedDateTime? = times.get(i)
+                val prev: ZonedDateTime? = times[i - 1]
+                val now: ZonedDateTime? = times[i]
                 result.add(Duration.between(prev, now))
             }
         }
         return result
     }
 
-    fun getElevations(segment: TrackSegment?): List<Double> {
-        return resolveCache(
-            elevations,
-            segment,
-            object : Calculator<Double> {
-                override fun calculate(t: TrackSegment?): List<Double> {
-                    return calculateElevations(segment!!)
-                }
-            }
-        )
-    }
+    fun getElevations(segment: TrackSegment): List<Double> =
+        resolveCache(elevations, segment) { calculateElevations(segment) }
 
-    private fun calculateElevations(segment: TrackSegment): List<Double> {
-        val waypoints: List<WayPoint> = segment.getPoints()
-        val elevations: List<Double> = waypoints.stream()
-            .map(Function({ it: WayPoint -> it.getElevation().orElse(ZERO_LENGTH).to(Length.Unit.METER) }))
-            .collect(Collectors.toUnmodifiableList())
-        return elevations
-    }
+    private fun calculateElevations(segment: TrackSegment): List<Double> =
+        segment.points.map { it.elevation.orElse(ZERO_LENGTH).to(Length.Unit.METER) }
 
     /**
      * Gets a list in which element X represents the gradient (in percent) between
@@ -278,17 +216,7 @@ class TrackStatisticsManager constructor() {
      * @param segment
      * @return
      */
-    fun getGradients(segment: TrackSegment?): List<Double> {
-        return resolveCache(
-            gradients,
-            segment,
-            object : Calculator<Double> {
-                override fun calculate(t: TrackSegment?): List<Double> {
-                    return calculateGradients(t!!) // TODO the non-null-assertion is a bodge for future refactoring.
-                }
-            }
-        )
-    }
+    fun getGradients(segment: TrackSegment): List<Double> = resolveCache(gradients, segment) { calculateGradients(segment) }
 
     private fun calculateGradients(segment: TrackSegment): List<Double> {
         val distanceDifferences: List<Double> = getDistanceDifferences(segment)
@@ -308,8 +236,8 @@ class TrackStatisticsManager constructor() {
             if (distance == 0.0) {
                 result.add(0.0)
             } else {
-                val first: Double = elevations.get(i - 1)
-                val second: Double = elevations.get(i)
+                val first: Double = elevations[i - 1]
+                val second: Double = elevations[i]
 
                 // factor 1000 is necessary because distances are in kilometers,
                 // while altitudes are in meters
@@ -320,7 +248,7 @@ class TrackStatisticsManager constructor() {
         return result
     }
 
-    fun getHeightProfileAsXY(segment: TrackSegment?): XYDataset {
+    fun getHeightProfileAsXY(segment: TrackSegment): XYDataset {
         val altitudes: List<Double> = getElevations(segment)
         val distances: List<Double> = getTotalDistances(segment)
         val result: XYSeries =
@@ -339,9 +267,9 @@ class TrackStatisticsManager constructor() {
         return XYSeriesCollection(result)
     }
 
-    fun getDistanceOverTimeAsXY(segment: TrackSegment?): XYDataset {
+    fun getDistanceOverTimeAsXY(segment: TrackSegment): XYDataset {
         val times: List<Double> = getTotalTimes(segment).stream()
-            .map(Function({ it: Duration -> it.getSeconds().toDouble() }))
+            .map { it.seconds.toDouble() }
             .collect(Collectors.toList())
         val distances: List<Double> = getTotalDistances(segment)
         return buildXYDataset(
@@ -359,14 +287,14 @@ class TrackStatisticsManager constructor() {
      * @param segment
      * @return
      */
-    fun getSpeedOverTimeAsXY(segment: TrackSegment?, unitSystem: UnitSystem?): XYDataset {
-        val times: List<Double> = getTotalTimes(segment).stream()
-            .map(Function({ it: Duration -> it.toMillis() / 1000.0 }))
-            .map(Function({ it: Double -> it / 60.0 }))
-            .collect(Collectors.toUnmodifiableList())
-        var speeds: List<Double> = getSpeeds(segment).stream()
-            .map(Function({ it: Double -> if (unitSystem == UnitSystem.IMPERIAL) unitConverter.kilometersToMiles(it) else it }))
-            .collect(Collectors.toUnmodifiableList())
+    fun getSpeedOverTimeAsXY(segment: TrackSegment, unitSystem: UnitSystem): XYDataset {
+        val times = getTotalTimes(segment)
+            .map { it.toMillis() / 1000.0 }
+            .map { it / 60.0 }
+
+        var speeds = getSpeeds(segment)
+            .map { if (unitSystem == UnitSystem.IMPERIAL) unitConverter.kilometersToMiles(it) else it }
+
         speeds = smootheWithZeroSnap(speeds, 5)
         return buildXYDataset(
             Messages.getString("TrackStatisticsManager.SpeedOverTimeDiagramLabel"),
@@ -375,7 +303,7 @@ class TrackStatisticsManager constructor() {
         ) //$NON-NLS-1$
     }
 
-    fun getGradientOverDistanceAsXY(segment: TrackSegment?): XYDataset {
+    fun getGradientOverDistanceAsXY(segment: TrackSegment): XYDataset {
         val gradients: List<Double> = getGradients(segment)
         //gradients = smootheWithoutZeroSnap(gradients, 50);
         val distances: List<Double> = getTotalDistances(segment)
@@ -389,18 +317,17 @@ class TrackStatisticsManager constructor() {
     private fun <T> resolveCache(
         cache: HashMap<TrackSegment, List<T>>,
         segment: TrackSegment?,
-        calculator: Calculator<T>
+        calculator: (TrackSegment) -> List<T>
     ): List<T> {
-        if (segment == null || segment.isEmpty()) {
+        if (segment == null || segment.isEmpty) {
             return emptyList()
         }
-        val cached: List<T>? = cache.get(segment)
-        if (cached != null) {
-            return cached
-        } else {
-            val calculated: List<T> = calculator.calculate(segment)
-            cache.put(segment, calculated)
-            return calculated
+        val cached: List<T>? = cache[segment]
+
+        return cached ?: run {
+            val calculated: List<T> = calculator(segment)
+            cache[segment] = calculated
+            calculated
         }
     }
 
@@ -426,29 +353,25 @@ class TrackStatisticsManager constructor() {
     }
 
     private fun average(input: List<Double>, min: Int, max: Int): Double {
-        var min: Int = min
-        var max: Int = max
-        min = Math.max(min, 0)
-        max = Math.min(max, input.size)
+        var min = min
+        var max = max
+
+        min = min.coerceAtLeast(0)
+        max = max.coerceAtMost(input.size)
+
         if (min > max) {
             throw IllegalArgumentException()
         }
         if (min == max) {
-            return input.get(min)
+            return input[min]
         }
-        var sum: Double = 0.0
-        var num: Int = 0
+        var sum = 0.0
+        var num = 0
         for (i in min until max) {
             num++
-            sum += input.get(i)
+            sum += input[i]
         }
         return sum / num
-    }
-
-    // TODO This interface is a bad idea and should probably be deleted outright. Without any way to do comparison
-    // between two instances of this interface, it is useless for the purposes of caching anyway.
-    private open interface Calculator<T> {
-        fun calculate(t: TrackSegment?): List<T>
     }
 
     companion object {
@@ -459,11 +382,11 @@ class TrackStatisticsManager constructor() {
          * This compensates for GPS imprecisions creating the impression of movement while
          * the GPS receiver is not actually moving.
          */
-        private val STANDING_SPEED_THRESHOLD: Double = 2.0
+        private const val STANDING_SPEED_THRESHOLD: Double = 2.0
         private val ZERO_LENGTH: Length = Length.of(0.0, Length.Unit.METER)
 
         private fun buildXYDataset(name: String?, xAxis: List<Double>, yAxis: List<Double>): XYDataset {
-            val result: XYSeries = XYSeries(name)
+            val result = XYSeries(name)
             if (xAxis.size != yAxis.size) {
                 val errorMessage: String = String.format(
                     "Can not build dataset: inconsistent data row lengths (%s and %s)",  //$NON-NLS-1$

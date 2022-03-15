@@ -2,6 +2,7 @@ package de.taschi.bulkgpxviewer.math
 
 import io.jenetics.jpx.WayPoint
 import org.jxmapviewer.viewer.GeoPosition
+import kotlin.math.*
 
 /*-
  * #%L
@@ -35,11 +36,11 @@ import org.jxmapviewer.viewer.GeoPosition
     fun getDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
         val dLat: Double = deg2rad(lat2 - lat1)
         val dLon: Double = deg2rad(lon2 - lon1)
-        val a: Double = (Math.pow(Math.sin(dLat / 2), 2.0)
-                + (Math.cos(deg2rad(lat1))
-                * Math.cos(deg2rad(lat2))
-                * Math.pow(Math.sin(dLon / 2), 2.0)))
-        val c: Double = 2 * Math.asin(Math.sqrt(a))
+        val a: Double = (Math.sin(dLat / 2).pow(2.0)
+                + (cos(deg2rad(lat1))
+                * cos(deg2rad(lat2))
+                * sin(dLon / 2).pow(2.0)))
+        val c: Double = 2 * asin(sqrt(a))
         val d: Double = EARTH_RADIUS * c
         return d
     }
@@ -62,12 +63,10 @@ import org.jxmapviewer.viewer.GeoPosition
      * @param there the second set of coordinates
      * @return the distance, in kilometers
      */
-    fun getDistance(here: GeoPosition, there: GeoPosition): Double {
-        return getDistance(
-            here.getLatitude(), here.getLongitude(),
-            there.getLatitude(), there.getLongitude()
+    fun getDistance(here: GeoPosition, there: GeoPosition) = getDistance(
+            here.latitude, here.longitude,
+            there.latitude, there.longitude
         )
-    }
 
     /**
      * Calculates the distance between to sets of coordinates, as per the
@@ -79,14 +78,13 @@ import org.jxmapviewer.viewer.GeoPosition
      * @param there the second set of coordinates
      * @return the distance, in kilometers
      */
-    fun getDistance(here: WayPoint, there: WayPoint): Double {
-        return getDistance(
-            here.getLatitude().toDouble(), here.getLongitude().toDouble(),
-            there.getLatitude().toDouble(), there.getLongitude().toDouble()
+    fun getDistance(here: WayPoint, there: WayPoint) = getDistance(
+            here.latitude.toDouble(), here.longitude.toDouble(),
+            there.latitude.toDouble(), there.longitude.toDouble()
         )
-    }
 
     companion object {
-        private val EARTH_RADIUS: Int = 6371
+        /** Approximate earth radius, in kilometers */
+        private const val EARTH_RADIUS: Int = 6371
     }
 }

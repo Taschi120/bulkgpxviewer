@@ -22,7 +22,9 @@ import java.util.*
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
- */   object Messages {
+ */
+
+object Messages {
     private const val BUNDLE_NAME = "de.taschi.bulkgpxviewer.ui.messages" //$NON-NLS-1$
     private val RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME)
     fun getString(key: String): String {

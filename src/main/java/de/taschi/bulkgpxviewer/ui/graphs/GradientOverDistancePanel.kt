@@ -20,7 +20,7 @@ class GradientOverDistancePanel : AbstractGraphPanel() {
         get() = "Gradient (%)"
 
     override fun getDataset(segment: TrackSegment?): XYDataset? {
-        return trackStatisticsManager!!.getGradientOverDistanceAsXY(segment)
+        return trackStatisticsManager!!.getGradientOverDistanceAsXY(segment!!)
     }
 
     companion object {

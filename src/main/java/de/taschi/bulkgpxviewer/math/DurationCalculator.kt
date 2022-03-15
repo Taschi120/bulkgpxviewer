@@ -31,7 +31,9 @@ import java.util.*
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
- */@Singleton
+ */
+
+@Singleton
 class DurationCalculator constructor() {
     /**
      * Get the recorded duration of all tracks of a [GPX] file, disregarding any gaps between

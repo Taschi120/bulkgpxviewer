@@ -34,7 +34,9 @@ import javax.swing.SwingUtilities
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
- */ /**
+ */
+
+/**
  * Singleton class for access to the loaded files and GPX tracks
  */
 @Singleton

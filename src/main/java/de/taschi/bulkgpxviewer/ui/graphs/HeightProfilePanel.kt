@@ -20,7 +20,7 @@ class HeightProfilePanel : AbstractGraphPanel() {
         get() = "Altitude (m)"
 
     override fun getDataset(segment: TrackSegment?): XYDataset? {
-        return trackStatisticsManager!!.getHeightProfileAsXY(segment)
+        return trackStatisticsManager!!.getHeightProfileAsXY(segment!!)
     }
 
     companion object {
